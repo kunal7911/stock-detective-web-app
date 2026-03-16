@@ -429,7 +429,10 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 <nav class="top-nav" id="topNav">
   <div class="nav-brand" onclick="goTo('dashboard')">🔍 Stock Detective</div>
   <div class="nav-steps" id="navSteps"></div>
-  <div><button class="nav-dash-btn" id="navDashBtn" onclick="goTo('dashboard')" style="display:none">🏠 Dashboard</button></div>
+  <div style="display:flex;gap:6px;flex-shrink:0">
+    <button class="nav-dash-btn" id="navPtmBtn" onclick="goTo('ptm')" style="display:none">⏰ Time & Money</button>
+    <button class="nav-dash-btn" id="navDashBtn" onclick="goTo('dashboard')" style="display:none">🏠 Dashboard</button>
+  </div>
 </nav>
 
 <div class="confetti-area" id="confettiArea"></div>
@@ -796,7 +799,9 @@ function goTo(v) {
 function renderNav(v) {
   const steps = document.getElementById('navSteps');
   const dashBtn = document.getElementById('navDashBtn');
+  const ptmBtn  = document.getElementById('navPtmBtn');
   dashBtn.style.display = (v==='dashboard') ? 'none' : 'block';
+  ptmBtn.style.display  = (v==='ptm')       ? 'none' : 'block';
   if(v==='dashboard'){steps.innerHTML='';return;}
   const mId = v.split('-')[0]; // 'm1' or 'm2'
   const mc = MISSIONS_CFG.find(m=>m.id===mId);
