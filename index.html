@@ -40,26 +40,64 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 .btn-sm{padding:6px 14px;font-size:.8em;border-radius:20px;border:none;cursor:pointer;font-weight:600;}
 .nav-row{display:flex;justify-content:flex-end;margin-top:24px;gap:10px;}
 
-/* DASHBOARD */
+/* DASHBOARD WRAPPER */
 .dash-wrap{max-width:1000px;margin:0 auto;padding:28px 16px;}
-.dash-header{display:flex;align-items:center;gap:20px;margin-bottom:24px;flex-wrap:wrap;}
-.dash-badge{width:70px;height:70px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2em;flex-shrink:0;box-shadow:0 0 30px rgba(245,200,66,.4);}
-.dash-greeting{color:#9ab;font-size:.85em;}
-.dash-name{color:#fff;font-size:1.6em;font-weight:800;display:flex;align-items:center;gap:8px;}
+
+/* HERO — new user landing */
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+@keyframes glow{0%,100%{box-shadow:0 0 30px rgba(245,200,66,.35);}50%{box-shadow:0 0 60px rgba(245,200,66,.7);}}
+.hero-badge-anim{display:inline-block;font-size:4.5em;animation:float 3s ease-in-out infinite;}
+.hero-eyebrow{color:var(--gold);font-size:.75em;font-weight:700;text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;}
+.hero-h1{color:#fff;font-size:2.4em;font-weight:900;line-height:1.15;margin-bottom:16px;}
+.hero-h1 em{color:var(--gold);font-style:normal;}
+.hero-story{color:#b8c8d8;font-size:.95em;line-height:1.8;max-width:640px;margin:0 auto 20px;}
+.hero-funfact{background:linear-gradient(135deg,rgba(245,200,66,.09),rgba(245,200,66,.04));border:1px solid rgba(245,200,66,.28);border-radius:12px;padding:14px 20px;max-width:580px;margin:0 auto 28px;font-size:.86em;color:#f5c842cc;line-height:1.7;}
+.hero-funfact strong{color:var(--gold);}
+.hero-name-card{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);border-radius:var(--radius);padding:24px 28px;max-width:420px;margin:0 auto 36px;text-align:center;}
+.hero-name-card h3{color:#fff;font-size:1.05em;font-weight:700;margin-bottom:6px;}
+.hero-name-card p{color:#9ab;font-size:.83em;margin-bottom:14px;}
+.hero-learn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:36px;}
+.hlc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:15px;display:flex;align-items:flex-start;gap:12px;}
+.hlc-icon{font-size:1.5em;flex-shrink:0;line-height:1;}
+.hlc h4{color:var(--gold);font-size:.83em;font-weight:700;margin-bottom:3px;}
+.hlc p{color:#8ab;font-size:.77em;line-height:1.5;}
+
+/* RETURNING USER HEADER */
+.rh-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+.rh-badge{font-size:2.2em;}
+.rh-name{color:#fff;font-size:1.45em;font-weight:800;display:flex;align-items:center;gap:7px;}
+.rh-greeting{color:#9ab;font-size:.82em;margin-bottom:2px;}
+.rh-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+.stat-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 16px;text-align:center;min-width:88px;}
+.stat-num{color:var(--gold);font-size:1.3em;font-weight:800;}
+.stat-label{color:#777;font-size:.68em;margin-top:2px;}
+.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:10px;height:7px;overflow:hidden;margin-bottom:24px;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:10px;transition:width .4s ease;}
 .edit-name-btn{background:none;border:none;cursor:pointer;font-size:.7em;opacity:.5;}
 .edit-name-btn:hover{opacity:1;}
-.dash-stats{display:flex;gap:12px;margin-left:auto;flex-wrap:wrap;}
-.stat-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 18px;text-align:center;min-width:90px;}
-.stat-num{color:var(--gold);font-size:1.4em;font-weight:800;}
-.stat-label{color:#777;font-size:.7em;margin-top:2px;}
-.dash-progress-wrap{margin-bottom:28px;}
-.dash-progress-label{color:#9ab;font-size:.78em;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
-.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:10px;height:8px;overflow:hidden;}
-.progress-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:10px;transition:width .4s ease;}
-.missions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
-.mission-card{background:rgba(255,255,255,.04);border:2px solid #333;border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:12px;transition:border-color .3s;}
+
+/* MISSIONS SECTION */
+.section-divider{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;margin-bottom:18px;}
+.section-heading{color:#fff;font-size:1.1em;font-weight:800;margin-bottom:16px;}
+.section-heading em{color:var(--gold);font-style:normal;}
+.missions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
+.mission-card{background:rgba(255,255,255,.04);border:2px solid #333;border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:11px;transition:border-color .3s;}
 .mission-card:not(.locked):hover{background:rgba(255,255,255,.07);}
 .mission-card.locked{opacity:.6;}
+
+/* COMPLETION CHECKLIST */
+.ccl-wrap{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;margin-bottom:14px;}
+.ccl-title{color:#9ab;font-size:.73em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.ccl-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.87em;}
+.ccl-item:last-child{border-bottom:none;}
+.ccl-item.done{color:var(--green);}
+.ccl-item.todo{color:#8ab;}
+.ccl-icon{font-size:1em;flex-shrink:0;margin-top:1px;}
+.ccl-sub{font-size:.8em;opacity:.65;display:block;margin-top:1px;}
+.complete-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:11px 15px;color:#f87171;font-size:.85em;margin-bottom:12px;display:none;}
+.complete-error.show{display:block;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
+.shake{animation:shake .35s ease;}
 .mission-card.completed{background:rgba(34,197,94,.05);}
 .mc-icon{font-size:2.2em;}
 .mc-num{color:#666;font-size:.75em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
@@ -607,43 +645,103 @@ function renderNav(v) {
 // 4. DASHBOARD
 // ═══════════════════════════════════════════════════════
 function renderDashboard() {
-  const done = MISSIONS_CFG.filter(m=>!m.comingSoon&&S[m.id]?.completed).length;
+  const done  = MISSIONS_CFG.filter(m=>!m.comingSoon&&S[m.id]?.completed).length;
   const total = MISSIONS_CFG.filter(m=>!m.comingSoon).length;
-  const name = S.detectiveName||'Detective';
-  const portfolioVal = getPortfolioValue();
+  const isNew = !S.detectiveName;
+
+  document.getElementById('dashContent').innerHTML = isNew
+    ? renderHeroNew()
+    : renderHeroReturning(done, total);
+}
+
+/* ── Hero for brand-new visitors ── */
+function renderHeroNew() {
+  return `
+  <div style="text-align:center;padding:44px 16px 32px">
+    <div class="hero-badge-anim">🔍</div>
+    <div class="hero-eyebrow" style="margin-top:14px">Stock Detective Academy</div>
+    <h1 class="hero-h1">The Stock Market is a Puzzle.<br>You're the <em>Detective.</em></h1>
+    <p class="hero-story">
+      Every day, millions of people invest money in real companies — Apple, Tesla, McDonald's, and more.
+      Some investors get <strong style="color:var(--green)">rich</strong>.
+      Others <strong style="color:var(--red)">lose everything</strong>.
+      What's the difference?<br><br>
+      The smartest investors know how to read <strong style="color:var(--gold)">6 secret clues</strong> hidden inside the numbers.
+      At Stock Detective Academy, you'll crack those clues, build your own virtual stock portfolio,
+      and find out if YOUR picks beat the market — just like a real Wall Street pro.
+    </p>
+    <div class="hero-funfact">
+      🤯 <strong>Did you know?</strong> $1,000 invested in Apple in 2004 would be worth over
+      <strong>$700,000 today</strong>. Warren Buffett — one of the world's richest investors —
+      started buying stocks when he was <strong>just 11 years old</strong>. Your turn.
+    </div>
+
+    <div class="hero-name-card">
+      <h3>🕵️ What's your detective name?</h3>
+      <p>Every great investor needs a code name. What's yours?</p>
+      <input class="name-input" type="text" id="nameInput" placeholder="Enter your name..." maxlength="24"
+        onkeydown="if(event.key==='Enter')saveName()" style="text-align:center">
+      <br><br>
+      <button class="btn-primary" onclick="saveName()">Accept the Mission →</button>
+    </div>
+  </div>
+
+  <div style="max-width:1000px;margin:0 auto;padding:0 16px 12px">
+    <div class="hero-eyebrow" style="text-align:center;margin-bottom:14px">What You'll Master</div>
+    <div class="hero-learn-grid">
+      <div class="hlc"><div class="hlc-icon">🔍</div><div><h4>Decode 6 Secret Numbers</h4><p>Learn the exact metrics every real investor uses to find great stocks vs risky ones.</p></div></div>
+      <div class="hlc"><div class="hlc-icon">📊</div><div><h4>Investigate Real Companies</h4><p>Analyze Apple, Tesla, McDonald's and more — look up live data on Yahoo Finance.</p></div></div>
+      <div class="hlc"><div class="hlc-icon">💼</div><div><h4>Build a $10,000 Portfolio</h4><p>Invest virtual money across real stocks and see how well you diversify your picks.</p></div></div>
+      <div class="hlc"><div class="hlc-icon">📈</div><div><h4>Track the Market Live</h4><p>Enter real prices any time to see your gains and losses update in real-time.</p></div></div>
+    </div>
+
+    <div class="section-divider">
+      <div class="section-heading" style="text-align:center">🗺️ Your <em>Missions</em></div>
+      <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
+    </div>
+  </div>`;
+}
+
+/* ── Hero for returning visitors ── */
+function renderHeroReturning(done, total) {
+  const name = S.detectiveName;
+  const portfolioVal  = getPortfolioValue();
   const portfolioChange = getPortfolioChange();
+  const checks = getM1TotalChecks();
 
   let statsHtml = `
     <div class="stat-box"><div class="stat-num">${done}/${total}</div><div class="stat-label">Missions Done</div></div>
-    <div class="stat-box"><div class="stat-num">${getM1TotalChecks()}</div><div class="stat-label">✓ Checks Earned</div></div>`;
+    <div class="stat-box"><div class="stat-num">${checks}</div><div class="stat-label">✓ Checks Earned</div></div>`;
   if(S.m2.portfolio.length>0){
-    const chg = portfolioChange;
-    statsHtml += `<div class="stat-box"><div class="stat-num" style="color:${chg>=0?'var(--green)':'var(--red)'}">${fmtMoney(portfolioVal)}</div><div class="stat-label">Portfolio Value</div></div>`;
+    const isUp = portfolioChange>=0;
+    statsHtml += `<div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${fmtMoney(portfolioVal)}</div><div class="stat-label">Portfolio Value</div></div>`;
   }
 
-  const nameSection = !S.detectiveName ? `
-    <div class="name-entry">
-      <h3>👋 Welcome, Detective!</h3>
-      <p>Enter your name to begin your mission.</p>
-      <input class="name-input" type="text" placeholder="Your detective name..." id="nameInput" onkeydown="if(event.key==='Enter')saveName()">
-      <br><br><button class="btn-primary" onclick="saveName()">Start Academy →</button>
-    </div>` : '';
+  // Motivational line based on progress
+  const motivation = done===0
+    ? '🔍 Your first mission is waiting — crack the code!'
+    : done===total
+    ? '🏆 All missions complete — you\'re a certified Stock Detective!'
+    : `⏳ Mission ${done+1} unlocked — keep going, Detective!`;
 
-  document.getElementById('dashContent').innerHTML = `
-    ${nameSection}
-    <div class="dash-header">
-      <div class="dash-badge">🔍</div>
+  return `
+  <div style="max-width:1000px;margin:0 auto;padding:28px 16px">
+    <div class="rh-row">
+      <div class="rh-badge">🔍</div>
       <div>
-        <div class="dash-greeting">Welcome back,</div>
-        <div class="dash-name"><span>${name}</span><button class="edit-name-btn" onclick="editName()" title="Edit name">✏️</button></div>
+        <div class="rh-greeting">Welcome back, Detective</div>
+        <div class="rh-name"><span>${name}</span><button class="edit-name-btn" onclick="editName()" title="Rename">✏️</button></div>
       </div>
-      <div class="dash-stats">${statsHtml}</div>
     </div>
-    <div class="dash-progress-wrap">
-      <div class="dash-progress-label">Overall Progress</div>
-      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${(done/total)*100}%"></div></div>
+    <div class="rh-stats">${statsHtml}</div>
+    <div style="color:#9ab;font-size:.84em;margin-bottom:14px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:8px;border-left:3px solid var(--gold)">${motivation}</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${(done/total)*100}%"></div></div>
+
+    <div class="section-divider">
+      <div class="section-heading">🗺️ Your <em>Missions</em></div>
+      <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
     </div>
-    <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>`;
+  </div>`;
 }
 
 function renderMissionCard(mc) {
@@ -692,6 +790,25 @@ function hasProgress(mId){
   if(mId==='m1') return Object.values(S.m1.stockData).some(d=>Object.values(d).some(v=>v!==''));
   if(mId==='m2') return S.m2.portfolio.length>0;
   return false;
+}
+
+// Returns {ok, researched, hasVerdict} — used by checklist + complete guard
+function canCompleteM1(){
+  const nonExample = COMPANIES.filter(c=>!c.example);
+  const researched  = nonExample.filter(c=>{
+    const filled = Object.values(S.m1.stockData[c.id]).filter(v=>v!=='').length;
+    return filled >= 4; // at least 4 of 5 scoring fields filled
+  }).length;
+  const hasVerdict = (S.m1.verdict.investIn||'').trim()!=='';
+  return { ok: researched>=3 && hasVerdict, researched, required:3, hasVerdict };
+}
+
+// Returns {ok, stockCount, hasPriceUpdate, hasReflection} — used by checklist + complete guard
+function canCompleteM2(){
+  const stockCount     = S.m2.portfolio.length;
+  const hasPriceUpdate = S.m2.portfolio.some(p=>p.priceHistory.length>1);
+  const hasReflection  = (S.m2.verdict.q1||'').trim()!=='';
+  return { ok: stockCount>=2 && hasPriceUpdate && hasReflection, stockCount, hasPriceUpdate, hasReflection };
 }
 
 function saveName(){
@@ -908,7 +1025,7 @@ function renderM1Score(){
     <div class="verdict-section">
       <h3>🏆 My Investment Verdict — If I Had $1,000 to Invest...</h3>
       <div class="verdict-row" style="margin-bottom:14px">
-        <div class="verdict-box"><label>I would invest in:</label><input type="text" placeholder="Company name..." value="${v.investIn}" oninput="S.m1.verdict.investIn=this.value;save()"></div>
+        <div class="verdict-box"><label>I would invest in:</label><input type="text" placeholder="Company name..." value="${v.investIn}" oninput="S.m1.verdict.investIn=this.value;save();refreshM1VerdictCheck(this.value)"></div>
         <div class="verdict-box"><label>Because (2 reasons):</label><textarea style="min-height:48px" placeholder="1.&#10;2." oninput="S.m1.verdict.investReason=this.value;save()">${v.investReason}</textarea></div>
       </div>
       <div class="verdict-row">
@@ -923,6 +1040,7 @@ function renderM1Score(){
     <div style="background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:10px;padding:14px 18px;color:#f5c842cc;font-size:.83em;line-height:1.7;margin-bottom:18px">
       💡 <strong style="color:var(--gold)">Fun Fact:</strong> Warren Buffett started buying stocks when he was just <strong>11 years old!</strong> He bought 3 shares for $38 each. Today he's worth over $100 billion. The best time to start is <em>right now!</em>
     </div>
+    ${S.m1.completed ? '' : m1Checklist()}
     <div class="nav-row">
       <button class="btn-secondary" onclick="goTo('m1-table')">← Back to Table</button>
       ${S.m1.completed
@@ -931,12 +1049,51 @@ function renderM1Score(){
     </div>`;
 }
 
+function m1Checklist(){
+  const c = canCompleteM1();
+  return `
+  <div class="ccl-wrap">
+    <div class="ccl-title">📋 Complete these steps before you can finish Mission 1</div>
+    <div class="ccl-item ${c.researched>=3?'done':'todo'}">
+      <div class="ccl-icon">${c.researched>=3?'✅':'⬜'}</div>
+      <div>Research at least 3 companies in the Investigate tab
+        <span class="ccl-sub">${c.researched} of 3 researched (need 4+ fields filled per company)</span>
+      </div>
+    </div>
+    <div class="ccl-item ${c.hasVerdict?'done':'todo'}">
+      <div class="ccl-icon">${c.hasVerdict?'✅':'⬜'}</div>
+      <div>Fill in your Investment Verdict below — which company would you invest in?
+        <span class="ccl-sub">${c.hasVerdict?'Done ✓':'Fill in the "I would invest in" box below'}</span>
+      </div>
+    </div>
+  </div>
+  <div class="complete-error" id="m1CompleteError">
+    ⛔ Not quite done yet! Check the list above and complete those steps first.
+  </div>`;
+}
+
+// Refresh only the verdict checklist item live as they type
+function refreshM1VerdictCheck(val){
+  const filled = val.trim()!=='';
+  const item = document.querySelector('.ccl-item:last-child');
+  if(!item) return;
+  item.className = 'ccl-item '+(filled?'done':'todo');
+  item.querySelector('.ccl-icon').textContent = filled?'✅':'⬜';
+  item.querySelector('.ccl-sub').textContent   = filled?'Done ✓':'Fill in the "I would invest in" box below';
+}
+
 function setM1Star(n){
   S.m1.verdict.stars=n;save();
   document.querySelectorAll('#m1StarsRow .star-btn').forEach((b,i)=>b.classList.toggle('lit',i<n));
 }
 
 function completeM1(){
+  const check = canCompleteM1();
+  if(!check.ok){
+    const err = document.getElementById('m1CompleteError');
+    if(err){ err.classList.add('show'); err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); }
+    return;
+  }
   S.m1.completed=true;S.m1.completedAt=new Date().toISOString();save();
   confetti();
   document.getElementById('m1ScoreContent').innerHTML=`
@@ -1365,6 +1522,7 @@ function renderM2Verdict(){
         <div class="stars-row" id="m2StarsRow">${[1,2,3,4,5].map(i=>`<button class="star-btn${i<=(v.stars||0)?' lit':''}" onclick="setM2Star(${i})">⭐</button>`).join('')}</div>
       </div>
     </div>
+    ${S.m2.completed ? '' : m2Checklist()}
     <div class="nav-row">
       <button class="btn-secondary" onclick="goTo('m2-track')">← Track</button>
       ${S.m2.completed
@@ -1373,12 +1531,47 @@ function renderM2Verdict(){
     </div>`;
 }
 
+function m2Checklist(){
+  const c = canCompleteM2();
+  return `
+  <div class="ccl-wrap">
+    <div class="ccl-title">📋 Complete these steps before you can finish Mission 2</div>
+    <div class="ccl-item ${c.stockCount>=2?'done':'todo'}">
+      <div class="ccl-icon">${c.stockCount>=2?'✅':'⬜'}</div>
+      <div>Add at least 2 stocks to your portfolio
+        <span class="ccl-sub">${c.stockCount} of 2 stocks added — go to the Build tab to add more</span>
+      </div>
+    </div>
+    <div class="ccl-item ${c.hasPriceUpdate?'done':'todo'}">
+      <div class="ccl-icon">${c.hasPriceUpdate?'✅':'⬜'}</div>
+      <div>Update today's price for at least one stock
+        <span class="ccl-sub">${c.hasPriceUpdate?'Done ✓':'Go to the Track tab and click "Update Today\'s Price"'}</span>
+      </div>
+    </div>
+    <div class="ccl-item ${c.hasReflection?'done':'todo'}">
+      <div class="ccl-icon">${c.hasReflection?'✅':'⬜'}</div>
+      <div>Write your reflection in Q1 below
+        <span class="ccl-sub">${c.hasReflection?'Done ✓':'Answer Q1 in the reflection section above'}</span>
+      </div>
+    </div>
+  </div>
+  <div class="complete-error" id="m2CompleteError">
+    ⛔ Not quite done yet! Check the list above and complete those steps first.
+  </div>`;
+}
+
 function setM2Star(n){
   S.m2.verdict.stars=n;save();
   document.querySelectorAll('#m2StarsRow .star-btn').forEach((b,i)=>b.classList.toggle('lit',i<n));
 }
 
 function completeM2(){
+  const check = canCompleteM2();
+  if(!check.ok){
+    const err = document.getElementById('m2CompleteError');
+    if(err){ err.classList.add('show'); err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); }
+    return;
+  }
   S.m2.completed=true;S.m2.completedAt=new Date().toISOString();save();
   confetti();
   document.getElementById('m2VerdictContent').innerHTML=`
