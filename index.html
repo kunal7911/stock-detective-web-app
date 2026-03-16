@@ -365,6 +365,62 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 .hbar-source-tag.m2{background:rgba(34,197,94,.2);color:var(--green);}
 .hbar-source-tag.m3{background:rgba(168,85,247,.2);color:#c084fc;}
 .combined-totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;}
+/* POWER OF TIME & MONEY */
+.ptm-hero{background:linear-gradient(135deg,rgba(245,200,66,.12),rgba(245,200,66,.04));border:2px solid rgba(245,200,66,.3);border-radius:var(--radius);padding:24px;text-align:center;margin-bottom:20px;animation:glow 3s ease-in-out infinite;}
+.ptm-final-num{color:var(--gold);font-size:3em;font-weight:900;line-height:1;margin-bottom:6px;transition:all .25s;}
+.ptm-final-label{color:#9ab;font-size:.85em;margin-bottom:14px;}
+.ptm-badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.ptm-badge{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 14px;font-size:.8em;color:#ccc;text-align:center;min-width:80px;}
+.ptm-badge strong{color:var(--gold);display:block;font-size:1.1em;margin-bottom:2px;}
+.ptm-sliders{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:22px;margin-bottom:18px;}
+.ptm-slider-row{margin-bottom:22px;}
+.ptm-slider-row:last-child{margin-bottom:0;}
+.ptm-slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.ptm-slider-label{color:#cde;font-size:.88em;font-weight:600;}
+.ptm-slider-val{color:var(--gold);font-size:1em;font-weight:800;}
+.ptm-range{width:100%;-webkit-appearance:none;appearance:none;height:7px;border-radius:4px;outline:none;cursor:pointer;}
+.ptm-range::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid var(--navy);box-shadow:0 0 12px rgba(245,200,66,.6);}
+.ptm-range::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid var(--navy);}
+.ptm-rate-toggle{display:flex;gap:8px;margin-top:8px;}
+.ptm-rate-btn{flex:1;padding:11px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#aaa;font-size:.88em;font-weight:700;cursor:pointer;transition:all .2s;}
+.ptm-rate-btn.active{background:rgba(34,197,94,.15);border-color:var(--green);color:var(--green);}
+.ptm-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;}
+@media(max-width:500px){.ptm-compare{grid-template-columns:1fr;}}
+.ptm-compare-card{border-radius:var(--radius);padding:18px;text-align:center;}
+.ptm-compare-card.now{background:rgba(245,200,66,.08);border:1.5px solid rgba(245,200,66,.3);}
+.ptm-compare-card.later{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);}
+.ptm-compare-label{font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.ptm-compare-card.now .ptm-compare-label{color:var(--gold);}
+.ptm-compare-card.later .ptm-compare-label{color:#666;}
+.ptm-compare-num{font-size:1.7em;font-weight:900;margin-bottom:4px;}
+.ptm-compare-card.now .ptm-compare-num{color:var(--gold);}
+.ptm-compare-card.later .ptm-compare-num{color:#555;}
+.ptm-compare-sub{font-size:.73em;color:#777;}
+.ptm-diff-banner{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px 16px;text-align:center;margin-bottom:18px;color:#f87171;font-size:.88em;line-height:1.5;}
+.ptm-diff-banner strong{color:var(--red);}
+.ptm-chart-wrap{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:20px;margin-bottom:18px;}
+.ptm-chart-title{color:var(--gold);font-size:.9em;font-weight:700;margin-bottom:16px;}
+.ptm-bars{display:flex;align-items:flex-end;gap:6px;height:160px;}
+.ptm-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;}
+.ptm-bar-pair{display:flex;gap:2px;align-items:flex-end;width:100%;}
+.ptm-bar{border-radius:4px 4px 0 0;transition:height .4s ease;flex:1;min-height:3px;}
+.ptm-bar.now{background:linear-gradient(180deg,var(--gold),#d97706);}
+.ptm-bar.later{background:rgba(255,255,255,.15);}
+.ptm-bar-age{color:#666;font-size:.65em;margin-top:5px;text-align:center;}
+.ptm-bar-val{color:#9ab;font-size:.6em;text-align:center;margin-bottom:4px;white-space:nowrap;}
+.ptm-chart-legend{display:flex;gap:16px;justify-content:center;margin-top:10px;}
+.ptm-chart-legend-item{display:flex;align-items:center;gap:6px;font-size:.75em;color:#9ab;}
+.ptm-chart-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.ptm-insight{background:linear-gradient(135deg,rgba(34,197,94,.07),rgba(34,197,94,.02));border:1px solid rgba(34,197,94,.22);border-radius:var(--radius);padding:18px 22px;margin-bottom:18px;}
+.ptm-insight-title{color:var(--green);font-size:.9em;font-weight:700;margin-bottom:10px;}
+.ptm-insight-item{display:flex;align-items:flex-start;gap:10px;font-size:.85em;color:#aac;line-height:1.55;margin-bottom:8px;}
+.ptm-insight-item:last-child{margin-bottom:0;}
+.ptm-dash-card{background:linear-gradient(135deg,rgba(245,200,66,.09),rgba(245,200,66,.02));border:1.5px solid rgba(245,200,66,.28);border-radius:var(--radius);padding:16px 20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+.ptm-dash-card:hover{background:linear-gradient(135deg,rgba(245,200,66,.16),rgba(245,200,66,.06));transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,200,66,.12);}
+.ptm-dash-icon{font-size:2.2em;flex-shrink:0;}
+.ptm-dash-title{color:var(--gold);font-weight:800;font-size:.95em;margin-bottom:3px;}
+.ptm-dash-sub{color:#8ab;font-size:.78em;line-height:1.4;}
+.ptm-dash-arrow{color:var(--gold);font-size:1.3em;flex-shrink:0;opacity:.7;}
 @media(max-width:600px){.metrics-grid,.fields-grid,.add-form-grid{grid-template-columns:1fr;}.pie-section{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -591,6 +647,11 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 <div class="page-wrap"><div id="m3ThesisContent"></div></div>
 </div>
 
+<!-- POWER OF TIME & MONEY -->
+<div id="view-ptm" class="view">
+<div class="page-wrap"><div id="ptmContent"></div></div>
+</div>
+
 <script>
 /**
  * ╔══════════════════════════════════════════════════════════╗
@@ -616,7 +677,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
  * ║  14. M3 BET      — $10k sector portfolio builder         ║
  * ║  15. M3 COMBINED — combined M2+M3 portfolio + bar chart  ║
  * ║  16. M3 THESIS   — reflection & completion               ║
- * ║  17. INIT        — app startup                           ║
+ * ║  17. PTM TOOL    — Power of Time & Money calculator      ║
+ * ║  18. INIT        — app startup                           ║
  * ║                                                          ║
  * ║  TO ADD A NEW MISSION:                                   ║
  * ║   1. Add entry to MISSIONS_CFG array (section 1)         ║
@@ -727,6 +789,7 @@ function goTo(v) {
   if(v==='m3-bet') renderM3Bet();
   if(v==='m3-combined') renderM3Combined();
   if(v==='m3-thesis') renderM3Thesis();
+  if(v==='ptm') renderPTM();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -831,6 +894,18 @@ function renderDashboard() {
       </div>
 
       <div class="section-divider">
+        <div class="section-heading" style="text-align:center;margin-bottom:12px">🛠️ <em>Tools</em></div>
+        <div class="ptm-dash-card" onclick="goTo('ptm')">
+          <div class="ptm-dash-icon">⏰</div>
+          <div style="flex:1">
+            <div class="ptm-dash-title">Power of Time & Money</div>
+            <div class="ptm-dash-sub">Drag sliders to see what saving $50/month from today becomes by retirement. The answer will blow your mind! 🤯</div>
+          </div>
+          <div class="ptm-dash-arrow">→</div>
+        </div>
+      </div>
+
+      <div class="section-divider" style="padding-top:16px">
         <div class="section-heading" style="text-align:center">🗺️ Your <em>Missions</em></div>
         <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
       </div>
@@ -2162,7 +2237,229 @@ function completeM3(){
 }
 
 // ═══════════════════════════════════════════════════════
-// 17. INIT  — app startup
+// 17. PTM TOOL  — Power of Time & Money calculator
+// ═══════════════════════════════════════════════════════
+let ptmState = { age:12, monthly:50, target:1000000, rate:8 };
+
+// Compound interest: FV of monthly contributions
+function calcCompound(fromAge, monthlyPMT, annualRate, toAge){
+  if(toAge<=fromAge) return 0;
+  const r = annualRate/12/100;
+  const n = (toAge-fromAge)*12;
+  if(r===0) return monthlyPMT*n;
+  return monthlyPMT*(Math.pow(1+r,n)-1)/r;
+}
+function calcRequiredMonthly(fromAge, annualRate, targetAmount, toAge=65){
+  const r = annualRate/12/100;
+  const n = (toAge-fromAge)*12;
+  if(n<=0) return Infinity;
+  if(r===0) return targetAmount/n;
+  return targetAmount*r/(Math.pow(1+r,n)-1);
+}
+function calcAgeToReach(fromAge, monthlyPMT, annualRate, targetAmount){
+  for(let a=fromAge+1;a<=65;a++){
+    if(calcCompound(fromAge,monthlyPMT,annualRate,a)>=targetAmount) return a;
+  }
+  return null;
+}
+function fmtShort(n){
+  if(n>=1000000) return '$'+(n/1000000).toFixed(1)+'M';
+  if(n>=1000) return '$'+(n/1000).toFixed(0)+'K';
+  return '$'+Math.round(n);
+}
+function fmtLarge(n){
+  if(n>=1000000) return '$'+(n/1000000).toFixed(2)+'M';
+  if(n>=1000) return '$'+(n/1000).toFixed(0)+'K';
+  return fmtMoney(n);
+}
+function updateSliderFill(id,min,max,val){
+  const el=document.getElementById(id);
+  if(!el) return;
+  const pct=((val-min)/(max-min))*100;
+  el.style.background=`linear-gradient(to right,var(--gold) ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
+}
+
+function renderPTM(){
+  const {age,monthly,target,rate}=ptmState;
+  document.getElementById('ptmContent').innerHTML=`
+    <div class="page-title">⏰ Power of Time & Money</div>
+    <div class="page-sub">Drag the sliders and watch your future fortune update in real time — starting early is the biggest secret!</div>
+
+    <div class="ptm-hero">
+      <div class="ptm-final-num" id="ptmFinalNum">$0</div>
+      <div class="ptm-final-label">Your estimated wealth at age 65</div>
+      <div class="ptm-badges" id="ptmBadges"></div>
+    </div>
+
+    <div class="ptm-sliders">
+      <div class="ptm-slider-row">
+        <div class="ptm-slider-header">
+          <div class="ptm-slider-label">🎂 Your current age</div>
+          <div class="ptm-slider-val" id="ptmAgeVal">${age} years old</div>
+        </div>
+        <input type="range" class="ptm-range" id="ptmAge" min="8" max="25" step="1" value="${age}"
+          oninput="ptmState.age=+this.value;updatePTMCalc()">
+      </div>
+      <div class="ptm-slider-row">
+        <div class="ptm-slider-header">
+          <div class="ptm-slider-label">💵 Monthly savings</div>
+          <div class="ptm-slider-val" id="ptmMonthlyVal">${fmtMoney(monthly)}/mo</div>
+        </div>
+        <input type="range" class="ptm-range" id="ptmMonthly" min="10" max="2000" step="10" value="${monthly}"
+          oninput="ptmState.monthly=+this.value;updatePTMCalc()">
+      </div>
+      <div class="ptm-slider-row">
+        <div class="ptm-slider-header">
+          <div class="ptm-slider-label">🎯 Retirement target</div>
+          <div class="ptm-slider-val" id="ptmTargetVal">${fmtShort(target)}</div>
+        </div>
+        <input type="range" class="ptm-range" id="ptmTarget" min="100000" max="5000000" step="50000" value="${target}"
+          oninput="ptmState.target=+this.value;updatePTMCalc()">
+      </div>
+      <div class="ptm-slider-row">
+        <div class="ptm-slider-header">
+          <div class="ptm-slider-label">📈 Expected market return</div>
+          <div class="ptm-slider-val" id="ptmRateVal">${rate}% per year</div>
+        </div>
+        <div class="ptm-rate-toggle">
+          <button class="ptm-rate-btn${rate===8?' active':''}" onclick="ptmState.rate=8;updatePTMCalc()">8% Conservative</button>
+          <button class="ptm-rate-btn${rate===10?' active':''}" onclick="ptmState.rate=10;updatePTMCalc()">10% Optimistic</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="color:var(--gold);font-weight:700;margin-bottom:10px;font-size:.92em">⚡ The Cost of Waiting — Start Now vs Start Later</div>
+    <div class="ptm-compare">
+      <div class="ptm-compare-card now">
+        <div class="ptm-compare-label" id="ptmNowLabel">🚀 Start at age ${age}</div>
+        <div class="ptm-compare-num" id="ptmNowNum">$0</div>
+        <div class="ptm-compare-sub" id="ptmNowSub">saving for ${65-age} years</div>
+      </div>
+      <div class="ptm-compare-card later">
+        <div class="ptm-compare-label" id="ptmLaterLabel">⏳ Start at age ${age+5}</div>
+        <div class="ptm-compare-num" id="ptmLaterNum">$0</div>
+        <div class="ptm-compare-sub" id="ptmLaterSub">saving for ${Math.max(0,60-age)} years</div>
+      </div>
+    </div>
+    <div class="ptm-diff-banner" id="ptmDiffBanner"></div>
+
+    <div class="ptm-chart-wrap">
+      <div class="ptm-chart-title">📊 Your Wealth Over Time</div>
+      <div class="ptm-bars" id="ptmBars"></div>
+      <div class="ptm-chart-legend">
+        <div class="ptm-chart-legend-item"><div class="ptm-chart-legend-dot" style="background:var(--gold)"></div><span id="ptmLegendNow">Start at age ${age}</span></div>
+        <div class="ptm-chart-legend-item"><div class="ptm-chart-legend-dot" style="background:rgba(255,255,255,.2)"></div><span id="ptmLegendLater">Start at age ${age+5}</span></div>
+      </div>
+    </div>
+
+    <div class="ptm-insight" id="ptmInsight"></div>
+
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goTo('dashboard')">← Dashboard</button>
+    </div>`;
+
+  updatePTMCalc();
+}
+
+function updatePTMCalc(){
+  const {age,monthly,target,rate}=ptmState;
+
+  // Slider fills
+  updateSliderFill('ptmAge',8,25,age);
+  updateSliderFill('ptmMonthly',10,2000,monthly);
+  updateSliderFill('ptmTarget',100000,5000000,target);
+
+  // Label updates
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('ptmAgeVal',age+' years old');
+  set('ptmMonthlyVal',fmtMoney(monthly)+'/mo');
+  set('ptmTargetVal',fmtShort(target));
+  set('ptmRateVal',rate+'% per year');
+  set('ptmNowLabel','🚀 Start at age '+age);
+  set('ptmLaterLabel','⏳ Start at age '+(age+5));
+  set('ptmNowSub','saving '+fmtMoney(monthly)+'/mo for '+(65-age)+' years');
+  set('ptmLaterSub','saving '+fmtMoney(monthly)+'/mo for '+Math.max(0,60-age)+' years');
+  set('ptmLegendNow','Start at age '+age);
+  set('ptmLegendLater','Start at age '+(age+5));
+
+  // Rate buttons
+  document.querySelectorAll('.ptm-rate-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&rate===8)||(i===1&&rate===10)));
+
+  // Calculations
+  const finalNow   = calcCompound(age,monthly,rate,65);
+  const finalLater = calcCompound(age+5,monthly,rate,65);
+  const diff       = finalNow-finalLater;
+  const ageToReach = calcAgeToReach(age,monthly,rate,target);
+  const onTrack    = finalNow>=target;
+  const needed     = calcRequiredMonthly(age,rate,target,65);
+  const totalSaved = monthly*(65-age)*12;
+  const marketAdds = finalNow-totalSaved;
+
+  // Hero
+  set('ptmFinalNum',fmtShort(finalNow));
+  const badgesEl=document.getElementById('ptmBadges');
+  if(badgesEl) badgesEl.innerHTML=`
+    <div class="ptm-badge"><strong>${fmtShort(totalSaved)}</strong>You save</div>
+    <div class="ptm-badge"><strong style="color:var(--green)">${fmtShort(Math.max(0,marketAdds))}</strong>Market adds</div>
+    <div class="ptm-badge"><strong>${ageToReach?'Age '+ageToReach:'After 65'}</strong>Hit ${fmtShort(target)}</div>`;
+
+  // Compare
+  set('ptmNowNum',fmtShort(finalNow));
+  set('ptmLaterNum',fmtShort(finalLater));
+
+  // Diff banner
+  const diffEl=document.getElementById('ptmDiffBanner');
+  if(diffEl) diffEl.innerHTML=diff>0
+    ?`😱 By waiting just <strong>5 years</strong> to start, you'd have <strong>${fmtShort(diff)} LESS</strong> at retirement!`
+    :'';
+
+  // Decade bar chart
+  const checkpoints=[];
+  const startDecade=Math.ceil((age+1)/5)*5;
+  for(let a=startDecade;a<=60;a+=5) checkpoints.push(a);
+  checkpoints.push(65);
+
+  const vals=checkpoints.map(a=>calcCompound(age,monthly,rate,a));
+  const maxVal=Math.max(...vals,1);
+
+  const barsEl=document.getElementById('ptmBars');
+  if(barsEl) barsEl.innerHTML=checkpoints.map((a,i)=>{
+    const vNow=vals[i];
+    const vLater=a>(age+5)?calcCompound(age+5,monthly,rate,a):0;
+    const hNow=Math.max(4,(vNow/maxVal)*140);
+    const hLater=Math.max(0,(vLater/maxVal)*140);
+    return `<div class="ptm-bar-group">
+      <div class="ptm-bar-val">${fmtShort(vNow)}</div>
+      <div class="ptm-bar-pair" style="height:${hNow}px;align-items:flex-end">
+        <div class="ptm-bar now" style="height:${hNow}px"></div>
+        <div class="ptm-bar later" style="height:${hLater}px"></div>
+      </div>
+      <div class="ptm-bar-age">Age ${a}</div>
+    </div>`;
+  }).join('');
+
+  // Insight box
+  const insightEl=document.getElementById('ptmInsight');
+  if(insightEl){
+    const dailySaving=(monthly/30).toFixed(2);
+    const items=[];
+    if(onTrack){
+      items.push(`🎉 You're on track! Saving ${fmtMoney(monthly)}/month from age ${age} will get you to <strong>${fmtShort(finalNow)}</strong> by retirement!`);
+    } else {
+      items.push(`💡 To reach your <strong>${fmtShort(target)}</strong> target by 65, you need <strong>${fmtMoney(needed)}/month</strong> — just ${fmtMoney(needed-monthly)} more than you're saving now.`);
+    }
+    if(ageToReach&&ageToReach<=65){
+      items.push(`🏁 You'll hit your <strong>${fmtShort(target)}</strong> goal at age <strong>${ageToReach}</strong> — a full ${65-ageToReach} years before retirement!`);
+    }
+    items.push(`☕ ${fmtMoney(monthly)}/month is just <strong>$${dailySaving}/day</strong> — less than a coffee at most places!`);
+    items.push(`🧠 The market adds <strong>${fmtShort(Math.max(0,marketAdds))}</strong> on top of your savings — that's compound interest doing the heavy lifting!`);
+    insightEl.innerHTML=`<div class="ptm-insight-title">💡 What This Means For You</div>`
+      +items.map(i=>`<div class="ptm-insight-item">• <span>${i}</span></div>`).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// 18. INIT  — app startup
 // ═══════════════════════════════════════════════════════
 function init(){
   renderDashboard();
