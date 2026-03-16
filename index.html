@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Detective Academy</title>
+  <style>
+    :root {
+      --navy: #0d1b2a;
+      --blue: #1b4f8a;
+      --gold: #f5c842;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --light: #f0f4f8;
+      --white: #ffffff;
+      --radius: 14px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--navy);
+      min-height: 100vh;
+      color: #1a1a1a;
+    }
+
+    /* ── NAV ── */
+    .top-nav {
+      background: rgba(13,27,42,0.97);
+      border-bottom: 2px solid var(--gold);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand { color: var(--gold); font-size: 1.1em; font-weight: 700; display:flex; align-items:center; gap:8px; }
+    .nav-steps { display: flex; gap: 6px; }
+    .nav-step {
+      padding: 5px 14px; border-radius: 20px;
+      font-size: 0.8em; font-weight: 600;
+      background: rgba(255,255,255,0.08); color: #aaa;
+      cursor: pointer; border: none; transition: all .2s;
+    }
+    .nav-step.active { background: var(--gold); color: var(--navy); }
+    .nav-step.done { background: var(--green); color: white; }
+
+    /* ── VIEWS ── */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ── WELCOME ── */
+    .welcome {
+      min-height: calc(100vh - 52px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 20px; text-align: center;
+    }
+    .badge {
+      width: 120px; height: 120px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex; align-items:center; justify-content:center;
+      font-size: 3em; margin-bottom: 24px;
+      box-shadow: 0 0 40px rgba(245,200,66,0.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 30px rgba(245,200,66,0.4); transform: scale(1); }
+      50% { box-shadow: 0 0 60px rgba(245,200,66,0.7); transform: scale(1.04); }
+    }
+    .welcome h1 { color: var(--gold); font-size: 2.8em; margin-bottom: 8px; letter-spacing: -1px; }
+    .welcome .subtitle { color: #aac; font-size: 1.1em; margin-bottom: 8px; }
+    .welcome .tagline { color: #fff; font-size: 1.3em; font-weight: 600; margin-bottom: 32px; }
+    .mission-cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; max-width: 800px; margin-bottom: 36px; width: 100%;
+    }
+    .mission-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius); padding: 20px 16px; color: white;
+    }
+    .mission-card .num { font-size: 2em; margin-bottom: 6px; }
+    .mission-card h3 { color: var(--gold); margin-bottom: 4px; font-size: 0.95em; }
+    .mission-card p { color: #aac; font-size: 0.82em; line-height: 1.5; }
+    .btn-primary {
+      background: var(--gold); color: var(--navy);
+      border: none; border-radius: 30px;
+      padding: 14px 40px; font-size: 1.15em; font-weight: 800;
+      cursor: pointer; transition: all .2s; letter-spacing: 0.5px;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,200,66,0.4); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1); color: white;
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 30px;
+      padding: 10px 28px; font-size: 1em; font-weight: 600;
+      cursor: pointer; transition: all .2s; margin-left: 10px;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.18); }
+
+    /* ── CHEAT SHEET ── */
+    .page-wrap {
+      max-width: 1000px; margin: 0 auto; padding: 30px 16px;
+    }
+    .page-title {
+      color: var(--gold); font-size: 1.8em; font-weight: 800;
+      margin-bottom: 6px; display: flex; align-items: center; gap: 10px;
+    }
+    .page-sub { color: #9ab; margin-bottom: 24px; font-size: 0.95em; }
+    .signals-bar {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .sig-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 30px; font-weight: 700; font-size: 0.9em;
+    }
+    .sig-pill.good { background: rgba(34,197,94,0.15); border: 1.5px solid var(--green); color: var(--green); }
+    .sig-pill.okay { background: rgba(245,158,11,0.15); border: 1.5px solid var(--yellow); color: var(--yellow); }
+    .sig-pill.warn { background: rgba(239,68,68,0.15); border: 1.5px solid var(--red); color: var(--red); }
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(290px,1fr)); gap: 16px;
+    }
+    .metric-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius); padding: 20px; color: white;
+    }
+    .metric-card .mc-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .mc-num {
+      background: var(--gold); color: var(--navy);
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items:center; justify-content:center;
+      font-weight: 800; font-size: 0.9em; flex-shrink: 0;
+    }
+    .mc-title { font-weight: 700; font-size: 1em; color: var(--gold); }
+    .mc-desc { font-size: 0.82em; color: #9ab; line-height: 1.5; margin-bottom: 12px; }
+    .mc-analogy { font-size: 0.78em; color: #f5c84299; font-style: italic; margin-bottom: 10px; }
+    .mc-rules { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .mc-rules li {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 0.82em; line-height: 1.4;
+    }
+    .mc-rules .tag {
+      font-weight: 700; min-width: 20px; font-size: 1em;
+    }
+    .mc-rules .good { color: var(--green); }
+    .mc-rules .okay { color: var(--yellow); }
+    .mc-rules .warn { color: var(--red); }
+    .nav-row { display: flex; justify-content: flex-end; margin-top: 28px; gap: 10px; }
+
+    /* ── DETECTIVE TABLE ── */
+    .company-tabs {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .co-tab {
+      padding: 8px 16px; border-radius: 20px;
+      font-size: 0.85em; font-weight: 600;
+      background: rgba(255,255,255,0.07); color: #aac;
+      cursor: pointer; border: 1.5px solid rgba(255,255,255,0.1);
+      transition: all .15s;
+    }
+    .co-tab.active { background: var(--blue); color: white; border-color: var(--blue); }
+    .co-tab.complete { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.08); }
+    .company-panel { display: none; }
+    .company-panel.active { display: block; }
+    .co-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius); padding: 24px;
+    }
+    .co-header {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+    }
+    .co-logo {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items:center; justify-content:center;
+      font-size: 1.6em; flex-shrink: 0;
+    }
+    .co-name { color: white; font-size: 1.3em; font-weight: 800; }
+    .co-ticker { color: var(--gold); font-size: 0.9em; font-weight: 600; }
+    .co-example-badge {
+      background: var(--gold); color: var(--navy);
+      font-size: 0.7em; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 8px;
+    }
+    .hint-box {
+      background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.25);
+      border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;
+      color: #f5c842cc; font-size: 0.82em; line-height: 1.6;
+    }
+    .hint-box strong { color: var(--gold); }
+    .fields-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;
+    }
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-label {
+      color: #9ab; font-size: 0.78em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .field-label span { color: var(--gold); }
+    .field-input {
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 8px; padding: 10px 12px; color: white; font-size: 0.95em;
+      outline: none; transition: border-color .2s;
+      width: 100%;
+    }
+    .field-input:focus { border-color: var(--gold); }
+    .field-input.locked { opacity: 0.6; cursor: not-allowed; }
+    .signal-display {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 6px; height: 28px;
+    }
+    .signal-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 20px; font-size: 0.8em; font-weight: 700;
+      transition: all .3s;
+    }
+    .signal-badge.good { background: rgba(34,197,94,0.2); border: 1px solid var(--green); color: var(--green); }
+    .signal-badge.okay { background: rgba(245,158,11,0.2); border: 1px solid var(--yellow); color: var(--yellow); }
+    .signal-badge.warn { background: rgba(239,68,68,0.2); border: 1px solid var(--red); color: var(--red); }
+    .signal-badge.empty { background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.2); color: #555; }
+    .co-score-bar {
+      margin-top: 20px; background: rgba(255,255,255,0.05);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      flex-wrap: wrap;
+    }
+    .co-score-label { color: #9ab; font-size: 0.85em; }
+    .co-score-num { color: var(--gold); font-size: 1.6em; font-weight: 800; }
+    .score-pips { display: flex; gap: 5px; }
+    .pip {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); transition: background .3s;
+    }
+    .pip.filled { background: var(--green); }
+    .lookup-tip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(27,79,138,0.4); border: 1px solid rgba(27,79,138,0.7);
+      border-radius: 8px; padding: 6px 12px; font-size: 0.75em; color: #8bc;
+      margin-top: 14px; text-decoration: none;
+    }
+    .fields-divider { grid-column: 1/-1; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 4px; }
+    .fields-divider-label { color: #777; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── SCOREBOARD ── */
+    .scoreboard-table {
+      width: 100%; border-collapse: collapse; margin-bottom: 24px;
+    }
+    .scoreboard-table th {
+      background: rgba(255,255,255,0.06);
+      color: var(--gold); font-size: 0.75em; text-transform: uppercase;
+      padding: 10px 12px; text-align: center; letter-spacing: 0.5px;
+    }
+    .scoreboard-table th:first-child { text-align: left; }
+    .scoreboard-table td {
+      padding: 10px 12px; text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: white; font-size: 0.88em;
+    }
+    .scoreboard-table td:first-child { text-align: left; font-weight: 600; }
+    .scoreboard-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .scoreboard-table tr.top-row td { background: rgba(34,197,94,0.08); }
+    .score-cell { font-weight: 800; font-size: 1.1em; color: var(--gold); }
+    .score-cell.top { color: var(--green); font-size: 1.25em; }
+    .sig-small {
+      display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 0.8em; font-weight: 700;
+    }
+    .sig-small.good { background: rgba(34,197,94,0.2); color: var(--green); }
+    .sig-small.okay { background: rgba(245,158,11,0.2); color: var(--yellow); }
+    .sig-small.warn { background: rgba(239,68,68,0.2); color: var(--red); }
+    .sig-small.empty { color: #555; }
+    .verdict-section {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+    }
+    .verdict-section h3 { color: var(--gold); margin-bottom: 16px; font-size: 1.1em; }
+    .questions { display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px; }
+    .question { display: flex; flex-direction: column; gap: 6px; }
+    .question label { color: #cde; font-size: 0.88em; font-weight: 600; }
+    .question textarea {
+      background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 8px; color: white; padding: 10px; font-size: 0.88em;
+      resize: vertical; min-height: 60px; outline: none; font-family: inherit;
+      transition: border-color .2s;
+    }
+    .question textarea:focus { border-color: var(--gold); }
+    .verdict-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    @media(max-width:600px){ .verdict-row { grid-template-columns: 1fr; } }
+    .verdict-box {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 14px;
+    }
+    .verdict-box label { color: #9ab; font-size: 0.75em; text-transform: uppercase; font-weight: 600; display:block; margin-bottom: 6px; }
+    .verdict-box input, .verdict-box textarea {
+      background: transparent; border: none; border-bottom: 1.5px solid rgba(255,255,255,0.2);
+      color: white; font-size: 0.95em; width: 100%; padding: 4px 0; outline: none;
+      font-family: inherit;
+    }
+    .verdict-box input:focus, .verdict-box textarea:focus { border-bottom-color: var(--gold); }
+    .stars-row { display: flex; gap: 8px; margin-top: 6px; }
+    .star-btn {
+      font-size: 1.8em; background: none; border: none; cursor: pointer;
+      opacity: 0.3; transition: all .15s;
+    }
+    .star-btn.lit { opacity: 1; }
+    .star-btn:hover { transform: scale(1.2); }
+    .winner-banner {
+      background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(245,200,66,0.15));
+      border: 1px solid rgba(34,197,94,0.3); border-radius: var(--radius);
+      padding: 20px 24px; text-align: center; margin-bottom: 20px;
+    }
+    .winner-banner h2 { color: var(--green); font-size: 1.4em; margin-bottom: 6px; }
+    .winner-banner p { color: #aac; font-size: 0.9em; }
+    .progress-bar-wrap {
+      background: rgba(255,255,255,0.08); border-radius: 10px;
+      height: 8px; overflow: hidden; margin-bottom: 28px;
+    }
+    .progress-bar {
+      height: 100%; background: linear-gradient(90deg, var(--blue), var(--gold));
+      border-radius: 10px; transition: width .4s ease;
+    }
+    .confetti-area { pointer-events: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; overflow: hidden; }
+    .confetti-piece {
+      position: absolute; width: 10px; height: 10px; border-radius: 2px;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Mobile */
+    @media(max-width: 600px) {
+      .welcome h1 { font-size: 2em; }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .fields-grid { grid-template-columns: 1fr; }
+      .nav-steps { gap: 4px; }
+      .nav-step { padding: 4px 10px; font-size: 0.72em; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-brand">🔍 Stock Detective Academy</div>
+  <div class="nav-steps">
+    <button class="nav-step active" onclick="goTo('welcome')">🏠 Home</button>
+    <button class="nav-step" id="tab-cheat" onclick="goTo('cheat')">📋 Cheat Sheet</button>
+    <button class="nav-step" id="tab-table" onclick="goTo('table')">🕵️ Investigate</button>
+    <button class="nav-step" id="tab-score" onclick="goTo('score')">🏆 Score</button>
+  </div>
+</nav>
+
+<!-- CONFETTI -->
+<div class="confetti-area" id="confettiArea"></div>
+
+<!-- ══ VIEW: WELCOME ══ -->
+<div id="view-welcome" class="view active">
+  <div class="welcome">
+    <div class="badge">🔍</div>
+    <div class="subtitle">JUNIOR INVESTOR WORKSHEET</div>
+    <h1>Stock Detective Academy</h1>
+    <div class="tagline">Mission: Find the Best Stock!</div>
+    <div class="mission-cards">
+      <div class="mission-card">
+        <div class="num">📋</div>
+        <h3>Step 1 — Learn</h3>
+        <p>Study the 6 Magic Numbers cheat sheet and learn what each one means for a company.</p>
+      </div>
+      <div class="mission-card">
+        <div class="num">🕵️</div>
+        <h3>Step 2 — Investigate</h3>
+        <p>Look up real stock data on Yahoo Finance or Google Finance and fill in the numbers.</p>
+      </div>
+      <div class="mission-card">
+        <div class="num">🏆</div>
+        <h3>Step 3 — Decide</h3>
+        <p>Score each company, compare them, and make your investment verdict like a real detective!</p>
+      </div>
+    </div>
+    <div>
+      <button class="btn-primary" onclick="goTo('cheat')">🚀 Start Mission</button>
+      <button class="btn-secondary" onclick="goTo('table')">Skip to Table →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VIEW: CHEAT SHEET ══ -->
+<div id="view-cheat" class="view">
+  <div class="page-wrap">
+    <div class="page-title">📋 The 6 Magic Numbers — Cheat Sheet</div>
+    <div class="page-sub">Use these rules when you fill in the Detective Table. Each number tells you something different about a company!</div>
+    <div class="signals-bar">
+      <div class="sig-pill good">✓ CHECK = GOOD (1 point)</div>
+      <div class="sig-pill okay">~ TILDE = OKAY (0 points)</div>
+      <div class="sig-pill warn">✗ CROSS = WARNING (0 points)</div>
+    </div>
+    <div class="metrics-grid">
+
+      <div class="metric-card">
+        <div class="mc-header"><div class="mc-num">1</div><div class="mc-title">Stock Price ($)</div></div>
+        <div class="mc-desc">How much ONE share costs right now. Like a price tag at a store. The price alone doesn't say if it's cheap or expensive — you need to compare it to the 52-week range!</div>
+        <div class="mc-analogy">🏷️ Like the sticker price of a toy at a shop.</div>
+        <ul class="mc-rules">
+          <li><span class="tag good">✓</span><span>Any price is OK — compare to 52-Wk range</span></li>
+          <li><span class="tag okay">~</span><span>Rising very fast lately? Be careful</span></li>
+          <li><span class="tag warn">✗</span><span>Near all-time high + bad P/E = skip it</span></li>
+        </ul>
+      </div>
+
+      <div class="metric-card">
+        <div class="mc-header"><div class="mc-num">2</div><div class="mc-title">P/E Ratio</div></div>
+        <div class="mc-desc">Imagine buying a lemonade stand for $200 that earns $10/year profit. You'd wait 20 years to get your money back — so P/E = 20. Lower P/E = better deal!</div>
+        <div class="mc-analogy">🍋 Stand costs $500, earns $10/yr → P/E = 50 → wait 50 years! Too expensive!</div>
+        <ul class="mc-rules">
+          <li><span class="tag good">✓</span><span>Under 25 = Get money back in less than 25 years. Good!</span></li>
+          <li><span class="tag okay">~</span><span>25 to 50 = Pricey but growing fast = maybe OK</span></li>
+          <li><span class="tag warn">✗</span><span>Over 50 = Very expensive! Would wait 50+ years!</span></li>
+        </ul>
+      </div>
+
+      <div class="metric-card">
+        <div class="mc-header"><div class="mc-num">3</div><div class="mc-title">52-Week High / Low</div></div>
+        <div class="mc-desc">The highest and lowest price in the past year. Shows if the stock is "on sale" right now or overpriced compared to its recent history.</div>
+        <div class="mc-analogy">🏷️ Like knowing an item's original price vs. today's sale price.</div>
+        <ul class="mc-rules">
+          <li><span class="tag good">✓</span><span>Near 52-wk LOW = possibly on sale! Great deal!</span></li>
+          <li><span class="tag okay">~</span><span>In the middle = Normal price range</span></li>
+          <li><span class="tag warn">✗</span><span>Near 52-wk HIGH = might be too expensive right now</span></li>
+        </ul>
+      </div>
+
+      <div class="metric-card">
+        <div class="mc-header"><div class="mc-num">4</div><div class="mc-title">Market Cap</div></div>
+        <div class="mc-desc">Total value of ALL shares added together. Shows how big the company is. Bigger usually means safer, like a giant mall vs. a tiny shop!</div>
+        <div class="mc-analogy">🏙️ Small shop vs. big mall vs. giant city!</div>
+        <ul class="mc-rules">
+          <li><span class="tag good">✓</span><span>Large Cap (&gt;$10B) = Safer, more stable</span></li>
+          <li><span class="tag okay">~</span><span>Mid Cap ($2B–$10B) = Some risk, some reward</span></li>
+          <li><span class="tag warn">✗</span><span>Small Cap (&lt;$2B) = Riskier — be careful!</span></li>
+        </ul>
+      </div>
+
+      <div class="metric-card">
+        <div class="mc-header"><div class="mc-num">5</div><div class="mc-title">Revenue Growth %</div></div>
+        <div class="mc-desc">Is the company making MORE money than last year? A positive number means the business is growing. Negative means it's shrinking!</div>
+        <div class="mc-analogy">🌱 Like a plant — is it growing taller or wilting?</div>
+        <ul class="mc-rules">
+          <li><span class="tag good">✓</span><span>Over +10% = Fast growing! Exciting!</span></li>
+          <li><span class="tag okay">~</span><span>0% to +10% = Steady and stable</span></li>
+          <li><span class="tag warn">✗</span><span>Negative = Shrinking! Big warning sign!</span></li>
+        </ul>
+      </div>
+
+      <div class="metric-card">
+        <div class="mc-header"><div class="mc-num">6</div><div class="mc-title">Dividend Yield %</div></div>
+        <div class="mc-desc">Money the company pays you JUST for holding the stock. Like pocket money from your investment — even if the price doesn't change, you get paid!</div>
+        <div class="mc-analogy">🐔 Like a hen that lays eggs — the eggs are your dividend!</div>
+        <ul class="mc-rules">
+          <li><span class="tag good">✓</span><span>Over 2% = Bonus income! Great!</span></li>
+          <li><span class="tag okay">~</span><span>Under 2% but &gt;0% = A little pocket money</span></li>
+          <li><span class="tag warn">✗</span><span>0% = No dividend — OK if growing very fast</span></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div style="margin-top:20px; background:rgba(27,79,138,0.2); border:1px solid rgba(27,79,138,0.5); border-radius:10px; padding:14px 18px; color:#8bc; font-size:0.85em; line-height:1.7;">
+      🌐 <strong style="color:#acd;">Where to find these numbers?</strong> Search the company ticker (e.g. <strong>AAPL</strong>, <strong>TSLA</strong>) on
+      <strong>finance.yahoo.com</strong>, <strong>google.com/finance</strong>, or <strong>marketwatch.com</strong>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goTo('welcome')">← Back</button>
+      <button class="btn-primary" onclick="goTo('table')">Start Investigating →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VIEW: DETECTIVE TABLE ══ -->
+<div id="view-table" class="view">
+  <div class="page-wrap">
+    <div class="page-title">🕵️ The Detective Table</div>
+    <div class="page-sub">Look up each company on Yahoo Finance or Google Finance, enter the numbers, and watch the signals appear!</div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar" style="width:0%"></div>
+    </div>
+
+    <div class="company-tabs" id="companyTabs"></div>
+    <div id="companyPanels"></div>
+
+    <div class="nav-row" style="margin-top:20px;">
+      <button class="btn-secondary" onclick="goTo('cheat')">← Cheat Sheet</button>
+      <button class="btn-primary" onclick="goTo('score')">See Scoreboard →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VIEW: SCOREBOARD ══ -->
+<div id="view-score" class="view">
+  <div class="page-wrap">
+    <div class="page-title">🏆 Score &amp; My Verdict</div>
+    <div class="page-sub">Transfer your signals, tally scores, then write your final investment decision!</div>
+
+    <div id="winnerBanner"></div>
+
+    <div class="verdict-section">
+      <h3>📊 Final Scoreboard</h3>
+      <div style="overflow-x:auto;">
+        <table class="scoreboard-table" id="scoreboardTable">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>① Price</th>
+              <th>② P/E</th>
+              <th>③ 52-Wk</th>
+              <th>④ Mkt Cap</th>
+              <th>⑤ Revenue</th>
+              <th>⑥ Dividend</th>
+              <th>TOTAL ✓</th>
+            </tr>
+          </thead>
+          <tbody id="scoreTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="verdict-section">
+      <h3>🤔 Think Like an Investor!</h3>
+      <div class="questions">
+        <div class="question">
+          <label>Q1: Which company got the MOST check marks (✓)? Would you invest in it? Why?</label>
+          <textarea placeholder="Write your answer here..."></textarea>
+        </div>
+        <div class="question">
+          <label>Q2: Tesla is famous and cool — but what do the numbers say? Is it a great investment right now?</label>
+          <textarea placeholder="Write your answer here..."></textarea>
+        </div>
+        <div class="question">
+          <label>Q3: Coca-Cola has been around for 130+ years. Which number says it's "safe"? Which one says it's not growing very fast?</label>
+          <textarea placeholder="Write your answer here..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict-section">
+      <h3>🏆 My Investment Verdict — If I Had $1,000 to Invest...</h3>
+      <div class="verdict-row" style="margin-bottom:16px;">
+        <div class="verdict-box">
+          <label>I WOULD INVEST IN THIS COMPANY:</label>
+          <input type="text" placeholder="Company name...">
+        </div>
+        <div class="verdict-box">
+          <label>BECAUSE (WRITE 2 REASONS):</label>
+          <textarea style="min-height:50px;" placeholder="1. &#10;2. "></textarea>
+        </div>
+      </div>
+      <div class="verdict-row">
+        <div class="verdict-box">
+          <label>THE COMPANY I WOULD NOT INVEST IN IS:</label>
+          <input type="text" placeholder="Company name...">
+        </div>
+        <div class="verdict-box">
+          <label>BECAUSE THE NUMBERS SHOWED:</label>
+          <textarea style="min-height:50px;" placeholder="The numbers showed..."></textarea>
+        </div>
+      </div>
+      <div style="margin-top:20px;">
+        <div style="color:#9ab; font-size:0.82em; margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:.5px;">HOW MUCH DID YOU ENJOY THIS EXERCISE?</div>
+        <div class="stars-row" id="starsRow">
+          <button class="star-btn" onclick="setStar(1)">⭐</button>
+          <button class="star-btn" onclick="setStar(2)">⭐</button>
+          <button class="star-btn" onclick="setStar(3)">⭐</button>
+          <button class="star-btn" onclick="setStar(4)">⭐</button>
+          <button class="star-btn" onclick="setStar(5)">⭐</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(245,200,66,0.08); border:1px solid rgba(245,200,66,0.2); border-radius:10px; padding:16px 20px; color:#f5c842cc; font-size:0.85em; line-height:1.7; margin-bottom:20px;">
+      💡 <strong style="color:var(--gold);">Fun Fact:</strong> Warren Buffett — one of the richest investors in the world — started buying stocks when he was just <strong>11 years old!</strong> He bought 3 shares of a company for $38 each. Today he's worth over $100 billion. The best time to start learning about investing is <em>right now!</em>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goTo('table')">← Back to Table</button>
+      <button class="btn-primary" onclick="celebrate()">🎉 I'm Done!</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+const COMPANIES = [
+  { id:'ko',   name:'Coca-Cola',  ticker:'KO',   logo:'🥤', bg:'#e63946', example: true,
+    pre: { price:64, pe:24, wkHigh:74, wkLow:57, mktCap:280, revGrowth:2, divYield:3.1 } },
+  { id:'aapl', name:'Apple',      ticker:'AAPL', logo:'🍎', bg:'#555', example: false, pre:null },
+  { id:'googl',name:'Alphabet',   ticker:'GOOGL',logo:'🔵', bg:'#4285F4', example: false, pre:null },
+  { id:'tsla', name:'Tesla',      ticker:'TSLA', logo:'⚡', bg:'#cc0000', example: false, pre:null },
+  { id:'amzn', name:'Amazon',     ticker:'AMZN', logo:'📦', bg:'#ff9900', example: false, pre:null },
+  { id:'nke',  name:'Nike',       ticker:'NKE',  logo:'👟', bg:'#111', example: false, pre:null },
+  { id:'mcd',  name:'McDonald\'s',ticker:'MCD',  logo:'🍔', bg:'#DA291C', example: false, pre:null },
+];
+
+// State: for each company, store entered values
+const state = {};
+COMPANIES.forEach(c => {
+  state[c.id] = { price:'', pe:'', wkHigh:'', wkLow:'', mktCap:'', revGrowth:'', divYield:'' };
+});
+let currentTab = 'ko';
+let starRating = 0;
+
+// ── SIGNAL LOGIC ──────────────────────────────────────────────────────
+function calcSignals(d) {
+  const sigs = {};
+  const n = (v) => parseFloat(v);
+
+  // P/E
+  if(d.pe !== '') {
+    const pe = n(d.pe);
+    if(isNaN(pe)) sigs.pe = 'empty';
+    else if(pe < 25) sigs.pe = 'good';
+    else if(pe <= 50) sigs.pe = 'okay';
+    else sigs.pe = 'warn';
+  } else sigs.pe = 'empty';
+
+  // 52-Wk position
+  if(d.price !== '' && d.wkHigh !== '' && d.wkLow !== '') {
+    const p = n(d.price), hi = n(d.wkHigh), lo = n(d.wkLow);
+    if(!isNaN(p) && !isNaN(hi) && !isNaN(lo) && hi > lo) {
+      const range = hi - lo;
+      const pos = (p - lo) / range; // 0=at low, 1=at high
+      if(pos <= 0.25) sigs.wk = 'good';
+      else if(pos >= 0.75) sigs.wk = 'warn';
+      else sigs.wk = 'okay';
+    } else sigs.wk = 'empty';
+  } else sigs.wk = 'empty';
+
+  // Market Cap
+  if(d.mktCap !== '') {
+    const mc = n(d.mktCap);
+    if(isNaN(mc)) sigs.mktCap = 'empty';
+    else if(mc >= 10) sigs.mktCap = 'good';
+    else if(mc >= 2) sigs.mktCap = 'okay';
+    else sigs.mktCap = 'warn';
+  } else sigs.mktCap = 'empty';
+
+  // Revenue Growth
+  if(d.revGrowth !== '') {
+    const rg = n(d.revGrowth);
+    if(isNaN(rg)) sigs.revGrowth = 'empty';
+    else if(rg > 10) sigs.revGrowth = 'good';
+    else if(rg >= 0) sigs.revGrowth = 'okay';
+    else sigs.revGrowth = 'warn';
+  } else sigs.revGrowth = 'empty';
+
+  // Dividend
+  if(d.divYield !== '') {
+    const dy = n(d.divYield);
+    if(isNaN(dy)) sigs.divYield = 'empty';
+    else if(dy >= 2) sigs.divYield = 'good';
+    else if(dy > 0) sigs.divYield = 'okay';
+    else sigs.divYield = 'warn';
+  } else sigs.divYield = 'empty';
+
+  // Price signal (depends on 52-wk, just mirror wk for price column)
+  sigs.price = sigs.wk;
+
+  return sigs;
+}
+
+function countChecks(sigs) {
+  return Object.values(sigs).filter(s => s === 'good').length;
+}
+
+function sigLabel(s) {
+  if(s === 'good') return '✓';
+  if(s === 'okay') return '~';
+  if(s === 'warn') return '✗';
+  return '—';
+}
+
+function sigClass(s) { return s === 'empty' ? 'empty' : s; }
+
+// ── RENDER HELPERS ────────────────────────────────────────────────────
+function renderSignalBadge(sig) {
+  const labels = { good:'✓ Good', okay:'~ Okay', warn:'✗ Warning', empty:'Enter value' };
+  return `<span class="signal-badge ${sigClass(sig)}">${labels[sig] || '—'}</span>`;
+}
+
+function buildCompanyPanel(co) {
+  const d = state[co.id];
+  const sigs = calcSignals(d);
+  const score = countChecks(sigs);
+  const isExample = co.example;
+  const locked = isExample ? 'locked' : '';
+  const ro = isExample ? 'readonly' : '';
+
+  const pv = (k) => d[k] !== '' ? d[k] : (isExample && co.pre ? co.pre[k] : '');
+
+  // For example, override state with pre-filled values
+  if(isExample && co.pre && d.price === '') {
+    Object.keys(co.pre).forEach(k => { state[co.id][k] = String(co.pre[k]); });
+  }
+  const sv = (k) => state[co.id][k] || '';
+
+  return `
+    <div class="co-card">
+      <div class="co-header">
+        <div class="co-logo" style="background:${co.bg}">${co.logo}</div>
+        <div>
+          <div class="co-name">${co.name} ${isExample ? '<span class="co-example-badge">EXAMPLE ★</span>' : ''}</div>
+          <div class="co-ticker">${co.ticker}</div>
+        </div>
+      </div>
+      ${isExample ? `<div class="hint-box">⭐ <strong>This row is pre-filled as an example!</strong> These are approximate values from early 2025. Notice how each number gets a signal (✓ ~ ✗) based on the Cheat Sheet rules. Use this as a guide to fill in the other companies.</div>` : `<div class="hint-box">🔍 <strong>Your turn, Detective!</strong> Search <strong>${co.ticker}</strong> on Yahoo Finance or Google Finance, then type the numbers below. The signals will appear automatically!</div>`}
+      <div class="fields-grid">
+        <div class="field-group">
+          <div class="field-label">① Stock Price <span>($)</span></div>
+          <input class="field-input ${locked}" type="number" step="0.01" placeholder="e.g. 150.25" ${ro}
+            value="${sv('price')}" oninput="update('${co.id}','price',this.value)">
+        </div>
+        <div class="field-group">
+          <div class="field-label">② P/E Ratio</div>
+          <input class="field-input ${locked}" type="number" step="0.1" placeholder="e.g. 28" ${ro}
+            value="${sv('pe')}" oninput="update('${co.id}','pe',this.value)">
+          <div class="signal-display" id="sig-pe-${co.id}">${renderSignalBadge(calcSignals(state[co.id]).pe)}</div>
+        </div>
+        <div class="field-group" style="grid-column: span 1;">
+          <div class="field-label">③ 52-Wk High</div>
+          <input class="field-input ${locked}" type="number" step="0.01" placeholder="e.g. 200.00" ${ro}
+            value="${sv('wkHigh')}" oninput="update('${co.id}','wkHigh',this.value)">
+        </div>
+        <div class="field-group">
+          <div class="field-label">③ 52-Wk Low</div>
+          <input class="field-input ${locked}" type="number" step="0.01" placeholder="e.g. 130.00" ${ro}
+            value="${sv('wkLow')}" oninput="update('${co.id}','wkLow',this.value)">
+          <div class="signal-display" id="sig-wk-${co.id}">${renderSignalBadge(calcSignals(state[co.id]).wk)}</div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">④ Market Cap <span>(in Billions, e.g. 280 = $280B, 3000 = $3T)</span></div>
+          <input class="field-input ${locked}" type="number" step="1" placeholder="e.g. 2800" ${ro}
+            value="${sv('mktCap')}" oninput="update('${co.id}','mktCap',this.value)">
+          <div class="signal-display" id="sig-mktCap-${co.id}">${renderSignalBadge(calcSignals(state[co.id]).mktCap)}</div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">⑤ Revenue Growth <span>(%)</span></div>
+          <input class="field-input ${locked}" type="number" step="0.1" placeholder="e.g. 5.2 or -3.1" ${ro}
+            value="${sv('revGrowth')}" oninput="update('${co.id}','revGrowth',this.value)">
+          <div class="signal-display" id="sig-revGrowth-${co.id}">${renderSignalBadge(calcSignals(state[co.id]).revGrowth)}</div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">⑥ Dividend Yield <span>(%)</span></div>
+          <input class="field-input ${locked}" type="number" step="0.01" placeholder="e.g. 1.5 (enter 0 if none)" ${ro}
+            value="${sv('divYield')}" oninput="update('${co.id}','divYield',this.value)">
+          <div class="signal-display" id="sig-divYield-${co.id}">${renderSignalBadge(calcSignals(state[co.id]).divYield)}</div>
+        </div>
+      </div>
+
+      <div class="co-score-bar">
+        <div>
+          <div class="co-score-label">Score for ${co.name}</div>
+          <div><span class="co-score-num" id="coscore-${co.id}">${score}</span> <span style="color:#666;font-size:0.85em;">/ 5 ✓ checks</span></div>
+        </div>
+        <div class="score-pips" id="pips-${co.id}">
+          ${[1,2,3,4,5].map(i => `<div class="pip${i <= score ? ' filled' : ''}"></div>`).join('')}
+        </div>
+      </div>
+      <a class="lookup-tip" href="https://finance.yahoo.com/quote/${co.ticker}" target="_blank">
+        🔗 Look up ${co.ticker} on Yahoo Finance ↗
+      </a>
+    </div>`;
+}
+
+function buildTabs() {
+  const container = document.getElementById('companyTabs');
+  container.innerHTML = COMPANIES.map(co => {
+    const d = state[co.id];
+    const sigs = calcSignals(d);
+    const filled = Object.values(d).filter(v => v !== '').length;
+    const complete = filled >= 5;
+    return `<button class="co-tab${co.id===currentTab?' active':''}${complete?' complete':''}" onclick="switchTab('${co.id}')">${co.logo} ${co.name}</button>`;
+  }).join('');
+}
+
+function buildPanels() {
+  const container = document.getElementById('companyPanels');
+  container.innerHTML = COMPANIES.map(co => `
+    <div class="company-panel${co.id===currentTab?' active':''}" id="panel-${co.id}">
+      ${buildCompanyPanel(co)}
+    </div>`).join('');
+}
+
+function switchTab(id) {
+  currentTab = id;
+  document.querySelectorAll('.company-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.co-tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById('panel-'+id);
+  if(panel) panel.classList.add('active');
+  const tabs = document.querySelectorAll('.co-tab');
+  COMPANIES.forEach((co,i) => { if(co.id===id) tabs[i].classList.add('active'); });
+}
+
+function update(coId, field, value) {
+  state[coId][field] = value;
+  // Re-render signals in place (no full re-render to preserve focus)
+  const sigs = calcSignals(state[coId]);
+  const sigMap = { pe:'pe', wk:'wk', mktCap:'mktCap', revGrowth:'revGrowth', divYield:'divYield' };
+  Object.entries(sigMap).forEach(([key, el]) => {
+    const el2 = document.getElementById(`sig-${el}-${coId}`);
+    if(el2) el2.innerHTML = renderSignalBadge(sigs[key]);
+  });
+  // Update score
+  const score = countChecks(sigs);
+  const scoreEl = document.getElementById(`coscore-${coId}`);
+  if(scoreEl) scoreEl.textContent = score;
+  const pipsEl = document.getElementById(`pips-${coId}`);
+  if(pipsEl) pipsEl.innerHTML = [1,2,3,4,5].map(i => `<div class="pip${i<=score?' filled':''}"></div>`).join('');
+  // Update tab complete state
+  buildTabs();
+  // Progress
+  updateProgress();
+  // Scoreboard if visible
+  if(document.getElementById('view-score').classList.contains('active')) buildScoreboard();
+}
+
+function updateProgress() {
+  let totalFilled = 0;
+  const totalFields = COMPANIES.length * 5;
+  COMPANIES.forEach(co => {
+    const d = state[co.id];
+    totalFilled += Object.values(d).filter(v => v !== '').length;
+  });
+  const pct = Math.min(100, Math.round(totalFilled / totalFields * 100));
+  const bar = document.getElementById('progressBar');
+  if(bar) bar.style.width = pct + '%';
+}
+
+// ── SCOREBOARD ────────────────────────────────────────────────────────
+function buildScoreboard() {
+  const tbody = document.getElementById('scoreTableBody');
+  if(!tbody) return;
+
+  const rows = COMPANIES.map(co => {
+    const sigs = calcSignals(state[co.id]);
+    const score = countChecks(sigs);
+    return { co, sigs, score };
+  });
+  const maxScore = Math.max(...rows.map(r => r.score));
+
+  tbody.innerHTML = rows.map(({co, sigs, score}) => {
+    const isTop = score === maxScore && score > 0;
+    return `<tr class="${isTop?'top-row':''}">
+      <td>${co.logo} ${co.name} <small style="color:#666;">(${co.ticker})</small>${co.example?'<span class="co-example-badge" style="margin-left:4px">EX</span>':''}</td>
+      <td><span class="sig-small ${sigClass(sigs.price)}">${sigLabel(sigs.price)}</span></td>
+      <td><span class="sig-small ${sigClass(sigs.pe)}">${sigLabel(sigs.pe)}</span></td>
+      <td><span class="sig-small ${sigClass(sigs.wk)}">${sigLabel(sigs.wk)}</span></td>
+      <td><span class="sig-small ${sigClass(sigs.mktCap)}">${sigLabel(sigs.mktCap)}</span></td>
+      <td><span class="sig-small ${sigClass(sigs.revGrowth)}">${sigLabel(sigs.revGrowth)}</span></td>
+      <td><span class="sig-small ${sigClass(sigs.divYield)}">${sigLabel(sigs.divYield)}</span></td>
+      <td class="score-cell ${isTop?'top':''}">${score} ${isTop?'🏆':''}</td>
+    </tr>`;
+  }).join('');
+
+  // Winner banner
+  const winner = rows.reduce((a,b) => b.score > a.score ? b : a);
+  const banner = document.getElementById('winnerBanner');
+  if(winner.score > 0) {
+    banner.innerHTML = `<div class="winner-banner">
+      <h2>🏆 Current Leader: ${winner.co.logo} ${winner.co.name} (${winner.co.ticker})</h2>
+      <p>Score: ${winner.score}/5 check marks — highest by the numbers! (But always think beyond just numbers!)</p>
+    </div>`;
+  } else {
+    banner.innerHTML = '';
+  }
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────
+const VIEWS = ['welcome','cheat','table','score'];
+function goTo(name) {
+  VIEWS.forEach(v => {
+    document.getElementById('view-'+v).classList.remove('active');
+  });
+  document.getElementById('view-'+name).classList.add('active');
+  // Update nav
+  document.querySelectorAll('.nav-step').forEach((btn,i) => {
+    btn.classList.remove('active','done');
+  });
+  const navMap = {welcome:0, cheat:1, table:2, score:3};
+  const navBtns = document.querySelectorAll('.nav-step');
+  navBtns.forEach((btn, i) => {
+    const viewIdx = navMap[name];
+    if(i === viewIdx) btn.classList.add('active');
+    else if(i < viewIdx) btn.classList.add('done');
+  });
+  if(name === 'score') buildScoreboard();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── STARS ─────────────────────────────────────────────────────────────
+function setStar(n) {
+  starRating = n;
+  document.querySelectorAll('.star-btn').forEach((btn,i) => {
+    btn.classList.toggle('lit', i < n);
+  });
+}
+
+// ── CONFETTI ──────────────────────────────────────────────────────────
+function celebrate() {
+  const colors = ['#f5c842','#22c55e','#3b82f6','#ef4444','#a855f7','#f97316'];
+  const area = document.getElementById('confettiArea');
+  area.innerHTML = '';
+  for(let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left: ${Math.random()*100}%;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration: ${1.5 + Math.random()*2}s;
+      animation-delay: ${Math.random()*0.8}s;
+      width: ${6+Math.random()*8}px;
+      height: ${6+Math.random()*8}px;
+      border-radius: ${Math.random()>0.5?'50%':'2px'};
+    `;
+    area.appendChild(el);
+  }
+  setTimeout(() => { area.innerHTML = ''; }, 4000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+function init() {
+  // Pre-fill Coca-Cola example
+  const ko = COMPANIES[0];
+  if(ko.pre) {
+    Object.entries(ko.pre).forEach(([k,v]) => { state[ko.id][k] = String(v); });
+  }
+  buildTabs();
+  buildPanels();
+  updateProgress();
+}
+
+init();
+</script>
+</body>
+</html>
