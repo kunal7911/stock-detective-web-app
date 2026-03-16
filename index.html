@@ -647,101 +647,89 @@ function renderNav(v) {
 function renderDashboard() {
   const done  = MISSIONS_CFG.filter(m=>!m.comingSoon&&S[m.id]?.completed).length;
   const total = MISSIONS_CFG.filter(m=>!m.comingSoon).length;
-  const isNew = !S.detectiveName;
+  const name  = S.detectiveName;
 
-  document.getElementById('dashContent').innerHTML = isNew
-    ? renderHeroNew()
-    : renderHeroReturning(done, total);
-}
+  // ── Middle card: name entry (new) OR detective profile (returning) ──
+  let middleCard;
+  if(!name){
+    middleCard = `
+      <div class="hero-name-card">
+        <h3>🕵️ What's your detective name?</h3>
+        <p>Every great investor needs a code name. What's yours?</p>
+        <input class="name-input" type="text" id="nameInput" placeholder="Enter your name..." maxlength="24"
+          onkeydown="if(event.key==='Enter')saveName()" style="text-align:center">
+        <br><br>
+        <button class="btn-primary" onclick="saveName()">Accept the Mission →</button>
+      </div>`;
+  } else {
+    const portfolioChange = getPortfolioChange();
+    const portfolioVal    = getPortfolioValue();
+    const checks = getM1TotalChecks();
+    const motivation = done===0
+      ? '🔍 Your first mission is waiting — crack the code!'
+      : done===total
+      ? '🏆 All missions complete — you\'re a certified Stock Detective!'
+      : `⏳ Mission ${done+1} unlocked — keep going, Detective!`;
 
-/* ── Hero for brand-new visitors ── */
-function renderHeroNew() {
-  return `
-  <div style="text-align:center;padding:44px 16px 32px">
-    <div class="hero-badge-anim">🔍</div>
-    <div class="hero-eyebrow" style="margin-top:14px">Stock Detective Academy</div>
-    <h1 class="hero-h1">The Stock Market is a Puzzle.<br>You're the <em>Detective.</em></h1>
-    <p class="hero-story">
-      Every day, millions of people invest money in real companies — Apple, Tesla, McDonald's, and more.
-      Some investors get <strong style="color:var(--green)">rich</strong>.
-      Others <strong style="color:var(--red)">lose everything</strong>.
-      What's the difference?<br><br>
-      The smartest investors know how to read <strong style="color:var(--gold)">6 secret clues</strong> hidden inside the numbers.
-      At Stock Detective Academy, you'll crack those clues, build your own virtual stock portfolio,
-      and find out if YOUR picks beat the market — just like a real Wall Street pro.
-    </p>
-    <div class="hero-funfact">
-      🤯 <strong>Did you know?</strong> $1,000 invested in Apple in 2004 would be worth over
-      <strong>$700,000 today</strong>. Warren Buffett — one of the world's richest investors —
-      started buying stocks when he was <strong>just 11 years old</strong>. Your turn.
-    </div>
+    let statsHtml = `
+      <div class="stat-box"><div class="stat-num">${done}/${total}</div><div class="stat-label">Missions Done</div></div>
+      <div class="stat-box"><div class="stat-num">${checks}</div><div class="stat-label">✓ Checks Earned</div></div>`;
+    if(S.m2.portfolio.length>0){
+      const isUp = portfolioChange>=0;
+      statsHtml += `<div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${fmtMoney(portfolioVal)}</div><div class="stat-label">Portfolio Value</div></div>`;
+    }
 
-    <div class="hero-name-card">
-      <h3>🕵️ What's your detective name?</h3>
-      <p>Every great investor needs a code name. What's yours?</p>
-      <input class="name-input" type="text" id="nameInput" placeholder="Enter your name..." maxlength="24"
-        onkeydown="if(event.key==='Enter')saveName()" style="text-align:center">
-      <br><br>
-      <button class="btn-primary" onclick="saveName()">Accept the Mission →</button>
-    </div>
-  </div>
-
-  <div style="max-width:1000px;margin:0 auto;padding:0 16px 12px">
-    <div class="hero-eyebrow" style="text-align:center;margin-bottom:14px">What You'll Master</div>
-    <div class="hero-learn-grid">
-      <div class="hlc"><div class="hlc-icon">🔍</div><div><h4>Decode 6 Secret Numbers</h4><p>Learn the exact metrics every real investor uses to find great stocks vs risky ones.</p></div></div>
-      <div class="hlc"><div class="hlc-icon">📊</div><div><h4>Investigate Real Companies</h4><p>Analyze Apple, Tesla, McDonald's and more — look up live data on Yahoo Finance.</p></div></div>
-      <div class="hlc"><div class="hlc-icon">💼</div><div><h4>Build a $10,000 Portfolio</h4><p>Invest virtual money across real stocks and see how well you diversify your picks.</p></div></div>
-      <div class="hlc"><div class="hlc-icon">📈</div><div><h4>Track the Market Live</h4><p>Enter real prices any time to see your gains and losses update in real-time.</p></div></div>
-    </div>
-
-    <div class="section-divider">
-      <div class="section-heading" style="text-align:center">🗺️ Your <em>Missions</em></div>
-      <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
-    </div>
-  </div>`;
-}
-
-/* ── Hero for returning visitors ── */
-function renderHeroReturning(done, total) {
-  const name = S.detectiveName;
-  const portfolioVal  = getPortfolioValue();
-  const portfolioChange = getPortfolioChange();
-  const checks = getM1TotalChecks();
-
-  let statsHtml = `
-    <div class="stat-box"><div class="stat-num">${done}/${total}</div><div class="stat-label">Missions Done</div></div>
-    <div class="stat-box"><div class="stat-num">${checks}</div><div class="stat-label">✓ Checks Earned</div></div>`;
-  if(S.m2.portfolio.length>0){
-    const isUp = portfolioChange>=0;
-    statsHtml += `<div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${fmtMoney(portfolioVal)}</div><div class="stat-label">Portfolio Value</div></div>`;
+    middleCard = `
+      <div class="hero-name-card">
+        <div class="rh-row" style="justify-content:center;margin-bottom:12px">
+          <div class="rh-badge">🔍</div>
+          <div>
+            <div class="rh-greeting">Detective</div>
+            <div class="rh-name"><span>${name}</span><button class="edit-name-btn" onclick="editName()" title="Rename">✏️</button></div>
+          </div>
+        </div>
+        <div class="rh-stats" style="justify-content:center">${statsHtml}</div>
+        <div style="color:#9ab;font-size:.82em;margin-top:10px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:8px;border-left:3px solid var(--gold);text-align:left">${motivation}</div>
+        <div class="progress-bar-wrap" style="margin-top:12px;margin-bottom:0"><div class="progress-bar" style="width:${(done/total)*100}%"></div></div>
+      </div>`;
   }
 
-  // Motivational line based on progress
-  const motivation = done===0
-    ? '🔍 Your first mission is waiting — crack the code!'
-    : done===total
-    ? '🏆 All missions complete — you\'re a certified Stock Detective!'
-    : `⏳ Mission ${done+1} unlocked — keep going, Detective!`;
-
-  return `
-  <div style="max-width:1000px;margin:0 auto;padding:28px 16px">
-    <div class="rh-row">
-      <div class="rh-badge">🔍</div>
-      <div>
-        <div class="rh-greeting">Welcome back, Detective</div>
-        <div class="rh-name"><span>${name}</span><button class="edit-name-btn" onclick="editName()" title="Rename">✏️</button></div>
+  document.getElementById('dashContent').innerHTML = `
+    <div style="text-align:center;padding:44px 16px 28px">
+      <div class="hero-badge-anim">🔍</div>
+      <div class="hero-eyebrow" style="margin-top:14px">Stock Detective Academy</div>
+      <h1 class="hero-h1">The Stock Market is a Puzzle.<br>You're the <em>Detective.</em></h1>
+      <p class="hero-story">
+        Every day, millions of people invest money in real companies — Apple, Tesla, McDonald's, and more.
+        Some investors get <strong style="color:var(--green)">rich</strong>.
+        Others <strong style="color:var(--red)">lose everything</strong>.
+        What's the difference?<br><br>
+        The smartest investors know how to read <strong style="color:var(--gold)">6 secret clues</strong> hidden inside the numbers.
+        At Stock Detective Academy, you'll crack those clues, build your own virtual stock portfolio,
+        and find out if YOUR picks beat the market — just like a real Wall Street pro.
+      </p>
+      <div class="hero-funfact">
+        🤯 <strong>Did you know?</strong> $1,000 invested in Apple in 2004 would be worth over
+        <strong>$700,000 today</strong>. Warren Buffett — one of the world's richest investors —
+        started buying stocks when he was <strong>just 11 years old</strong>. Your turn.
       </div>
+      ${middleCard}
     </div>
-    <div class="rh-stats">${statsHtml}</div>
-    <div style="color:#9ab;font-size:.84em;margin-bottom:14px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:8px;border-left:3px solid var(--gold)">${motivation}</div>
-    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${(done/total)*100}%"></div></div>
 
-    <div class="section-divider">
-      <div class="section-heading">🗺️ Your <em>Missions</em></div>
-      <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
-    </div>
-  </div>`;
+    <div style="max-width:1000px;margin:0 auto;padding:0 16px 16px">
+      <div class="hero-eyebrow" style="text-align:center;margin-bottom:14px">What You'll Master</div>
+      <div class="hero-learn-grid">
+        <div class="hlc"><div class="hlc-icon">🔍</div><div><h4>Decode 6 Secret Numbers</h4><p>Learn the exact metrics every real investor uses to find great stocks vs risky ones.</p></div></div>
+        <div class="hlc"><div class="hlc-icon">📊</div><div><h4>Investigate Real Companies</h4><p>Analyze Apple, Tesla, McDonald's and more — look up live data on Yahoo Finance.</p></div></div>
+        <div class="hlc"><div class="hlc-icon">💼</div><div><h4>Build a $10,000 Portfolio</h4><p>Invest virtual money across real stocks and see how well you diversify your picks.</p></div></div>
+        <div class="hlc"><div class="hlc-icon">📈</div><div><h4>Track the Market Live</h4><p>Enter real prices any time to see your gains and losses update in real-time.</p></div></div>
+      </div>
+
+      <div class="section-divider">
+        <div class="section-heading" style="text-align:center">🗺️ Your <em>Missions</em></div>
+        <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
+      </div>
+    </div>`;
 }
 
 function renderMissionCard(mc) {
