@@ -335,6 +335,36 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 .lookup-tip{display:inline-flex;align-items:center;gap:5px;background:rgba(27,79,138,.4);border:1px solid rgba(27,79,138,.7);border-radius:8px;padding:5px 11px;font-size:.73em;color:#8bc;text-decoration:none;transition:background .2s;}
 .lookup-tip:hover{background:rgba(27,79,138,.7);color:#cdf;}
 
+/* M3 SECTORS */
+.sector-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+.sector-card{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s;text-align:left;}
+.sector-card:hover{background:rgba(255,255,255,.09);transform:translateY(-2px);}
+.sector-card.selected{transform:translateY(-2px);}
+.sector-card-icon{font-size:2em;margin-bottom:7px;}
+.sector-card-name{color:#fff;font-size:.92em;font-weight:800;margin-bottom:4px;}
+.sector-card-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:.68em;font-weight:700;margin-bottom:7px;}
+.sector-card-badge.defensive{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
+.sector-card-badge.cyclical{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3);}
+.sector-card-desc{color:#8ab;font-size:.75em;line-height:1.45;margin-bottom:5px;}
+.sector-card-examples{color:#555;font-size:.7em;}
+.selected-sector-banner{background:rgba(168,85,247,.08);border:1.5px solid rgba(168,85,247,.35);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.ssb-icon{font-size:2em;}
+.ssb-title{color:#c084fc;font-weight:800;font-size:.95em;margin-bottom:2px;}
+.ssb-sub{color:#9ab;font-size:.8em;}
+/* HORIZONTAL BAR CHART */
+.hbar-section{margin-bottom:24px;}
+.hbar-item{margin-bottom:16px;}
+.hbar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;flex-wrap:wrap;gap:4px;}
+.hbar-label{color:#fff;font-size:.85em;font-weight:700;display:flex;align-items:center;gap:7px;}
+.hbar-val{color:#9ab;font-size:.8em;}
+.hbar-track{height:30px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;}
+.hbar-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding:0 10px;font-size:.77em;font-weight:700;color:rgba(255,255,255,.9);transition:width .5s ease;white-space:nowrap;}
+.hbar-stocks{margin-top:7px;display:flex;flex-wrap:wrap;gap:6px;}
+.hbar-stock-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 10px;font-size:.76em;color:#ccc;}
+.hbar-source-tag{font-size:.65em;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:2px;}
+.hbar-source-tag.m2{background:rgba(34,197,94,.2);color:var(--green);}
+.hbar-source-tag.m3{background:rgba(168,85,247,.2);color:#c084fc;}
+.combined-totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;}
 @media(max-width:600px){.metrics-grid,.fields-grid,.add-form-grid{grid-template-columns:1fr;}.pie-section{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -515,6 +545,52 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 <div class="page-wrap"><div id="m2VerdictContent"></div></div>
 </div>
 
+<!-- M3: INTRO -->
+<div id="view-m3-intro" class="view">
+<div class="page-wrap">
+  <div class="intro-hero">
+    <div style="font-size:3.5em;margin-bottom:12px;">🗺️</div>
+    <h1 style="color:var(--gold);font-size:2.2em;font-weight:800;margin-bottom:8px;">Mission 3: The Sector Bet</h1>
+    <p style="color:#9ab;font-size:1em;margin-bottom:24px;">The stock market is split into 11 sectors. Smart investors pick the sectors they believe will WIN — and put their money there!</p>
+    <div class="intro-cards">
+      <div class="intro-card"><div class="ico">🗺️</div><h3>Explore 11 Sectors</h3><p>From Technology to Healthcare — understand what makes each sector tick.</p></div>
+      <div class="intro-card"><div class="ico">🎯</div><h3>Pick Your Sector</h3><p>Which sector do YOU believe will grow the most? Place your sector bet!</p></div>
+      <div class="intro-card"><div class="ico">🔍</div><h3>Research & Invest</h3><p>Find real stocks on Yahoo Finance. You get a fresh $10,000 to invest!</p></div>
+      <div class="intro-card"><div class="ico">📊</div><h3>Combined View</h3><p>See your M2 + M3 portfolios together — $20,000 total — grouped by sector with a bar chart.</p></div>
+    </div>
+    <div class="hint-box" style="max-width:640px;margin:0 auto 24px">
+      🤯 <strong>Did you know?</strong> In 2020, Technology stocks went UP +40% while Energy stocks CRASHED −30%.
+      Picking the right sector can make a HUGE difference. Warren Buffett bets big on
+      <strong>Financials</strong>. Cathie Wood bets on <strong>Technology</strong>. Now it's your turn to pick!
+    </div>
+    <div class="nav-row" style="justify-content:center;">
+      <button class="btn-secondary" onclick="goTo('dashboard')">← Dashboard</button>
+      <button class="btn-primary" onclick="goTo('m3-explore')">Explore the Sectors →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- M3: EXPLORE -->
+<div id="view-m3-explore" class="view">
+<div class="page-wrap"><div id="m3ExploreContent"></div></div>
+</div>
+
+<!-- M3: BET (Invest) -->
+<div id="view-m3-bet" class="view">
+<div class="page-wrap"><div id="m3BetContent"></div></div>
+</div>
+
+<!-- M3: COMBINED Portfolio -->
+<div id="view-m3-combined" class="view">
+<div class="page-wrap"><div id="m3CombinedContent"></div></div>
+</div>
+
+<!-- M3: THESIS (Reflection + Completion) -->
+<div id="view-m3-thesis" class="view">
+<div class="page-wrap"><div id="m3ThesisContent"></div></div>
+</div>
+
 <script>
 /**
  * ╔══════════════════════════════════════════════════════════╗
@@ -536,7 +612,11 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
  * ║  10. M2 VERDICT  — reflection & mission completion       ║
  * ║  11. PIE CHART   — SVG pie chart renderer                ║
  * ║  12. UTILITIES   — formatMoney, confetti                 ║
- * ║  13. INIT        — app startup                           ║
+ * ║  13. M3 EXPLORE  — sector grid & selection               ║
+ * ║  14. M3 BET      — $10k sector portfolio builder         ║
+ * ║  15. M3 COMBINED — combined M2+M3 portfolio + bar chart  ║
+ * ║  16. M3 THESIS   — reflection & completion               ║
+ * ║  17. INIT        — app startup                           ║
  * ║                                                          ║
  * ║  TO ADD A NEW MISSION:                                   ║
  * ║   1. Add entry to MISSIONS_CFG array (section 1)         ║
@@ -560,7 +640,20 @@ const COMPANIES = [
 ];
 
 const TICKER_SECTOR = {KO:'Consumer Staples',AAPL:'Technology',GOOGL:'Technology',TSLA:'Consumer Discretionary',AMZN:'Consumer Discretionary',NKE:'Consumer Discretionary',MCD:'Consumer Discretionary'};
-const SECTOR_COLORS = {'Technology':'#3b82f6','Consumer Staples':'#22c55e','Consumer Discretionary':'#f97316','Healthcare':'#a855f7','Energy':'#f59e0b','Finance':'#6366f1','Other':'#78716c'};
+const SECTOR_COLORS = {'Technology':'#3b82f6','Consumer Staples':'#22c55e','Consumer Discretionary':'#f97316','Healthcare':'#a855f7','Energy':'#f59e0b','Financials':'#6366f1','Finance':'#6366f1','Utilities':'#06b6d4','Real Estate':'#84cc16','Materials':'#78716c','Industrials':'#0ea5e9','Communication Services':'#ec4899','Other':'#94a3b8'};
+const ALL_SECTORS = [
+  {id:'Technology',           icon:'💻', badge:'cyclical',  desc:'Software, hardware, AI — the engine of the future!',                      examples:'Apple, Google, Microsoft, Nvidia'},
+  {id:'Healthcare',           icon:'🏥', badge:'defensive', desc:'Medicines, hospitals, biotech — always needed no matter what',              examples:'Johnson & Johnson, Pfizer, UnitedHealth'},
+  {id:'Consumer Staples',     icon:'🛒', badge:'defensive', desc:'Food, drinks, soap — the basics people always buy',                         examples:'Coca-Cola, Procter & Gamble, Walmart'},
+  {id:'Consumer Discretionary',icon:'🛍️',badge:'cyclical',  desc:'Fun stuff people buy when they have extra money',                           examples:"Tesla, Amazon, Nike, McDonald's"},
+  {id:'Energy',               icon:'⚡', badge:'cyclical',  desc:'Oil, gas, solar & wind — powering everything around us',                    examples:'ExxonMobil, Chevron, NextEra Energy'},
+  {id:'Financials',           icon:'🏦', badge:'cyclical',  desc:'Banks, insurance, credit cards — the money movers',                         examples:'JPMorgan, Visa, Berkshire Hathaway'},
+  {id:'Utilities',            icon:'💡', badge:'defensive', desc:'Electricity, water, gas companies — always on!',                            examples:'Duke Energy, Southern Company, Xcel Energy'},
+  {id:'Real Estate',          icon:'🏠', badge:'cyclical',  desc:'Buildings, apartments, shopping malls',                                     examples:'Simon Property Group, Public Storage'},
+  {id:'Materials',            icon:'⛏️', badge:'cyclical',  desc:'Metals, chemicals, paper — raw materials for everything',                   examples:'3M, Dow, Freeport-McMoRan'},
+  {id:'Industrials',          icon:'🏗️', badge:'cyclical',  desc:'Manufacturing, shipping, aerospace, construction',                          examples:'Boeing, Caterpillar, FedEx, Deere & Co.'},
+  {id:'Communication Services',icon:'📡',badge:'cyclical',  desc:'Social media, streaming, telecom, entertainment',                           examples:'Meta, Netflix, AT&T, Disney'},
+];
 
 const MISSIONS_CFG = [
   {id:'m1',num:1,title:'Find the Best Stock',subtitle:'Stock Detective',icon:'🕵️',color:'#f5c842',
@@ -569,8 +662,10 @@ const MISSIONS_CFG = [
   {id:'m2',num:2,title:'Build Your Portfolio',subtitle:'Virtual Investor',icon:'💼',color:'#22c55e',
    learn:['Invest $10,000 virtual money','Track real stock performance','Learn about diversification'],
    steps:['m2-intro','m2-build','m2-track','m2-verdict'],stepLabels:['Intro','Build','Track','Verdict'],requiresM1:true},
-  {id:'m3',num:3,title:'Market Sectors Safari',subtitle:'Coming Soon',icon:'🗺️',color:'#a855f7',
-   learn:['Explore 11 market sectors','Understand sector rotation','Build a sector-balanced portfolio'],comingSoon:true},
+  {id:'m3',num:3,title:'The Sector Bet',subtitle:'Sector Investor',icon:'🗺️',color:'#a855f7',
+   learn:['Explore all 11 market sectors','Pick your winning sector','Invest a fresh $10,000 sector bet'],
+   steps:['m3-intro','m3-explore','m3-bet','m3-combined','m3-thesis'],
+   stepLabels:['Intro','Explore','Invest','Combined','Thesis'],requiresM2:true},
   {id:'m4',num:4,title:'Bull & Bear Hunt',subtitle:'Coming Soon',icon:'🐻',color:'#f97316',
    learn:['Understand market cycles','Learn what causes crashes','Strategies for every market'],comingSoon:true},
 ];
@@ -590,6 +685,8 @@ function defaultState() {
         verdict:{q1:'',q2:'',q3:'',investIn:'',investReason:'',notInvest:'',notReason:'',stars:0}},
     m2:{completed:false,completedAt:null,budget:10000,portfolio:[],
         verdict:{q1:'',q2:'',stars:0}},
+    m3:{completed:false,completedAt:null,budget:10000,selectedSector:null,portfolio:[],
+        verdict:{q1:'',q2:'',stars:0}},
   };
 }
 
@@ -600,7 +697,8 @@ let S = (() => {
       const p = JSON.parse(raw), d = defaultState();
       return {...d,...p,
         m1:{...d.m1,...p.m1,stockData:{...d.m1.stockData,...(p.m1?.stockData||{})},verdict:{...d.m1.verdict,...(p.m1?.verdict||{})}},
-        m2:{...d.m2,...p.m2,verdict:{...d.m2.verdict,...(p.m2?.verdict||{})}}};
+        m2:{...d.m2,...p.m2,verdict:{...d.m2.verdict,...(p.m2?.verdict||{})}},
+        m3:{...d.m3,...(p.m3||{}),verdict:{...d.m3.verdict,...(p.m3?.verdict||{})}}};
     }
   } catch(e){}
   return defaultState();
@@ -625,6 +723,10 @@ function goTo(v) {
   if(v==='m2-build') renderM2Build();
   if(v==='m2-track') renderM2Track();
   if(v==='m2-verdict') renderM2Verdict();
+  if(v==='m3-explore') renderM3Explore();
+  if(v==='m3-bet') renderM3Bet();
+  if(v==='m3-combined') renderM3Combined();
+  if(v==='m3-thesis') renderM3Thesis();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -674,9 +776,12 @@ function renderDashboard() {
     let statsHtml = `
       <div class="stat-box"><div class="stat-num">${done}/${total}</div><div class="stat-label">Missions Done</div></div>
       <div class="stat-box"><div class="stat-num">${checks}</div><div class="stat-label">✓ Checks Earned</div></div>`;
-    if(S.m2.portfolio.length>0){
-      const isUp = portfolioChange>=0;
-      statsHtml += `<div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${fmtMoney(portfolioVal)}</div><div class="stat-label">Portfolio Value</div></div>`;
+    const hasM3 = S.m3?.portfolio?.length>0;
+    const combinedVal = portfolioVal + (hasM3 ? getM3CurrentValue() : 0);
+    if(S.m2.portfolio.length>0 || hasM3){
+      const combinedInvested = getM2Invested() + (hasM3 ? getM3Invested() : 0);
+      const isUp = combinedVal >= combinedInvested;
+      statsHtml += `<div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${fmtMoney(combinedVal)}</div><div class="stat-label">${hasM3?'Combined':'Portfolio'} Value</div></div>`;
     }
 
     middleCard = `
@@ -743,14 +848,14 @@ function renderMissionCard(mc) {
     </div>`;
 
   const ms = S[mc.id];
-  const locked = mc.requiresM1&&!S.m1.completed;
+  const locked = (mc.requiresM1&&!S.m1.completed)||(mc.requiresM2&&!S.m2.completed);
   const completed = ms?.completed;
   const inProgress = !completed&&!locked&&hasProgress(mc.id);
   const borderColor = locked?'#333':completed?'var(--green)':mc.color;
 
   let statusHtml, actionHtml;
   if(locked){
-    statusHtml=`<div class="mc-status locked-status">🔒 Complete Mission 1 first</div>`;
+    statusHtml=`<div class="mc-status locked-status">🔒 Complete Mission ${mc.requiresM2?2:1} first</div>`;
     actionHtml=`<button class="mc-btn locked-btn" disabled>Locked</button>`;
   } else if(completed){
     statusHtml=`<div class="mc-status completed-status">✅ Completed!</div>`;
@@ -777,6 +882,7 @@ function renderMissionCard(mc) {
 function hasProgress(mId){
   if(mId==='m1') return Object.values(S.m1.stockData).some(d=>Object.values(d).some(v=>v!==''));
   if(mId==='m2') return S.m2.portfolio.length>0;
+  if(mId==='m3') return (S.m3?.portfolio?.length>0)||S.m3?.selectedSector!==null;
   return false;
 }
 
@@ -1566,8 +1672,9 @@ function completeM2(){
     <div class="completion-screen">
       <div class="completion-badge">💼</div>
       <div class="completion-title">Mission 2 Complete!</div>
-      <div class="completion-sub" style="margin-bottom:20px">You're a real virtual investor now!<br>Keep updating your portfolio prices to track your performance over time.</div>
-      <button class="btn-green" onclick="goTo('dashboard')">🏠 Back to Dashboard</button>
+      <div class="completion-sub" style="margin-bottom:20px">You're a real virtual investor now!<br>Mission 3 is now unlocked — place your sector bet!</div>
+      <button class="btn-green" onclick="goTo('m3-intro')">Start Mission 3: The Sector Bet →</button>
+      <br><br><button class="btn-secondary" onclick="goTo('dashboard')">🏠 Back to Dashboard</button>
     </div>`;
 }
 
@@ -1624,7 +1731,438 @@ function confetti(){
 }
 
 // ═══════════════════════════════════════════════════════
-// 13. INIT  — app startup
+// 13. MISSION 3 — EXPLORE  (sector grid, selection)
+// ═══════════════════════════════════════════════════════
+function renderM3Explore(){
+  const sel = S.m3.selectedSector;
+  const sectorCards = ALL_SECTORS.map(s=>{
+    const isSelected = sel===s.id;
+    const color = SECTOR_COLORS[s.id]||'#555';
+    return `<div class="sector-card${isSelected?' selected':''}"
+      style="${isSelected?`border-color:${color};background:${color}18`:''}"
+      onclick="selectM3Sector('${s.id}')">
+      <div class="sector-card-icon">${s.icon}</div>
+      <div class="sector-card-name">${s.id}</div>
+      <div class="sector-card-badge ${s.badge}">${s.badge==='defensive'?'🛡️ Defensive':'⚡ Cyclical'}</div>
+      <div class="sector-card-desc">${s.desc}</div>
+      <div class="sector-card-examples">e.g. ${s.examples}</div>
+      ${isSelected?`<div style="margin-top:8px;color:${color};font-weight:800;font-size:.8em">✓ YOUR BET!</div>`:''}
+    </div>`;
+  }).join('');
+
+  const selectedBanner = sel ? (()=>{
+    const si = ALL_SECTORS.find(s=>s.id===sel);
+    const color = SECTOR_COLORS[sel]||'#a855f7';
+    return `<div class="selected-sector-banner" style="border-color:${color}50">
+      <div class="ssb-icon">${si.icon}</div>
+      <div><div class="ssb-title" style="color:${color}">🎯 Your Sector Bet: ${sel}</div>
+      <div class="ssb-sub">${si.desc}</div></div>
+    </div>`;
+  })() : '';
+
+  document.getElementById('m3ExploreContent').innerHTML=`
+    <div class="page-title">🗺️ Explore the 11 Sectors</div>
+    <div class="page-sub">Every stock belongs to a sector. Tap a sector to learn about it — then pick the one you believe in most!</div>
+    <div class="hint-box">
+      <strong>🛡️ Defensive sectors</strong> (Healthcare, Utilities, Consumer Staples) stay strong even in recessions — people always need food, medicine, and electricity.<br>
+      <strong>⚡ Cyclical sectors</strong> (Technology, Energy, Financials) grow fast in boom times but can fall hard in downturns.
+    </div>
+    ${selectedBanner}
+    <div class="sector-grid">${sectorCards}</div>
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goTo('m3-intro')">← Intro</button>
+      ${sel
+        ?`<button class="btn-primary" onclick="goTo('m3-bet')">Invest in ${sel} →</button>`
+        :`<button class="btn-secondary" disabled style="opacity:.4">Pick a sector to continue →</button>`}
+    </div>`;
+}
+
+function selectM3Sector(sectorId){
+  S.m3.selectedSector=sectorId;
+  save();
+  renderM3Explore();
+}
+
+// ═══════════════════════════════════════════════════════
+// 14. MISSION 3 — BET  ($10k sector portfolio builder)
+// ═══════════════════════════════════════════════════════
+let m3SelectedStock = null;
+
+function getM3Invested(){ return S.m3.portfolio.reduce((s,p)=>s+p.buyPrice*p.shares,0); }
+function getM3Remaining(){ return S.m3.budget-getM3Invested(); }
+function getM3CurrentValue(){
+  return S.m3.portfolio.reduce((s,p)=>{
+    const cur=p.priceHistory[p.priceHistory.length-1].price;
+    return s+cur*p.shares;
+  },0);
+}
+
+function renderM3Bet(){
+  const remaining = getM3Remaining();
+  const invested  = getM3Invested();
+  const pct       = Math.min(100,(invested/S.m3.budget)*100);
+  const sel       = S.m3.selectedSector;
+  const si        = ALL_SECTORS.find(s=>s.id===sel);
+  const selColor  = SECTOR_COLORS[sel]||'#a855f7';
+
+  const sectorBanner = sel ? `
+    <div class="selected-sector-banner" style="border-color:${selColor}50">
+      <div class="ssb-icon">${si?.icon||'🎯'}</div>
+      <div style="flex:1">
+        <div class="ssb-title" style="color:${selColor}">🎯 Your Sector Bet: ${sel}</div>
+        <div class="ssb-sub">Research stocks in <strong>${sel}</strong> on Yahoo Finance, then add them below!</div>
+      </div>
+      <button class="btn-secondary" style="padding:6px 14px;font-size:.78em;flex-shrink:0" onclick="goTo('m3-explore')">Change Sector</button>
+    </div>` : `<div class="hint-box">⚠️ You haven't picked a sector yet!
+    <button class="btn-sm" style="background:var(--gold);color:var(--navy);margin-left:8px" onclick="goTo('m3-explore')">Pick a Sector →</button></div>`;
+
+  const portfolioList = S.m3.portfolio.length===0
+    ? '<div style="color:#666;font-size:.85em;padding:10px 0">No stocks added yet — click "Add Stock" above!</div>'
+    : S.m3.portfolio.map(p=>buildM3PortfolioItem(p)).join('');
+
+  const addForm = m3SelectedStock ? buildM3AddForm() : '';
+
+  document.getElementById('m3BetContent').innerHTML=`
+    <div class="page-title">💰 Place Your Sector Bet</div>
+    <div class="page-sub">You have $10,000 fresh money. Research stocks in your chosen sector and invest!</div>
+    ${sectorBanner}
+    <div class="budget-bar-wrap">
+      <div class="budget-bar-header">
+        <div class="budget-title">💰 M3 Budget Tracker</div>
+        <div class="budget-nums">
+          <div class="budget-stat"><div class="val" style="color:var(--red)">${fmtMoney(invested)}</div><div class="lbl">Invested</div></div>
+          <div class="budget-stat"><div class="val" style="color:var(--green)">${fmtMoney(remaining)}</div><div class="lbl">Remaining</div></div>
+        </div>
+      </div>
+      <div class="budget-track"><div class="budget-fill" style="width:${pct}%;background:${selColor}"></div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px">
+      <div style="color:var(--gold);font-weight:700;margin-bottom:12px;font-size:.95em">🔍 Add a Stock
+        <span style="color:#666;font-size:.8em;font-weight:400"> — find stocks in
+        <strong style="color:${selColor}">${sel||'your sector'}</strong> on Yahoo Finance</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <div class="stock-pick-card${m3SelectedStock==='custom'?' selected':''}" onclick="selectM3Stock('custom')" style="max-width:160px">
+          <div class="spc-logo">🔍</div>
+          <div class="spc-name">Add Stock</div>
+          <div class="spc-ticker">Enter ticker</div>
+          <div class="spc-m1score no-data">Find on Yahoo Finance</div>
+        </div>
+      </div>
+      ${addForm}
+    </div>
+    ${S.m3.portfolio.length>0?`
+    <div class="card" style="margin-bottom:18px">
+      <div style="color:var(--gold);font-weight:700;margin-bottom:14px;font-size:.95em">📋 My Sector Portfolio (${S.m3.portfolio.length} stocks)</div>
+      <div class="portfolio-list">${portfolioList}</div>
+    </div>`:''}
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goTo('m3-explore')">← Explore</button>
+      ${S.m3.portfolio.length>=1
+        ?`<button class="btn-primary" onclick="goTo('m3-combined')">View Combined Portfolio →</button>`
+        :`<button class="btn-secondary" disabled style="opacity:.4">Add a stock to continue →</button>`}
+    </div>`;
+}
+
+function selectM3Stock(id){ m3SelectedStock=id; renderM3Bet(); }
+
+function buildM3AddForm(){
+  const remaining = getM3Remaining();
+  const today = new Date().toISOString().split('T')[0];
+  const selColor = SECTOR_COLORS[S.m3.selectedSector]||'#a855f7';
+  return `<div class="add-form" style="border-color:${selColor}40">
+    <h4>🔍 Add a Stock to Your Sector Portfolio</h4>
+    <div class="hint-box" style="margin-bottom:12px">
+      Search on <a href="https://finance.yahoo.com" target="_blank" class="lookup-tip" style="display:inline-flex;margin:0 3px">📊 Yahoo Finance ↗</a>
+      or <a href="https://www.google.com/finance" target="_blank" class="lookup-tip" style="display:inline-flex;margin:0 3px">🔍 Google Finance ↗</a>
+      for a stock in the <strong>${S.m3.selectedSector||'your chosen'}</strong> sector!
+    </div>
+    <div class="add-form-grid">
+      <div class="field-group"><div class="field-label">Ticker Symbol</div>
+        <input class="field-input" id="m3Ticker" type="text" placeholder="e.g. MSFT" oninput="this.value=this.value.toUpperCase()"></div>
+      <div class="field-group"><div class="field-label">Company Name</div>
+        <input class="field-input" id="m3Name" type="text" placeholder="e.g. Microsoft"></div>
+      <div class="field-group"><div class="field-label">Sector</div>
+        <select class="field-input" id="m3Sector" style="background:#1a2a3a;color:#fff">
+          ${ALL_SECTORS.map(s=>`<option value="${s.id}"${s.id===S.m3.selectedSector?' selected':''}>${s.icon} ${s.id}</option>`).join('')}
+          <option value="Other">📊 Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="add-form-grid">
+      <div class="field-group"><div class="field-label">Shares</div>
+        <input class="field-input" id="m3Shares" type="number" min="1" step="1" placeholder="e.g. 5" oninput="updateM3AddTotal()"></div>
+      <div class="field-group"><div class="field-label">Buy Price ($)</div>
+        <input class="field-input" id="m3Price" type="number" min="0.01" step="0.01" placeholder="e.g. 185.50" oninput="updateM3AddTotal()"></div>
+      <div class="field-group"><div class="field-label">Buy Date</div>
+        <input class="field-input" id="m3Date" type="date" value="${today}"></div>
+    </div>
+    <div class="add-form-total">Total cost: <strong id="m3AddTotal">$0.00</strong> &nbsp;|&nbsp; Remaining: <strong id="m3AddRemaining">${fmtMoney(remaining)}</strong></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn-primary" style="padding:9px 24px;font-size:.88em" onclick="confirmAddM3Stock()">Add to Portfolio ✓</button>
+      <button class="btn-secondary" style="padding:9px 20px;font-size:.88em" onclick="m3SelectedStock=null;renderM3Bet()">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function updateM3AddTotal(){
+  const shares = parseFloat(document.getElementById('m3Shares')?.value)||0;
+  const price  = parseFloat(document.getElementById('m3Price')?.value)||0;
+  const total  = shares*price;
+  const rem    = getM3Remaining()-total;
+  const el  = document.getElementById('m3AddTotal');
+  const el2 = document.getElementById('m3AddRemaining');
+  if(el)  el.textContent=fmtMoney(total);
+  if(el2){ el2.textContent=fmtMoney(rem); el2.style.color=rem<0?'var(--red)':'var(--green)'; }
+}
+
+function confirmAddM3Stock(){
+  const ticker = (document.getElementById('m3Ticker')?.value||'').toUpperCase().trim();
+  const name   = document.getElementById('m3Name')?.value.trim()||ticker;
+  const sector = document.getElementById('m3Sector')?.value||S.m3.selectedSector||'Other';
+  const shares = parseFloat(document.getElementById('m3Shares')?.value);
+  const price  = parseFloat(document.getElementById('m3Price')?.value);
+  const date   = document.getElementById('m3Date')?.value||new Date().toISOString().split('T')[0];
+  if(!ticker){ alert('Please enter a ticker symbol!'); return; }
+  if(!shares||!price||shares<=0||price<=0){ alert('Please enter valid shares and price!'); return; }
+  if(shares*price>getM3Remaining()){ alert(`Not enough budget! You have ${fmtMoney(getM3Remaining())} remaining.`); return; }
+  S.m3.portfolio.push({
+    id:'m3_'+Date.now(),ticker,name,logo:'📈',bg:'#334',sector,shares,
+    buyPrice:price,buyDate:date,priceHistory:[{date,price,note:'Purchase price'}]
+  });
+  save();
+  m3SelectedStock=null;
+  renderM3Bet();
+}
+
+function buildM3PortfolioItem(p){
+  const currentPrice = p.priceHistory[p.priceHistory.length-1].price;
+  const invested = p.buyPrice*p.shares;
+  const color = SECTOR_COLORS[p.sector]||'#555';
+  return `<div class="portfolio-item">
+    <div class="pi-header">
+      <div class="pi-left">
+        <div class="pi-logo">${p.logo}</div>
+        <div>
+          <div class="pi-name">${p.name}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="pi-ticker">${p.ticker}</div>
+            <div class="pi-sector" style="background:${color}">${p.sector}</div>
+          </div>
+        </div>
+      </div>
+      <button class="pi-remove" onclick="removeFromM3Portfolio('${p.id}')">✕ Remove</button>
+    </div>
+    <div class="pi-stats">
+      <div class="pi-stat"><div class="val">${p.shares} shares</div><div class="lbl">Shares</div></div>
+      <div class="pi-stat"><div class="val">${fmtMoney(p.buyPrice)}</div><div class="lbl">Buy price</div></div>
+      <div class="pi-stat"><div class="val">${fmtMoney(invested)}</div><div class="lbl">Invested</div></div>
+    </div>
+  </div>`;
+}
+
+function removeFromM3Portfolio(stockId){
+  if(!confirm('Remove this stock?')) return;
+  S.m3.portfolio=S.m3.portfolio.filter(p=>p.id!==stockId);
+  save();
+  renderM3Bet();
+}
+
+// ═══════════════════════════════════════════════════════
+// 15. MISSION 3 — COMBINED  (M2 + M3 by sector + bar chart)
+// ═══════════════════════════════════════════════════════
+function renderM3Combined(){
+  const m2 = S.m2.portfolio.map(p=>({...p,source:'m2'}));
+  const m3 = S.m3.portfolio.map(p=>({...p,source:'m3'}));
+  const all = [...m2,...m3];
+
+  if(all.length===0){
+    document.getElementById('m3CombinedContent').innerHTML=`
+      <div class="page-title">📊 Combined Portfolio</div>
+      <div class="no-portfolio-msg"><div class="big">💼</div><p>No portfolio yet — build M2 and M3 first.</p>
+      <br><button class="btn-primary" onclick="goTo('m3-bet')">Go to Invest →</button></div>`;
+    return;
+  }
+
+  // Group by sector
+  const sectorMap={};
+  all.forEach(p=>{
+    const val=p.buyPrice*p.shares;
+    if(!sectorMap[p.sector]) sectorMap[p.sector]={value:0,stocks:[]};
+    sectorMap[p.sector].value+=val;
+    sectorMap[p.sector].stocks.push(p);
+  });
+
+  const totalInvested = all.reduce((s,p)=>s+p.buyPrice*p.shares,0)||1;
+  const m2Invested = getM2Invested();
+  const m3Invested = getM3Invested();
+  const m2Value    = getPortfolioValue();
+  const m3Value    = getM3CurrentValue();
+  const totalValue = m2Value+m3Value;
+  const totalChange = totalValue-totalInvested;
+  const isUp = totalChange>=0;
+
+  const sortedSectors = Object.entries(sectorMap).sort((a,b)=>b[1].value-a[1].value);
+  const barChart = sortedSectors.map(([sector,data])=>{
+    const pct = (data.value/totalInvested*100).toFixed(1);
+    const color = SECTOR_COLORS[sector]||'#555';
+    const si = ALL_SECTORS.find(s=>s.id===sector);
+    const pills = data.stocks.map(p=>`<span class="hbar-stock-pill">${p.logo} ${p.ticker}
+      <span class="hbar-source-tag ${p.source}">${p.source==='m2'?'M2':'M3'}</span></span>`).join('');
+    return `<div class="hbar-item">
+      <div class="hbar-header">
+        <div class="hbar-label">${si?si.icon:'📊'} ${sector}</div>
+        <div class="hbar-val">${fmtMoney(data.value)} &middot; ${pct}%</div>
+      </div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}">${pct}%</div></div>
+      <div class="hbar-stocks">${pills}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('m3CombinedContent').innerHTML=`
+    <div class="page-title">📊 Combined Portfolio</div>
+    <div class="page-sub">Your Mission 2 + Mission 3 investments — $20,000 total — grouped by sector!</div>
+    <div class="combined-totals">
+      <div class="ps-card"><div class="val">${fmtMoney(m2Invested)}</div><div class="lbl">M2 Invested</div></div>
+      <div class="ps-card"><div class="val" style="color:#c084fc">${fmtMoney(m3Invested)}</div><div class="lbl">M3 Invested</div></div>
+      <div class="ps-card"><div class="val" style="color:var(--gold)">${fmtMoney(totalInvested)}</div><div class="lbl">Total Invested</div></div>
+      <div class="ps-card ${isUp?'positive':'negative'}"><div class="val">${isUp?'+':''}${fmtMoney(totalChange)}</div><div class="lbl">Combined G/L</div></div>
+      <div class="ps-card ${isUp?'positive':'negative'}"><div class="val">${fmtPct((totalChange/totalInvested)*100)}</div><div class="lbl">Total Return</div></div>
+    </div>
+    <div class="verdict-section">
+      <h3>🗺️ Where Is Your Money? — By Sector</h3>
+      <div class="hbar-section">${barChart}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;align-items:center">
+        <span style="font-size:.78em;color:#9ab">Legend:</span>
+        <span class="hbar-source-tag m2" style="font-size:.78em;padding:3px 10px;border-radius:10px">M2 = Mission 2 stocks</span>
+        <span class="hbar-source-tag m3" style="font-size:.78em;padding:3px 10px;border-radius:10px">M3 = Mission 3 stocks</span>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goTo('m3-bet')">← Invest</button>
+      <button class="btn-primary" onclick="goTo('m3-thesis')">Write My Thesis →</button>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// 16. MISSION 3 — THESIS  (reflection & completion)
+// ═══════════════════════════════════════════════════════
+function canCompleteM3(){
+  const hasStocks = S.m3.portfolio.length>=1;
+  const hasSector = S.m3.selectedSector!==null;
+  const hasThesis = (S.m3.verdict.q1||'').trim()!=='';
+  return { ok: hasStocks&&hasSector&&hasThesis, hasStocks, hasSector, hasThesis };
+}
+
+function renderM3Thesis(){
+  const v   = S.m3.verdict;
+  const sel = S.m3.selectedSector;
+  const si  = ALL_SECTORS.find(s=>s.id===sel);
+  const selColor = SECTOR_COLORS[sel]||'#a855f7';
+
+  document.getElementById('m3ThesisContent').innerHTML=`
+    <div class="page-title">📝 Your Sector Thesis</div>
+    <div class="page-sub">A "thesis" is an investor's written reason for making a bet. Write yours!</div>
+    ${sel?`<div class="selected-sector-banner" style="border-color:${selColor}50">
+      <div class="ssb-icon">${si?.icon||'🎯'}</div>
+      <div><div class="ssb-title" style="color:${selColor}">Your Bet: ${sel}</div>
+      <div class="ssb-sub">${si?.desc||''}</div></div>
+    </div>`:''}
+    <div class="verdict-section">
+      <h3>✍️ Write Your Investment Thesis</h3>
+      <div class="questions">
+        <div class="question">
+          <label>Q1: Why did you choose the <strong>${sel||'sector'}</strong> sector? What makes you believe it will grow?</label>
+          <textarea placeholder="Write your thesis here... What's happening in this sector? Why is now a good time to invest?"
+            oninput="S.m3.verdict.q1=this.value;save();refreshM3ThesisCheck(this.value)">${v.q1}</textarea>
+        </div>
+        <div class="question">
+          <label>Q2: Which stock in your M3 portfolio are you most excited about and why?</label>
+          <textarea placeholder="Name the stock and explain your reasons..." oninput="S.m3.verdict.q2=this.value;save()">${v.q2}</textarea>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <div style="color:#9ab;font-size:.75em;margin-bottom:6px;font-weight:600;text-transform:uppercase">How confident are you in your sector bet?</div>
+        <div class="stars-row" id="m3StarsRow">${[1,2,3,4,5].map(i=>`<button class="star-btn${i<=(v.stars||0)?' lit':''}" onclick="setM3Star(${i})">⭐</button>`).join('')}</div>
+      </div>
+    </div>
+    ${S.m3.completed ? '' : m3Checklist()}
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goTo('m3-combined')">← Combined View</button>
+      ${S.m3.completed
+        ?`<button class="btn-green" onclick="goTo('dashboard')">🏠 Dashboard</button>`
+        :`<button class="complete-mission-btn" onclick="completeM3()">✅ Complete Mission 3 — Sector Detective!</button>`}
+    </div>`;
+}
+
+function m3Checklist(){
+  const c = canCompleteM3();
+  return `
+  <div class="ccl-wrap">
+    <div class="ccl-title">📋 Complete these steps to finish Mission 3</div>
+    <div class="ccl-item ${c.hasSector?'done':'todo'}">
+      <div class="ccl-icon">${c.hasSector?'✅':'⬜'}</div>
+      <div>Pick your sector in the Explore tab
+        <span class="ccl-sub">${c.hasSector?`Sector: ${S.m3.selectedSector} ✓`:'Go to Explore and tap a sector'}</span>
+      </div>
+    </div>
+    <div class="ccl-item ${c.hasStocks?'done':'todo'}">
+      <div class="ccl-icon">${c.hasStocks?'✅':'⬜'}</div>
+      <div>Add at least 1 stock to your M3 portfolio
+        <span class="ccl-sub">${S.m3.portfolio.length} stock${S.m3.portfolio.length!==1?'s':''} added — go to Invest to add more</span>
+      </div>
+    </div>
+    <div class="ccl-item ${c.hasThesis?'done':'todo'}">
+      <div class="ccl-icon">${c.hasThesis?'✅':'⬜'}</div>
+      <div>Write your investment thesis in Q1 below
+        <span class="ccl-sub">${c.hasThesis?'Done ✓':'Explain why you chose your sector above'}</span>
+      </div>
+    </div>
+  </div>
+  <div class="complete-error" id="m3CompleteError">
+    ⛔ Not quite done yet! Check the list above and complete those steps first.
+  </div>`;
+}
+
+function refreshM3ThesisCheck(val){
+  const filled = val.trim()!=='';
+  const items = document.querySelectorAll('.ccl-item');
+  if(!items||items.length<3) return;
+  const item = items[2];
+  item.className='ccl-item '+(filled?'done':'todo');
+  item.querySelector('.ccl-icon').textContent=filled?'✅':'⬜';
+  item.querySelector('.ccl-sub').textContent=filled?'Done ✓':'Explain why you chose your sector above';
+}
+
+function setM3Star(n){
+  S.m3.verdict.stars=n; save();
+  document.querySelectorAll('#m3StarsRow .star-btn').forEach((b,i)=>b.classList.toggle('lit',i<n));
+}
+
+function completeM3(){
+  const check = canCompleteM3();
+  if(!check.ok){
+    const err = document.getElementById('m3CompleteError');
+    if(err){ err.classList.add('show'); err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); }
+    return;
+  }
+  S.m3.completed=true; S.m3.completedAt=new Date().toISOString(); save();
+  confetti();
+  document.getElementById('m3ThesisContent').innerHTML=`
+    <div class="completion-screen">
+      <div class="completion-badge">🗺️</div>
+      <div class="completion-title">Mission 3 Complete!</div>
+      <div class="completion-sub" style="margin-bottom:20px">
+        You placed your sector bet on <strong style="color:#c084fc">${S.m3.selectedSector}</strong>!<br>
+        Keep watching the market — your sector bet is live!
+      </div>
+      <button class="btn-green" onclick="goTo('dashboard')">🏠 Back to Dashboard</button>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// 17. INIT  — app startup
 // ═══════════════════════════════════════════════════════
 function init(){
   renderDashboard();
