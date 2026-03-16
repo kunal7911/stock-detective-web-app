@@ -288,6 +288,15 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 .intro-card h3{color:var(--green);font-size:.9em;margin-bottom:4px;}
 .intro-card p{color:#9ab;font-size:.8em;line-height:1.5;}
 
+/* METRIC CARD — WHERE TO FIND */
+.mc-find{background:rgba(27,79,138,.25);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:7px 10px;margin-top:10px;font-size:.76em;color:#8bc;line-height:1.6;}
+.mc-find strong{color:#acd;}
+.mc-find .hard{color:var(--yellow);}
+/* LOOKUP LINKS (company panel) */
+.lookup-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.lookup-tip{display:inline-flex;align-items:center;gap:5px;background:rgba(27,79,138,.4);border:1px solid rgba(27,79,138,.7);border-radius:8px;padding:5px 11px;font-size:.73em;color:#8bc;text-decoration:none;transition:background .2s;}
+.lookup-tip:hover{background:rgba(27,79,138,.7);color:#cdf;}
+
 @media(max-width:600px){.metrics-grid,.fields-grid,.add-form-grid{grid-template-columns:1fr;}.pie-section{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -317,15 +326,94 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
     <div class="sig-pill warn">✗ CROSS = WARNING (0 points)</div>
   </div>
   <div class="metrics-grid">
-    <div class="metric-card"><div class="mc-header"><div class="mc-num-badge">1</div><div class="mc-title-txt">Stock Price ($)</div></div><div class="mc-desc">How much ONE share costs right now. Compare it to the 52-week range to know if it's cheap or expensive.</div><div class="mc-analogy">🏷️ Like a sticker price — but is it on sale?</div><ul class="mc-rules"><li><span class="tag good">✓</span><span>Any price is OK — compare to 52-Wk range</span></li><li><span class="tag okay">~</span><span>Rising very fast lately? Be careful</span></li><li><span class="tag warn">✗</span><span>Near all-time high + bad P/E = skip it</span></li></ul></div>
-    <div class="metric-card"><div class="mc-header"><div class="mc-num-badge">2</div><div class="mc-title-txt">P/E Ratio</div></div><div class="mc-desc">Imagine you buy a lemonade stand for $200. It earns $10/yr profit. You'd wait 20 years — so P/E = 20. Lower = better deal!</div><div class="mc-analogy">🍋 Stand costs $100, earns $10/yr → P/E 10 → great deal!</div><ul class="mc-rules"><li><span class="tag good">✓</span><span>Under 25 = money back in less than 25 years</span></li><li><span class="tag okay">~</span><span>25–50 = pricey but growing fast</span></li><li><span class="tag warn">✗</span><span>Over 50 = very expensive!</span></li></ul></div>
-    <div class="metric-card"><div class="mc-header"><div class="mc-num-badge">3</div><div class="mc-title-txt">52-Week High / Low</div></div><div class="mc-desc">The highest and lowest price in the past year. Shows if the stock is "on sale" or overpriced compared to recent history.</div><div class="mc-analogy">🏷️ Like knowing the original vs. sale price.</div><ul class="mc-rules"><li><span class="tag good">✓</span><span>Near 52-wk LOW = possibly on sale!</span></li><li><span class="tag okay">~</span><span>In the middle = normal</span></li><li><span class="tag warn">✗</span><span>Near 52-wk HIGH = might be too expensive</span></li></ul></div>
-    <div class="metric-card"><div class="mc-header"><div class="mc-num-badge">4</div><div class="mc-title-txt">Market Cap</div></div><div class="mc-desc">Total value of ALL shares. Shows how big the company is. Bigger usually means safer!</div><div class="mc-analogy">🏙️ Small shop vs. big mall vs. giant city!</div><ul class="mc-rules"><li><span class="tag good">✓</span><span>Large Cap (&gt;$10B) = safer, stable</span></li><li><span class="tag okay">~</span><span>Mid Cap ($2B–$10B) = some risk</span></li><li><span class="tag warn">✗</span><span>Small Cap (&lt;$2B) = riskier</span></li></ul></div>
-    <div class="metric-card"><div class="mc-header"><div class="mc-num-badge">5</div><div class="mc-title-txt">Revenue Growth %</div></div><div class="mc-desc">Is the company making MORE money than last year? Positive = growing business. Negative = shrinking!</div><div class="mc-analogy">🌱 Is it growing taller or wilting?</div><ul class="mc-rules"><li><span class="tag good">✓</span><span>Over +10% = fast growing!</span></li><li><span class="tag okay">~</span><span>0% to +10% = steady</span></li><li><span class="tag warn">✗</span><span>Negative = shrinking!</span></li></ul></div>
-    <div class="metric-card"><div class="mc-header"><div class="mc-num-badge">6</div><div class="mc-title-txt">Dividend Yield %</div></div><div class="mc-desc">Money the company pays you JUST for holding the stock — like pocket money from your investment!</div><div class="mc-analogy">🐔 Like a hen that lays eggs — the eggs are your dividend!</div><ul class="mc-rules"><li><span class="tag good">✓</span><span>Over 2% = bonus income!</span></li><li><span class="tag okay">~</span><span>Under 2% but &gt;0% = a little</span></li><li><span class="tag warn">✗</span><span>0% = no dividend (OK if growing fast)</span></li></ul></div>
+
+    <div class="metric-card">
+      <div class="mc-header"><div class="mc-num-badge">1</div><div class="mc-title-txt">Stock Price ($)</div></div>
+      <div class="mc-desc">How much ONE share costs right now. Compare it to the 52-week range to know if it's cheap or expensive.</div>
+      <div class="mc-analogy">🏷️ Like a sticker price — but is it on sale?</div>
+      <ul class="mc-rules">
+        <li><span class="tag good">✓</span><span>Any price is OK — compare to 52-Wk range</span></li>
+        <li><span class="tag okay">~</span><span>Rising very fast lately? Be careful</span></li>
+        <li><span class="tag warn">✗</span><span>Near all-time high + bad P/E = skip it</span></li>
+      </ul>
+      <div class="mc-find">📍 <strong>Where to find it:</strong> It's the <strong>big number at the very top</strong> of the page on both Yahoo Finance and Google Finance!</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="mc-header"><div class="mc-num-badge">2</div><div class="mc-title-txt">P/E Ratio</div></div>
+      <div class="mc-desc">Imagine you buy a lemonade stand for $200. It earns $10/yr profit. You'd wait 20 years — so P/E = 20. Lower = better deal!</div>
+      <div class="mc-analogy">🍋 Stand costs $100, earns $10/yr → P/E 10 → great deal!</div>
+      <ul class="mc-rules">
+        <li><span class="tag good">✓</span><span>Under 25 = money back in less than 25 years</span></li>
+        <li><span class="tag okay">~</span><span>25–50 = pricey but growing fast</span></li>
+        <li><span class="tag warn">✗</span><span>Over 50 = very expensive!</span></li>
+      </ul>
+      <div class="mc-find">📍 <strong>Yahoo Finance:</strong> look for <strong>"PE Ratio (TTM)"</strong> on the Summary page.<br>
+      <strong>Google Finance:</strong> look for <strong>"P/E ratio"</strong> in the right panel.<br>
+      <em>(TTM = Trailing Twelve Months = last 12 months of profits)</em></div>
+    </div>
+
+    <div class="metric-card">
+      <div class="mc-header"><div class="mc-num-badge">3</div><div class="mc-title-txt">52-Week High / Low</div></div>
+      <div class="mc-desc">The highest and lowest price in the past year. Shows if the stock is "on sale" or overpriced compared to recent history.</div>
+      <div class="mc-analogy">🏷️ Like knowing the original vs. sale price.</div>
+      <ul class="mc-rules">
+        <li><span class="tag good">✓</span><span>Near 52-wk LOW = possibly on sale!</span></li>
+        <li><span class="tag okay">~</span><span>In the middle = normal</span></li>
+        <li><span class="tag warn">✗</span><span>Near 52-wk HIGH = might be too expensive</span></li>
+      </ul>
+      <div class="mc-find">📍 <strong>Yahoo Finance:</strong> look for <strong>"52 Week Range"</strong> on the Summary page — it shows the Low and High in one line (e.g. 57.00 – 74.00).<br>
+      <strong>Google Finance:</strong> look for <strong>"52-wk high"</strong> and <strong>"52-wk low"</strong> listed separately in the right panel.</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="mc-header"><div class="mc-num-badge">4</div><div class="mc-title-txt">Market Cap</div></div>
+      <div class="mc-desc">Total value of ALL shares. Shows how big the company is. Bigger usually means safer!</div>
+      <div class="mc-analogy">🏙️ Small shop vs. big mall vs. giant city!</div>
+      <ul class="mc-rules">
+        <li><span class="tag good">✓</span><span>Large Cap (&gt;$10B) = safer, stable</span></li>
+        <li><span class="tag okay">~</span><span>Mid Cap ($2B–$10B) = some risk</span></li>
+        <li><span class="tag warn">✗</span><span>Small Cap (&lt;$2B) = riskier</span></li>
+      </ul>
+      <div class="mc-find">📍 <strong>Yahoo Finance &amp; Google Finance:</strong> both label it <strong>"Market Cap"</strong>.<br>
+      They shorten big numbers — enter it in billions: <strong>T = Trillion</strong> (2.8T → enter 2800), <strong>B = Billion</strong> (280B → enter 280).</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="mc-header"><div class="mc-num-badge">5</div><div class="mc-title-txt">Revenue Growth %</div></div>
+      <div class="mc-desc">Is the company making MORE money than last year? Positive = growing business. Negative = shrinking!</div>
+      <div class="mc-analogy">🌱 Is it growing taller or wilting?</div>
+      <ul class="mc-rules">
+        <li><span class="tag good">✓</span><span>Over +10% = fast growing!</span></li>
+        <li><span class="tag okay">~</span><span>0% to +10% = steady</span></li>
+        <li><span class="tag warn">✗</span><span>Negative = shrinking!</span></li>
+      </ul>
+      <div class="mc-find">📍 <span class="hard">⚠️ Trickiest one to find!</span><br>
+      <strong>Yahoo Finance:</strong> click the <strong>"Statistics"</strong> tab → scroll down to the "Income Statement" section → look for <strong>"Revenue Growth (YoY)"</strong>.<br>
+      <strong>Google Finance:</strong> click <strong>"Financials"</strong> → look at the Revenue bar chart and compare this year vs last year.</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="mc-header"><div class="mc-num-badge">6</div><div class="mc-title-txt">Dividend Yield %</div></div>
+      <div class="mc-desc">Money the company pays you JUST for holding the stock — like pocket money from your investment!</div>
+      <div class="mc-analogy">🐔 Like a hen that lays eggs — the eggs are your dividend!</div>
+      <ul class="mc-rules">
+        <li><span class="tag good">✓</span><span>Over 2% = bonus income!</span></li>
+        <li><span class="tag okay">~</span><span>Under 2% but &gt;0% = a little</span></li>
+        <li><span class="tag warn">✗</span><span>0% = no dividend (OK if growing fast)</span></li>
+      </ul>
+      <div class="mc-find">📍 <strong>Yahoo Finance:</strong> look for <strong>"Forward Dividend &amp; Yield"</strong> on the Summary page — use the <strong>% number in brackets</strong> (e.g. 3.12%).<br>
+      <strong>Google Finance:</strong> look for <strong>"Dividend yield"</strong> in the right panel.<br>
+      If it shows <em>N/A</em> or <em>—</em>, the company pays no dividend → <strong>enter 0</strong>.</div>
+    </div>
+
   </div>
-  <div style="margin-top:18px;background:rgba(27,79,138,.2);border:1px solid rgba(27,79,138,.5);border-radius:10px;padding:12px 16px;color:#8bc;font-size:.82em;line-height:1.7;">
-    🌐 <strong style="color:#acd">Find numbers at:</strong> finance.yahoo.com · google.com/finance · marketwatch.com — search the ticker (e.g. AAPL, TSLA)
+  <div style="margin-top:18px;background:rgba(27,79,138,.2);border:1px solid rgba(27,79,138,.5);border-radius:10px;padding:14px 16px;">
+    <div style="color:#acd;font-size:.82em;font-weight:700;margin-bottom:10px;">🌐 Look up any stock on these free websites — search by ticker (e.g. AAPL, TSLA, KO):</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="https://finance.yahoo.com" target="_blank" class="lookup-tip" style="font-size:.82em;padding:8px 16px;">📊 finance.yahoo.com ↗</a>
+      <a href="https://www.google.com/finance" target="_blank" class="lookup-tip" style="font-size:.82em;padding:8px 16px;">🔍 google.com/finance ↗</a>
+    </div>
   </div>
   <div class="nav-row">
     <button class="btn-secondary" onclick="goTo('dashboard')">← Dashboard</button>
@@ -390,8 +478,38 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 </div>
 
 <script>
+/**
+ * ╔══════════════════════════════════════════════════════════╗
+ * ║         STOCK DETECTIVE ACADEMY — Single-file App        ║
+ * ╠══════════════════════════════════════════════════════════╣
+ * ║  All state is persisted via localStorage (key below).    ║
+ * ║  Views are shown/hidden with goTo(viewId).               ║
+ * ║                                                          ║
+ * ║  SECTIONS — search the ═══ headers to jump to each:      ║
+ * ║   1. CONSTANTS   — company list, mission configs         ║
+ * ║   2. STATE       — localStorage load / save              ║
+ * ║   3. ROUTER      — goTo(), renderNav()                   ║
+ * ║   4. DASHBOARD   — mission hub, name entry               ║
+ * ║   5. M1 SIGNALS  — scoring logic (✓ ~ ✗)                ║
+ * ║   6. M1 TABLE    — company investigation table           ║
+ * ║   7. M1 SCORE    — scoreboard, verdict, completion       ║
+ * ║   8. M2 BUILD    — $10k portfolio builder                ║
+ * ║   9. M2 TRACK    — price updates, gain/loss display      ║
+ * ║  10. M2 VERDICT  — reflection & mission completion       ║
+ * ║  11. PIE CHART   — SVG pie chart renderer                ║
+ * ║  12. UTILITIES   — formatMoney, confetti                 ║
+ * ║  13. INIT        — app startup                           ║
+ * ║                                                          ║
+ * ║  TO ADD A NEW MISSION:                                   ║
+ * ║   1. Add entry to MISSIONS_CFG array (section 1)         ║
+ * ║   2. Add HTML view divs in <body>                        ║
+ * ║   3. Add a JS section with render functions              ║
+ * ║   4. Register the view IDs in goTo() (section 3)         ║
+ * ╚══════════════════════════════════════════════════════════╝
+ */
+
 // ═══════════════════════════════════════════════════════
-// CONSTANTS
+// 1. CONSTANTS
 // ═══════════════════════════════════════════════════════
 const COMPANIES = [
   {id:'ko',   name:'Coca-Cola',   ticker:'KO',   logo:'🥤', bg:'#e63946', example:true,  pre:{price:'64',pe:'24',wkHigh:'74',wkLow:'57',mktCap:'280',revGrowth:'2',divYield:'3.1'}},
@@ -420,7 +538,7 @@ const MISSIONS_CFG = [
 ];
 
 // ═══════════════════════════════════════════════════════
-// STATE
+// 2. STATE
 // ═══════════════════════════════════════════════════════
 const STATE_KEY = 'stockDetective_v2';
 
@@ -453,7 +571,7 @@ let S = (() => {
 function save(){try{localStorage.setItem(STATE_KEY,JSON.stringify(S));}catch(e){}}
 
 // ═══════════════════════════════════════════════════════
-// ROUTER
+// 3. ROUTER
 // ═══════════════════════════════════════════════════════
 let currentView = 'dashboard';
 
@@ -486,7 +604,7 @@ function renderNav(v) {
 }
 
 // ═══════════════════════════════════════════════════════
-// DASHBOARD
+// 4. DASHBOARD
 // ═══════════════════════════════════════════════════════
 function renderDashboard() {
   const done = MISSIONS_CFG.filter(m=>!m.comingSoon&&S[m.id]?.completed).length;
@@ -591,7 +709,7 @@ function getM1TotalChecks(){
 }
 
 // ═══════════════════════════════════════════════════════
-// MISSION 1 — SIGNALS
+// 5. MISSION 1 — SIGNALS  (scoring logic: ✓ ~ ✗)
 // ═══════════════════════════════════════════════════════
 function calcSignals(d){
   const n=v=>parseFloat(v);
@@ -625,7 +743,7 @@ function sigBadge(sig){
 }
 
 // ═══════════════════════════════════════════════════════
-// MISSION 1 — TABLE
+// 6. MISSION 1 — TABLE  (company investigation panels)
 // ═══════════════════════════════════════════════════════
 let m1CurrentTab = 'ko';
 
@@ -704,7 +822,10 @@ function buildPanel(co){
       </div>
       <div class="score-pips" id="pips-${co.id}">${[1,2,3,4,5].map(i=>`<div class="pip${i<=score?' filled':''}"></div>`).join('')}</div>
     </div>
-    <a class="lookup-tip" href="https://finance.yahoo.com/quote/${co.ticker}" target="_blank">🔗 Look up ${co.ticker} on Yahoo Finance ↗</a>
+    <div class="lookup-links">
+      <a class="lookup-tip" href="https://finance.yahoo.com/quote/${co.ticker}" target="_blank">📊 Yahoo Finance: ${co.ticker} ↗</a>
+      <a class="lookup-tip" href="https://www.google.com/finance/quote/${co.ticker}" target="_blank">🔍 Google Finance: ${co.ticker} ↗</a>
+    </div>
   </div>`;
 }
 
@@ -741,7 +862,7 @@ function updateM1Progress(){
 }
 
 // ═══════════════════════════════════════════════════════
-// MISSION 1 — SCORE
+// 7. MISSION 1 — SCORE  (scoreboard, verdict, completion)
 // ═══════════════════════════════════════════════════════
 function renderM1Score(){
   const rows=COMPANIES.map(co=>{const sigs=calcSignals(S.m1.stockData[co.id]);return{co,sigs,score:countChecks(sigs)};});
@@ -829,7 +950,7 @@ function completeM1(){
 }
 
 // ═══════════════════════════════════════════════════════
-// MISSION 2 — BUILD
+// 8. MISSION 2 — BUILD  ($10k portfolio builder)
 // ═══════════════════════════════════════════════════════
 let m2SelectedStock = null;
 
@@ -1074,7 +1195,7 @@ function getDivMsg(){
 }
 
 // ═══════════════════════════════════════════════════════
-// MISSION 2 — TRACK
+// 9. MISSION 2 — TRACK  (price updates, gain/loss display)
 // ═══════════════════════════════════════════════════════
 function getPortfolioValue(){
   return S.m2.portfolio.reduce((s,p)=>{
@@ -1200,7 +1321,7 @@ function saveUpdate(stockId){
 }
 
 // ═══════════════════════════════════════════════════════
-// MISSION 2 — VERDICT
+// 10. MISSION 2 — VERDICT  (reflection & completion)
 // ═══════════════════════════════════════════════════════
 function renderM2Verdict(){
   const v=S.m2.verdict;
@@ -1270,7 +1391,7 @@ function completeM2(){
 }
 
 // ═══════════════════════════════════════════════════════
-// PIE CHART (SVG)
+// 11. PIE CHART (SVG)  — no external libraries needed
 // ═══════════════════════════════════════════════════════
 function polarToCartesian(cx,cy,r,deg){
   const rad=(deg-90)*Math.PI/180;
@@ -1303,7 +1424,7 @@ function drawPieChart(chartId,legendId,items){
 }
 
 // ═══════════════════════════════════════════════════════
-// UTILITIES
+// 12. UTILITIES  — fmtMoney, fmtPct, confetti
 // ═══════════════════════════════════════════════════════
 function fmtMoney(n){return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fmtPct(n){return(n>=0?'+':'')+n.toFixed(2)+'%';}
@@ -1322,7 +1443,7 @@ function confetti(){
 }
 
 // ═══════════════════════════════════════════════════════
-// INIT
+// 13. INIT  — app startup
 // ═══════════════════════════════════════════════════════
 function init(){
   renderDashboard();
