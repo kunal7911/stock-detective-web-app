@@ -2288,42 +2288,54 @@ function renderPTM(){
   const {age,retireAge,monthly,target,rate}=ptmState;
   document.getElementById('ptmContent').innerHTML=`
     <div class="page-title">⏰ Power of Time & Money</div>
-    <div class="page-sub">Set your goal — we'll tell you exactly how much to save each month to get there!</div>
+    <div class="page-sub">Drag any slider — target and monthly savings update each other automatically!</div>
 
     <div class="ptm-hero">
-      <div style="color:#9ab;font-size:.82em;margin-bottom:5px" id="ptmHeroEyebrow">To reach ${fmtShort(target)} by age ${retireAge}, starting today at age ${age}</div>
-      <div style="color:#aac;font-size:.78em;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">You need to save</div>
+      <div style="color:#9ab;font-size:.82em;margin-bottom:5px" id="ptmHeroEyebrow">Saving ${fmtMoney(monthly)}/month from age ${age} to age ${retireAge}</div>
+      <div style="color:#aac;font-size:.78em;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">You'll have</div>
       <div class="ptm-final-num" id="ptmFinalNum">$0</div>
-      <div class="ptm-final-label">per month</div>
+      <div class="ptm-final-label" id="ptmFinalLabel">by age ${retireAge}</div>
+      <div id="ptmGoalStatus" style="margin:10px 0 4px;font-size:.85em;font-weight:600"></div>
       <div class="ptm-badges" id="ptmBadges"></div>
     </div>
 
     <div class="ptm-sliders">
+      <div style="font-size:.7em;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">🔗 All four values update each other</div>
       <div class="ptm-slider-row">
         <div class="ptm-slider-header">
-          <div class="ptm-slider-label">🎂 Your current age</div>
+          <div class="ptm-slider-label">🎂 Current age</div>
           <div class="ptm-slider-val" id="ptmAgeVal">${age} years old</div>
         </div>
         <input type="range" class="ptm-range" id="ptmAge" min="8" max="25" step="1" value="${age}"
-          oninput="ptmState.age=+this.value;if(ptmState.retireAge<=ptmState.age+5){ptmState.retireAge=ptmState.age+5;document.getElementById('ptmRetire').value=ptmState.retireAge;}updatePTMCalc()">
+          oninput="ptmState.age=+this.value;if(ptmState.retireAge<=ptmState.age+5){ptmState.retireAge=ptmState.age+5;document.getElementById('ptmRetire').value=ptmState.retireAge;}var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">
+        <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>Age 8</span><span>Age 16</span><span>Age 25</span></div>
       </div>
       <div class="ptm-slider-row">
         <div class="ptm-slider-header">
-          <div class="ptm-slider-label">🏁 I want to retire by age</div>
+          <div class="ptm-slider-label">🏁 Target age (retire / goal age)</div>
           <div class="ptm-slider-val" id="ptmRetireVal">age ${retireAge}</div>
         </div>
         <input type="range" class="ptm-range" id="ptmRetire" min="20" max="75" step="1" value="${retireAge}"
-          oninput="ptmState.retireAge=Math.max(+this.value,ptmState.age+5);this.value=ptmState.retireAge;updatePTMCalc()">
+          oninput="ptmState.retireAge=Math.max(+this.value,ptmState.age+5);this.value=ptmState.retireAge;var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,ptmState.retireAge);ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">
         <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>Age 20</span><span>Age 45</span><span>Age 75</span></div>
       </div>
       <div class="ptm-slider-row">
         <div class="ptm-slider-header">
-          <div class="ptm-slider-label">🎯 My retirement target</div>
+          <div class="ptm-slider-label">🎯 Target amount</div>
           <div class="ptm-slider-val" id="ptmTargetVal">${fmtShort(target)}</div>
         </div>
-        <input type="range" class="ptm-range" id="ptmTarget" min="100000" max="25000000" step="100000" value="${target}"
-          oninput="ptmState.target=+this.value;updatePTMCalc()">
-        <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>$100K</span><span>$5M</span><span>$25M</span></div>
+        <input type="range" class="ptm-range" id="ptmTarget" min="10000" max="25000000" step="10000" value="${target}"
+          oninput="ptmState.target=+this.value;var nm=calcRequiredMonthly(ptmState.age,ptmState.rate,ptmState.target,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.monthly=Math.min(Math.max(10,Math.round(nm/10)*10),5000);document.getElementById('ptmMonthly').value=ptmState.monthly;updatePTMCalc()">
+        <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>$10K</span><span>$5M</span><span>$25M</span></div>
+      </div>
+      <div class="ptm-slider-row">
+        <div class="ptm-slider-header">
+          <div class="ptm-slider-label">💵 Monthly savings</div>
+          <div class="ptm-slider-val" id="ptmMonthlyVal">${fmtMoney(monthly)}/mo</div>
+        </div>
+        <input type="range" class="ptm-range" id="ptmMonthly" min="10" max="5000" step="10" value="${monthly}"
+          oninput="ptmState.monthly=+this.value;var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">
+        <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>$10/mo</span><span>$2,500/mo</span><span>$5,000/mo</span></div>
       </div>
       <div class="ptm-slider-row">
         <div class="ptm-slider-header">
@@ -2331,8 +2343,8 @@ function renderPTM(){
           <div class="ptm-slider-val" id="ptmRateVal">${rate}% per year</div>
         </div>
         <div class="ptm-rate-toggle">
-          <button class="ptm-rate-btn${rate===8?' active':''}" onclick="ptmState.rate=8;updatePTMCalc()">8% Conservative</button>
-          <button class="ptm-rate-btn${rate===10?' active':''}" onclick="ptmState.rate=10;updatePTMCalc()">10% Optimistic</button>
+          <button class="ptm-rate-btn${rate===8?' active':''}" onclick="ptmState.rate=8;var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">8% Conservative</button>
+          <button class="ptm-rate-btn${rate===10?' active':''}" onclick="ptmState.rate=10;var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">10% Optimistic</button>
         </div>
       </div>
     </div>
@@ -2342,18 +2354,18 @@ function renderPTM(){
       <div class="ptm-compare-card now">
         <div class="ptm-compare-label" id="ptmNowLabel">🚀 Start at age ${age}</div>
         <div class="ptm-compare-num" id="ptmNowNum">$0</div>
-        <div class="ptm-compare-sub" id="ptmNowSub">per month needed</div>
+        <div class="ptm-compare-sub" id="ptmNowSub">you'd have by age ${retireAge}</div>
       </div>
       <div class="ptm-compare-card later">
         <div class="ptm-compare-label" id="ptmLaterLabel">⏳ Wait until age ${age+5}</div>
         <div class="ptm-compare-num" id="ptmLaterNum">$0</div>
-        <div class="ptm-compare-sub" id="ptmLaterSub">per month needed</div>
+        <div class="ptm-compare-sub" id="ptmLaterSub">you'd have by age ${retireAge}</div>
       </div>
     </div>
     <div class="ptm-diff-banner" id="ptmDiffBanner"></div>
 
     <div class="ptm-chart-wrap">
-      <div class="ptm-chart-title">📊 How Your Wealth Grows — Saving the Required Amount</div>
+      <div class="ptm-chart-title" id="ptmChartTitle">📊 Your Wealth Over Time</div>
       <div class="ptm-bars" id="ptmBars"></div>
       <div class="ptm-chart-legend">
         <div class="ptm-chart-legend-item"><div class="ptm-chart-legend-dot" style="background:var(--gold)"></div><span id="ptmLegendNow">Start at age ${age}</span></div>
@@ -2362,19 +2374,6 @@ function renderPTM(){
     </div>
 
     <div class="ptm-insight" id="ptmInsight"></div>
-
-    <div class="ptm-sliders" style="margin-bottom:18px">
-      <div style="color:var(--gold);font-weight:700;font-size:.88em;margin-bottom:14px">🔍 What If? — Explore different savings amounts</div>
-      <div class="ptm-slider-row" style="margin-bottom:0">
-        <div class="ptm-slider-header">
-          <div class="ptm-slider-label">💵 What if I save</div>
-          <div class="ptm-slider-val" id="ptmMonthlyVal">${fmtMoney(monthly)}/mo</div>
-        </div>
-        <input type="range" class="ptm-range" id="ptmMonthly" min="10" max="5000" step="10" value="${monthly}"
-          oninput="ptmState.monthly=+this.value;updatePTMCalc()">
-        <div id="ptmWhatIfResult"></div>
-      </div>
-    </div>
 
     <div class="nav-row">
       <button class="btn-secondary" onclick="goTo('dashboard')">← Dashboard</button>
@@ -2391,11 +2390,12 @@ function updatePTMCalc(){
   // Slider fills
   updateSliderFill('ptmAge',8,25,age);
   updateSliderFill('ptmRetire',20,75,retireAge);
-  updateSliderFill('ptmTarget',100000,25000000,target);
+  updateSliderFill('ptmTarget',10000,25000000,target);
   updateSliderFill('ptmMonthly',10,5000,monthly);
 
   // Label updates
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  const setHTML=(id,v)=>{const el=document.getElementById(id);if(el)el.innerHTML=v;};
   set('ptmAgeVal',age+' years old');
   set('ptmRetireVal','age '+retireAge);
   set('ptmTargetVal',fmtShort(target));
@@ -2403,54 +2403,64 @@ function updatePTMCalc(){
   set('ptmMonthlyVal',fmtMoney(monthly)+'/mo');
   set('ptmNowLabel','🚀 Start at age '+age);
   set('ptmLaterLabel','⏳ Wait until age '+(age+5));
+  set('ptmNowSub','you\'d have by age '+retireAge);
+  set('ptmLaterSub','you\'d have by age '+retireAge);
   set('ptmLegendNow','Start at age '+age);
   set('ptmLegendLater','Start at age '+(age+5));
+  set('ptmFinalLabel','by age '+retireAge);
 
   // Rate buttons
   document.querySelectorAll('.ptm-rate-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&rate===8)||(i===1&&rate===10)));
 
-  // Core calculations — needed drives everything
+  // Core calculations
+  const projected   = calcCompound(age,monthly,rate,retireAge);
+  const projLater   = calcCompound(age+5,monthly,rate,retireAge);
   const needed      = calcRequiredMonthly(age,rate,target,retireAge);
-  const neededLater = calcRequiredMonthly(age+5,rate,target,retireAge);
-  const totalContrib = needed*yearsLeft*12;
-  const marketAdds   = Math.max(0,target-totalContrib);
-  const dailyCost    = needed/30;
+  const totalContrib = monthly*yearsLeft*12;
+  const marketAdds   = Math.max(0,projected-totalContrib);
 
-  // Hero eyebrow
-  set('ptmHeroEyebrow',`To reach ${fmtShort(target)} by age ${retireAge}, starting today at age ${age}`);
+  // Hero eyebrow + big number = projected total
+  set('ptmHeroEyebrow',`Saving ${fmtMoney(monthly)}/month from age ${age} to age ${retireAge}`);
+  set('ptmFinalNum', fmtShort(projected));
 
-  // Hero big number — required monthly
-  const neededDisplay = needed>99999 ? '😅 Very high!' : fmtMoney(needed);
-  set('ptmFinalNum', needed>99999 ? '😅' : fmtMoney(needed));
+  // Goal status — am I on track?
+  const diff = projected - target;
+  const statusEl = document.getElementById('ptmGoalStatus');
+  if(statusEl){
+    if(diff>=0){
+      statusEl.innerHTML=`<span style="color:var(--green)">🎉 ${fmtShort(diff)} over your ${fmtShort(target)} goal!</span>`;
+    } else {
+      statusEl.innerHTML=`<span style="color:#f97316">📊 ${fmtShort(Math.abs(diff))} short of your ${fmtShort(target)} goal</span>`;
+    }
+  }
 
   const badgesEl=document.getElementById('ptmBadges');
   if(badgesEl) badgesEl.innerHTML=`
     <div class="ptm-badge"><strong>${fmtShort(target)}</strong>Your goal</div>
     <div class="ptm-badge"><strong>${yearsLeft} yrs</strong>Time you have</div>
-    <div class="ptm-badge"><strong>$${dailyCost.toFixed(2)}/day</strong>Daily cost</div>
+    <div class="ptm-badge"><strong style="color:var(--gold)">${needed>99999?'Very high':fmtMoney(needed)+'/mo'}</strong>Needed/month</div>
     <div class="ptm-badge"><strong style="color:var(--green)">${fmtShort(marketAdds)}</strong>Market adds</div>`;
 
-  // Compare — show required monthly for start now vs start later
-  set('ptmNowNum', needed>99999?'Very high':fmtMoney(needed));
-  set('ptmLaterNum', neededLater>99999?'Impossible':fmtMoney(neededLater));
-  set('ptmNowSub','per month if you start now');
-  set('ptmLaterSub','per month if you wait 5 years');
+  // Compare — same monthly, start now vs wait 5 years → different projected totals
+  set('ptmNowNum', fmtShort(projected));
+  set('ptmLaterNum', fmtShort(projLater));
 
-  const diffNeeded = neededLater-needed;
+  const wealthLost = projected - projLater;
   const diffEl=document.getElementById('ptmDiffBanner');
-  if(diffEl) diffEl.innerHTML=diffNeeded>0&&neededLater<99999
-    ?`😱 Waiting just <strong>5 years</strong> means you'd need <strong>${fmtMoney(diffNeeded)} MORE per month</strong> to hit the same goal!`
+  if(diffEl) diffEl.innerHTML=wealthLost>0
+    ?`😱 Waiting just <strong>5 years</strong> means you'd end up with <strong>${fmtShort(wealthLost)} LESS</strong> by age ${retireAge}!`
     :'';
 
-  // Bar chart — uses `needed` monthly to show the path to target
-  const pmtForChart = Math.min(needed, 10000); // cap for display if unrealistic
+  // Chart title + bars
+  set('ptmChartTitle',`📊 Your Wealth Over Time — saving ${fmtMoney(monthly)}/month`);
+
   const checkpoints=[];
   const startDecade=Math.ceil((age+1)/5)*5;
   for(let a=startDecade;a<retireAge;a+=5) checkpoints.push(a);
   if(!checkpoints.includes(retireAge)) checkpoints.push(retireAge);
 
-  const valsNow   = checkpoints.map(a=>calcCompound(age,pmtForChart,rate,a));
-  const valsLater = checkpoints.map(a=>a>(age+5)?calcCompound(age+5,pmtForChart,rate,a):0);
+  const valsNow   = checkpoints.map(a=>calcCompound(age,monthly,rate,a));
+  const valsLater = checkpoints.map(a=>a>(age+5)?calcCompound(age+5,monthly,rate,a):0);
   const maxVal    = Math.max(...valsNow,1);
 
   const barsEl=document.getElementById('ptmBars');
@@ -2469,32 +2479,20 @@ function updatePTMCalc(){
     </div>`;
   }).join('');
 
-  // What If — how much would I have if I save `monthly` instead
-  const whatIfResult=document.getElementById('ptmWhatIfResult');
-  if(whatIfResult){
-    const whatIfFinal=calcCompound(age,monthly,rate,retireAge);
-    const diff=whatIfFinal-target;
-    const color=diff>=0?'var(--green)':'var(--red)';
-    const msg=diff>=0
-      ?`🎉 You'd reach <strong style="color:var(--green)">${fmtShort(whatIfFinal)}</strong> — that's <strong style="color:var(--green)">${fmtShort(diff)} over</strong> your target!`
-      :`You'd reach <strong style="color:var(--gold)">${fmtShort(whatIfFinal)}</strong> — still <strong style="color:var(--red)">${fmtShort(Math.abs(diff))} short</strong> of your ${fmtShort(target)} goal.`;
-    whatIfResult.innerHTML=`<div style="margin-top:10px;background:rgba(255,255,255,.04);border-radius:10px;padding:12px 14px;font-size:.86em;color:#ccc;line-height:1.6">
-      Saving <strong style="color:var(--gold)">${fmtMoney(monthly)}/month</strong> from age ${age} to age ${retireAge}: ${msg}
-    </div>`;
-  }
-
   // Insight
   const insightEl=document.getElementById('ptmInsight');
   if(insightEl){
     const items=[];
-    if(needed<=99999){
-      items.push(`🎯 Save <strong>${fmtMoney(needed)}/month</strong> starting today and you'll hit <strong>${fmtShort(target)}</strong> exactly by age ${retireAge}!`);
-      items.push(`☕ That's just <strong>$${dailyCost.toFixed(2)}/day</strong> — skip a coffee or two and you're there!`);
+    items.push(`💰 Saving <strong>${fmtMoney(monthly)}/month</strong> from age ${age} grows to <strong style="color:var(--gold)">${fmtShort(projected)}</strong> by age ${retireAge}.`);
+    if(diff>=0){
+      items.push(`🎯 You'd beat your ${fmtShort(target)} goal by <strong style="color:var(--green)">${fmtShort(diff)}</strong> — amazing! You could even lower your monthly savings and still hit it.`);
+    } else if(needed<=99999){
+      items.push(`📈 To hit ${fmtShort(target)} exactly you'd need <strong>${fmtMoney(needed)}/month</strong> — just <strong>${fmtMoney(needed-monthly)} more</strong> per month than you're saving now.`);
     } else {
-      items.push(`💡 Your goal is ambitious! Try a lower target, a later retire age, or a higher return rate.`);
+      items.push(`💡 Your goal is very ambitious for this timeline. Try a longer time horizon or adjust your target.`);
     }
-    items.push(`🧠 Of your total ${fmtShort(target)} goal, the market contributes <strong style="color:var(--green)">${fmtShort(marketAdds)}</strong> in growth — compound interest does the heavy lifting!`);
-    items.push(`⏰ Starting at age ${age} gives you <strong>${yearsLeft} years</strong> for your money to grow. Every year you wait makes it harder!`);
+    items.push(`🧠 Of your ${fmtShort(projected)} total, you only put in <strong>${fmtShort(totalContrib)}</strong> — the market contributes <strong style="color:var(--green)">${fmtShort(marketAdds)}</strong> in growth!`);
+    items.push(`⏰ Starting at age ${age} vs age ${age+5}: you'd have <strong style="color:var(--green)">${fmtShort(wealthLost)} more</strong> just by starting now!`);
     insightEl.innerHTML=`<div class="ptm-insight-title">💡 What This Means For You</div>`
       +items.map(i=>`<div class="ptm-insight-item">• <span>${i}</span></div>`).join('');
   }
