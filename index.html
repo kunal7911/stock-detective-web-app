@@ -2244,7 +2244,7 @@ function completeM3(){
 // ═══════════════════════════════════════════════════════
 // 17. PTM TOOL  — Power of Time & Money calculator
 // ═══════════════════════════════════════════════════════
-let ptmState = { age:12, monthly:50, target:1000000, rate:8 };
+let ptmState = { age:12, retireAge:65, monthly:50, target:1000000, rate:8 };
 
 // Compound interest: FV of monthly contributions
 function calcCompound(fromAge, monthlyPMT, annualRate, toAge){
@@ -2285,14 +2285,14 @@ function updateSliderFill(id,min,max,val){
 }
 
 function renderPTM(){
-  const {age,monthly,target,rate}=ptmState;
+  const {age,retireAge,monthly,target,rate}=ptmState;
   document.getElementById('ptmContent').innerHTML=`
     <div class="page-title">⏰ Power of Time & Money</div>
     <div class="page-sub">Drag the sliders and watch your future fortune update in real time — starting early is the biggest secret!</div>
 
     <div class="ptm-hero">
       <div class="ptm-final-num" id="ptmFinalNum">$0</div>
-      <div class="ptm-final-label">Your estimated wealth at age 65</div>
+      <div class="ptm-final-label" id="ptmFinalLabel">Your estimated wealth at age ${retireAge}</div>
       <div class="ptm-badges" id="ptmBadges"></div>
     </div>
 
@@ -2303,7 +2303,16 @@ function renderPTM(){
           <div class="ptm-slider-val" id="ptmAgeVal">${age} years old</div>
         </div>
         <input type="range" class="ptm-range" id="ptmAge" min="8" max="25" step="1" value="${age}"
-          oninput="ptmState.age=+this.value;updatePTMCalc()">
+          oninput="ptmState.age=+this.value;if(ptmState.retireAge<=ptmState.age+5){ptmState.retireAge=ptmState.age+5;document.getElementById('ptmRetire').value=ptmState.retireAge;}updatePTMCalc()">
+      </div>
+      <div class="ptm-slider-row">
+        <div class="ptm-slider-header">
+          <div class="ptm-slider-label">🏁 Target age to retire</div>
+          <div class="ptm-slider-val" id="ptmRetireVal">age ${retireAge}</div>
+        </div>
+        <input type="range" class="ptm-range" id="ptmRetire" min="20" max="75" step="1" value="${retireAge}"
+          oninput="ptmState.retireAge=Math.max(+this.value,ptmState.age+5);this.value=ptmState.retireAge;updatePTMCalc()">
+        <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>Age 20</span><span>Age 45</span><span>Age 75</span></div>
       </div>
       <div class="ptm-slider-row">
         <div class="ptm-slider-header">
@@ -2368,22 +2377,27 @@ function renderPTM(){
 
 function updatePTMCalc(){
   const {age,monthly,target,rate}=ptmState;
+  const retireAge = Math.max(ptmState.retireAge, age+5);
+  const yearsLeft = retireAge-age;
 
   // Slider fills
   updateSliderFill('ptmAge',8,25,age);
+  updateSliderFill('ptmRetire',20,75,retireAge);
   updateSliderFill('ptmMonthly',10,2000,monthly);
   updateSliderFill('ptmTarget',100000,5000000,target);
 
   // Label updates
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
   set('ptmAgeVal',age+' years old');
+  set('ptmRetireVal','age '+retireAge);
   set('ptmMonthlyVal',fmtMoney(monthly)+'/mo');
   set('ptmTargetVal',fmtShort(target));
   set('ptmRateVal',rate+'% per year');
+  set('ptmFinalLabel','Your estimated wealth at age '+retireAge);
   set('ptmNowLabel','🚀 Start at age '+age);
   set('ptmLaterLabel','⏳ Start at age '+(age+5));
-  set('ptmNowSub','saving '+fmtMoney(monthly)+'/mo for '+(65-age)+' years');
-  set('ptmLaterSub','saving '+fmtMoney(monthly)+'/mo for '+Math.max(0,60-age)+' years');
+  set('ptmNowSub','saving '+fmtMoney(monthly)+'/mo for '+yearsLeft+' years');
+  set('ptmLaterSub','saving '+fmtMoney(monthly)+'/mo for '+Math.max(0,yearsLeft-5)+' years');
   set('ptmLegendNow','Start at age '+age);
   set('ptmLegendLater','Start at age '+(age+5));
 
@@ -2391,13 +2405,13 @@ function updatePTMCalc(){
   document.querySelectorAll('.ptm-rate-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&rate===8)||(i===1&&rate===10)));
 
   // Calculations
-  const finalNow   = calcCompound(age,monthly,rate,65);
-  const finalLater = calcCompound(age+5,monthly,rate,65);
+  const finalNow   = calcCompound(age,monthly,rate,retireAge);
+  const finalLater = calcCompound(age+5,monthly,rate,retireAge);
   const diff       = finalNow-finalLater;
   const ageToReach = calcAgeToReach(age,monthly,rate,target);
   const onTrack    = finalNow>=target;
-  const needed     = calcRequiredMonthly(age,rate,target,65);
-  const totalSaved = monthly*(65-age)*12;
+  const needed     = calcRequiredMonthly(age,rate,target,retireAge);
+  const totalSaved = monthly*yearsLeft*12;
   const marketAdds = finalNow-totalSaved;
 
   // Hero
@@ -2406,7 +2420,7 @@ function updatePTMCalc(){
   if(badgesEl) badgesEl.innerHTML=`
     <div class="ptm-badge"><strong>${fmtShort(totalSaved)}</strong>You save</div>
     <div class="ptm-badge"><strong style="color:var(--green)">${fmtShort(Math.max(0,marketAdds))}</strong>Market adds</div>
-    <div class="ptm-badge"><strong>${ageToReach?'Age '+ageToReach:'After 65'}</strong>Hit ${fmtShort(target)}</div>`;
+    <div class="ptm-badge"><strong>${ageToReach&&ageToReach<=retireAge?'Age '+ageToReach:'After '+retireAge}</strong>Hit ${fmtShort(target)}</div>`;
 
   // Compare
   set('ptmNowNum',fmtShort(finalNow));
@@ -2415,14 +2429,14 @@ function updatePTMCalc(){
   // Diff banner
   const diffEl=document.getElementById('ptmDiffBanner');
   if(diffEl) diffEl.innerHTML=diff>0
-    ?`😱 By waiting just <strong>5 years</strong> to start, you'd have <strong>${fmtShort(diff)} LESS</strong> at retirement!`
+    ?`😱 By waiting just <strong>5 years</strong> to start, you'd have <strong>${fmtShort(diff)} LESS</strong> by age ${retireAge}!`
     :'';
 
-  // Decade bar chart
+  // Bar chart — checkpoints up to retireAge
   const checkpoints=[];
   const startDecade=Math.ceil((age+1)/5)*5;
-  for(let a=startDecade;a<=60;a+=5) checkpoints.push(a);
-  checkpoints.push(65);
+  for(let a=startDecade;a<retireAge;a+=5) checkpoints.push(a);
+  if(!checkpoints.includes(retireAge)) checkpoints.push(retireAge);
 
   const vals=checkpoints.map(a=>calcCompound(age,monthly,rate,a));
   const maxVal=Math.max(...vals,1);
@@ -2433,13 +2447,14 @@ function updatePTMCalc(){
     const vLater=a>(age+5)?calcCompound(age+5,monthly,rate,a):0;
     const hNow=Math.max(4,(vNow/maxVal)*140);
     const hLater=Math.max(0,(vLater/maxVal)*140);
+    const isTarget=a===retireAge;
     return `<div class="ptm-bar-group">
       <div class="ptm-bar-val">${fmtShort(vNow)}</div>
       <div class="ptm-bar-pair" style="height:${hNow}px;align-items:flex-end">
-        <div class="ptm-bar now" style="height:${hNow}px"></div>
+        <div class="ptm-bar now" style="height:${hNow}px${isTarget?';box-shadow:0 0 10px rgba(245,200,66,.7)':''}"></div>
         <div class="ptm-bar later" style="height:${hLater}px"></div>
       </div>
-      <div class="ptm-bar-age">Age ${a}</div>
+      <div class="ptm-bar-age" style="${isTarget?'color:var(--gold);font-weight:700':''}">${isTarget?'🏁 ':''} ${a}</div>
     </div>`;
   }).join('');
 
@@ -2449,12 +2464,12 @@ function updatePTMCalc(){
     const dailySaving=(monthly/30).toFixed(2);
     const items=[];
     if(onTrack){
-      items.push(`🎉 You're on track! Saving ${fmtMoney(monthly)}/month from age ${age} will get you to <strong>${fmtShort(finalNow)}</strong> by retirement!`);
+      items.push(`🎉 You're on track! Saving ${fmtMoney(monthly)}/month from age ${age} will get you to <strong>${fmtShort(finalNow)}</strong> by age ${retireAge}!`);
     } else {
-      items.push(`💡 To reach your <strong>${fmtShort(target)}</strong> target by 65, you need <strong>${fmtMoney(needed)}/month</strong> — just ${fmtMoney(needed-monthly)} more than you're saving now.`);
+      items.push(`💡 To reach your <strong>${fmtShort(target)}</strong> target by age ${retireAge}, you need <strong>${fmtMoney(needed)}/month</strong> — just ${fmtMoney(needed-monthly)} more than now.`);
     }
-    if(ageToReach&&ageToReach<=65){
-      items.push(`🏁 You'll hit your <strong>${fmtShort(target)}</strong> goal at age <strong>${ageToReach}</strong> — a full ${65-ageToReach} years before retirement!`);
+    if(ageToReach&&ageToReach<=retireAge){
+      items.push(`🏁 You'll hit your <strong>${fmtShort(target)}</strong> goal at age <strong>${ageToReach}</strong> — a full ${retireAge-ageToReach} years before your target!`);
     }
     items.push(`☕ ${fmtMoney(monthly)}/month is just <strong>$${dailySaving}/day</strong> — less than a coffee at most places!`);
     items.push(`🧠 The market adds <strong>${fmtShort(Math.max(0,marketAdds))}</strong> on top of your savings — that's compound interest doing the heavy lifting!`);
