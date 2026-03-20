@@ -3,2494 +3,985 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stock Detective Academy</title>
+<title>Stock Detective Academy — Learn to Invest Like a Pro</title>
+<meta name="description" content="A mission-based investing game that teaches kids how Wall Street actually works. Investigate real companies, build a virtual portfolio, and become a Stock Detective.">
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 :root {
-  --navy:#0d1b2a; --navy2:#132233; --blue:#1b4f8a;
-  --gold:#f5c842; --green:#22c55e; --yellow:#f59e0b;
-  --red:#ef4444; --purple:#a855f7; --orange:#f97316;
-  --radius:14px;
+  --gold: #f5c842;
+  --gold-dim: rgba(245,200,66,.15);
+  --green: #22c55e;
+  --blue: #3b82f6;
+  --navy: #0a0f1e;
+  --navy2: #0d1526;
+  --card-bg: rgba(255,255,255,.03);
+  --border: rgba(255,255,255,.07);
+  --text: #e2e8f0;
+  --muted: #64748b;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:100vh;color:#1a1a1a;}
 
-/* NAV */
-.top-nav{background:rgba(13,27,42,.97);border-bottom:2px solid var(--gold);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:8px;}
-.nav-brand{color:var(--gold);font-size:1.05em;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;letter-spacing:.3px;}
-.nav-steps{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
-.nav-step{padding:5px 12px;border-radius:20px;font-size:.75em;font-weight:600;background:rgba(255,255,255,.08);color:#aaa;cursor:pointer;border:none;transition:all .2s;}
-.nav-step.active{background:var(--gold);color:var(--navy);}
-.nav-step.done{background:var(--green);color:#fff;}
-.nav-dash-btn{background:rgba(255,255,255,.1);color:#ccc;border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 14px;font-size:.78em;font-weight:600;cursor:pointer;white-space:nowrap;}
-.nav-dash-btn:hover{background:rgba(255,255,255,.18);}
+html { scroll-behavior: smooth; }
 
-/* VIEWS */
-.view{display:none;}.view.active{display:block;}
-.page-wrap{max-width:1000px;margin:0 auto;padding:28px 16px;}
-.page-title{color:var(--gold);font-size:1.7em;font-weight:800;margin-bottom:6px;}
-.page-sub{color:#9ab;margin-bottom:22px;font-size:.92em;}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
 
-/* BUTTONS */
-.btn-primary{background:var(--gold);color:var(--navy);border:none;border-radius:30px;padding:12px 36px;font-size:1.05em;font-weight:800;cursor:pointer;transition:all .2s;}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,200,66,.4);}
-.btn-secondary{background:rgba(255,255,255,.1);color:#ccc;border:1px solid rgba(255,255,255,.2);border-radius:30px;padding:10px 24px;font-size:.95em;font-weight:600;cursor:pointer;transition:all .2s;}
-.btn-secondary:hover{background:rgba(255,255,255,.18);}
-.btn-green{background:var(--green);color:#fff;border:none;border-radius:30px;padding:12px 36px;font-size:1.05em;font-weight:800;cursor:pointer;transition:all .2s;}
-.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(34,197,94,.35);}
-.btn-sm{padding:6px 14px;font-size:.8em;border-radius:20px;border:none;cursor:pointer;font-weight:600;}
-.nav-row{display:flex;justify-content:flex-end;margin-top:24px;gap:10px;}
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
 
-/* DASHBOARD WRAPPER */
-.dash-wrap{max-width:1000px;margin:0 auto;padding:28px 16px;}
+/* ── NAV ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 0 40px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10,15,30,.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: background .3s;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.05em;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: -.2px;
+}
+.nav-logo span { color: var(--gold); }
+.nav-logo-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, #f5c842, #f59e0b);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1em;
+  box-shadow: 0 0 20px rgba(245,200,66,.35);
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .88em;
+  font-weight: 500;
+  transition: color .2s;
+}
+.nav-links a:hover { color: #fff; }
+.nav-cta {
+  background: var(--gold);
+  color: #0a0f1e;
+  font-weight: 700;
+  font-size: .85em;
+  padding: 9px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all .2s;
+  white-space: nowrap;
+  box-shadow: 0 0 24px rgba(245,200,66,.3);
+}
+.nav-cta:hover {
+  background: #fbd64a;
+  box-shadow: 0 0 32px rgba(245,200,66,.5);
+  transform: translateY(-1px);
+}
 
-/* HERO — new user landing */
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
-@keyframes glow{0%,100%{box-shadow:0 0 30px rgba(245,200,66,.35);}50%{box-shadow:0 0 60px rgba(245,200,66,.7);}}
-.hero-badge-anim{display:inline-block;font-size:4.5em;animation:float 3s ease-in-out infinite;}
-.hero-eyebrow{color:var(--gold);font-size:.75em;font-weight:700;text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;}
-.hero-h1{color:#fff;font-size:2.4em;font-weight:900;line-height:1.15;margin-bottom:16px;}
-.hero-h1 em{color:var(--gold);font-style:normal;}
-.hero-story{color:#b8c8d8;font-size:.95em;line-height:1.8;max-width:640px;margin:0 auto 20px;}
-.hero-funfact{background:linear-gradient(135deg,rgba(245,200,66,.09),rgba(245,200,66,.04));border:1px solid rgba(245,200,66,.28);border-radius:12px;padding:14px 20px;max-width:580px;margin:0 auto 28px;font-size:.86em;color:#f5c842cc;line-height:1.7;}
-.hero-funfact strong{color:var(--gold);}
-.hero-name-card{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);border-radius:var(--radius);padding:24px 28px;max-width:420px;margin:0 auto 36px;text-align:center;}
-.hero-name-card h3{color:#fff;font-size:1.05em;font-weight:700;margin-bottom:6px;}
-.hero-name-card p{color:#9ab;font-size:.83em;margin-bottom:14px;}
-.hero-learn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:36px;}
-.hlc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:15px;display:flex;align-items:flex-start;gap:12px;}
-.hlc-icon{font-size:1.5em;flex-shrink:0;line-height:1;}
-.hlc h4{color:var(--gold);font-size:.83em;font-weight:700;margin-bottom:3px;}
-.hlc p{color:#8ab;font-size:.77em;line-height:1.5;}
+/* ── HERO ── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  overflow: hidden;
+}
 
-/* RETURNING USER HEADER */
-.rh-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
-.rh-badge{font-size:2.2em;}
-.rh-name{color:#fff;font-size:1.45em;font-weight:800;display:flex;align-items:center;gap:7px;}
-.rh-greeting{color:#9ab;font-size:.82em;margin-bottom:2px;}
-.rh-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
-.stat-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 16px;text-align:center;min-width:88px;}
-.stat-num{color:var(--gold);font-size:1.3em;font-weight:800;}
-.stat-label{color:#777;font-size:.68em;margin-top:2px;}
-.progress-bar-wrap{background:rgba(255,255,255,.08);border-radius:10px;height:7px;overflow:hidden;margin-bottom:24px;}
-.progress-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:10px;transition:width .4s ease;}
-.edit-name-btn{background:none;border:none;cursor:pointer;font-size:.7em;opacity:.5;}
-.edit-name-btn:hover{opacity:1;}
+/* Animated gradient orbs */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: .35;
+  animation: orbFloat 8s ease-in-out infinite;
+}
+.hero-orb-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #1e3a8a, transparent);
+  top: -200px; left: -100px;
+  animation-delay: 0s;
+}
+.hero-orb-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(245,200,66,.4), transparent);
+  top: -100px; right: -80px;
+  animation-delay: -3s;
+}
+.hero-orb-3 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #065f46, transparent);
+  bottom: -100px; left: 40%;
+  animation-delay: -5s;
+}
+@keyframes orbFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-40px) scale(1.05); }
+}
 
-/* MISSIONS SECTION */
-.section-divider{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;margin-bottom:18px;}
-.section-heading{color:#fff;font-size:1.1em;font-weight:800;margin-bottom:16px;}
-.section-heading em{color:var(--gold);font-style:normal;}
-.missions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
-.mission-card{background:rgba(255,255,255,.04);border:2px solid #333;border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:11px;transition:border-color .3s;}
-.mission-card:not(.locked):hover{background:rgba(255,255,255,.07);}
-.mission-card.locked{opacity:.6;}
+/* Grid lines */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
 
-/* COMPLETION CHECKLIST */
-.ccl-wrap{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;margin-bottom:14px;}
-.ccl-title{color:#9ab;font-size:.73em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
-.ccl-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.87em;}
-.ccl-item:last-child{border-bottom:none;}
-.ccl-item.done{color:var(--green);}
-.ccl-item.todo{color:#8ab;}
-.ccl-icon{font-size:1em;flex-shrink:0;margin-top:1px;}
-.ccl-sub{font-size:.8em;opacity:.65;display:block;margin-top:1px;}
-.complete-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:11px 15px;color:#f87171;font-size:.85em;margin-bottom:12px;display:none;}
-.complete-error.show{display:block;}
-@keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
-.shake{animation:shake .35s ease;}
-.mission-card.completed{background:rgba(34,197,94,.05);}
-.mc-icon{font-size:2.2em;}
-.mc-num{color:#666;font-size:.75em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
-.mc-card-title{font-size:1.1em;font-weight:800;}
-.mc-subtitle{color:#777;font-size:.8em;}
-.mc-learn{display:flex;flex-direction:column;gap:4px;margin-top:4px;}
-.mc-learn-item{color:#9ab;font-size:.8em;line-height:1.4;}
-.mc-learn-item.locked-text{color:#444;}
-.mc-action{margin-top:auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.mc-status{font-size:.78em;font-weight:600;padding:4px 10px;border-radius:20px;}
-.mc-status.new-status{background:rgba(245,200,66,.15);color:var(--gold);}
-.mc-status.progress-status{background:rgba(245,158,11,.15);color:var(--yellow);}
-.mc-status.completed-status{background:rgba(34,197,94,.15);color:var(--green);}
-.mc-status.locked-status{color:#555;font-size:.78em;}
-.mc-status.coming-soon{color:#444;}
-.mc-btn{padding:8px 20px;border-radius:20px;font-size:.82em;font-weight:700;border:none;cursor:pointer;transition:all .2s;}
-.start-btn{background:var(--gold);color:var(--navy);}
-.continue-btn{background:var(--yellow);color:var(--navy);}
-.review-btn{background:rgba(34,197,94,.2);color:var(--green);border:1px solid var(--green);}
-.locked-btn{background:#333;color:#555;cursor:not-allowed;}
-.name-entry{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:24px;margin-bottom:24px;text-align:center;}
-.name-entry h3{color:var(--gold);margin-bottom:8px;}
-.name-entry p{color:#9ab;font-size:.88em;margin-bottom:16px;}
-.name-input{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;color:#fff;font-size:1em;outline:none;width:100%;max-width:300px;font-family:inherit;}
-.name-input:focus{border-color:var(--gold);}
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 820px;
+}
 
-/* SHARED CARD */
-.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:22px;color:#fff;}
-.hint-box{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.25);border-radius:10px;padding:12px 16px;margin-bottom:18px;color:#f5c842cc;font-size:.82em;line-height:1.6;}
-.hint-box strong{color:var(--gold);}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(245,200,66,.1);
+  border: 1px solid rgba(245,200,66,.3);
+  color: var(--gold);
+  font-size: .78em;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 28px;
+  letter-spacing: .5px;
+  animation: fadeUp .6s ease both;
+}
+.hero-badge::before { content: '●'; font-size: .6em; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
 
-/* SIGNALS */
-.sig-pill{display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:30px;font-weight:700;font-size:.88em;}
-.sig-pill.good{background:rgba(34,197,94,.15);border:1.5px solid var(--green);color:var(--green);}
-.sig-pill.okay{background:rgba(245,158,11,.15);border:1.5px solid var(--yellow);color:var(--yellow);}
-.sig-pill.warn{background:rgba(239,68,68,.15);border:1.5px solid var(--red);color:var(--red);}
-.signal-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.78em;font-weight:700;transition:all .3s;}
-.signal-badge.good{background:rgba(34,197,94,.2);border:1px solid var(--green);color:var(--green);}
-.signal-badge.okay{background:rgba(245,158,11,.2);border:1px solid var(--yellow);color:var(--yellow);}
-.signal-badge.warn{background:rgba(239,68,68,.2);border:1px solid var(--red);color:var(--red);}
-.signal-badge.empty{background:rgba(255,255,255,.05);border:1px dashed rgba(255,255,255,.2);color:#444;}
+.hero-h1 {
+  font-size: clamp(2.8em, 7vw, 5em);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  color: #fff;
+  margin-bottom: 24px;
+  animation: fadeUp .6s ease .1s both;
+}
+.hero-h1 .gold { color: var(--gold); }
+.hero-h1 .outline {
+  -webkit-text-stroke: 2px rgba(255,255,255,.3);
+  color: transparent;
+}
 
-/* M1 CHEAT SHEET */
-.signals-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
-.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
-.metric-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:18px;color:#fff;}
-.mc-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.mc-num-badge{background:var(--gold);color:var(--navy);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85em;flex-shrink:0;}
-.mc-title-txt{font-weight:700;color:var(--gold);}
-.mc-desc{font-size:.8em;color:#9ab;line-height:1.5;margin-bottom:8px;}
-.mc-analogy{font-size:.76em;color:#f5c84288;font-style:italic;margin-bottom:8px;}
-.mc-rules{list-style:none;display:flex;flex-direction:column;gap:4px;}
-.mc-rules li{display:flex;align-items:flex-start;gap:7px;font-size:.8em;line-height:1.4;}
-.mc-rules .tag{font-weight:700;min-width:18px;}
-.mc-rules .good{color:var(--green);}
-.mc-rules .okay{color:var(--yellow);}
-.mc-rules .warn{color:var(--red);}
+.hero-sub {
+  font-size: 1.15em;
+  color: #94a3b8;
+  max-width: 560px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+  animation: fadeUp .6s ease .2s both;
+}
 
-/* M1 TABLE */
-.company-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px;}
-.co-tab{padding:7px 14px;border-radius:20px;font-size:.82em;font-weight:600;background:rgba(255,255,255,.07);color:#aac;cursor:pointer;border:1.5px solid rgba(255,255,255,.1);transition:all .15s;}
-.co-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
-.co-tab.complete{border-color:var(--green);color:var(--green);background:rgba(34,197,94,.08);}
-.company-panel{display:none;}.company-panel.active{display:block;}
-.co-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:22px;}
-.co-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
-.co-logo{width:48px;height:48px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.5em;flex-shrink:0;}
-.co-name{color:#fff;font-size:1.2em;font-weight:800;}
-.co-ticker{color:var(--gold);font-size:.88em;font-weight:600;}
-.co-example-badge{background:var(--gold);color:var(--navy);font-size:.65em;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px;}
-.fields-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
-.field-group{display:flex;flex-direction:column;gap:5px;}
-.field-label{color:#9ab;font-size:.75em;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
-.field-label span{color:var(--gold);}
-.field-input{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:8px;padding:9px 11px;color:#fff;font-size:.92em;outline:none;transition:border-color .2s;width:100%;}
-.field-input:focus{border-color:var(--gold);}
-.field-input.locked{opacity:.6;cursor:not-allowed;}
-.signal-display{height:26px;display:flex;align-items:center;}
-.co-score-bar{margin-top:18px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.co-score-num{color:var(--gold);font-size:1.5em;font-weight:800;}
-.score-pips{display:flex;gap:5px;}
-.pip{width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.1);transition:background .3s;}
-.pip.filled{background:var(--green);}
-.lookup-tip{display:inline-flex;align-items:center;gap:6px;background:rgba(27,79,138,.4);border:1px solid rgba(27,79,138,.7);border-radius:8px;padding:5px 11px;font-size:.73em;color:#8bc;margin-top:12px;text-decoration:none;}
+.hero-btns {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 56px;
+  animation: fadeUp .6s ease .3s both;
+}
+.btn-primary-hero {
+  background: var(--gold);
+  color: #0a0f1e;
+  font-weight: 800;
+  font-size: 1em;
+  padding: 14px 30px;
+  border-radius: 10px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all .2s;
+  box-shadow: 0 0 40px rgba(245,200,66,.4), 0 4px 20px rgba(0,0,0,.3);
+}
+.btn-primary-hero:hover {
+  background: #fbd64a;
+  transform: translateY(-2px);
+  box-shadow: 0 0 60px rgba(245,200,66,.5), 0 8px 30px rgba(0,0,0,.4);
+}
+.btn-ghost-hero {
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1em;
+  padding: 14px 28px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: all .2s;
+}
+.btn-ghost-hero:hover {
+  background: rgba(255,255,255,.1);
+  border-color: rgba(255,255,255,.15);
+  transform: translateY(-2px);
+}
 
-/* M1 SCORE */
-.scoreboard-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
-.scoreboard-table th{background:rgba(255,255,255,.06);color:var(--gold);font-size:.72em;text-transform:uppercase;padding:9px 10px;text-align:center;letter-spacing:.5px;}
-.scoreboard-table th:first-child{text-align:left;}
-.scoreboard-table td{padding:9px 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06);color:#fff;font-size:.85em;}
-.scoreboard-table td:first-child{text-align:left;font-weight:600;}
-.scoreboard-table tr.top-row td{background:rgba(34,197,94,.07);}
-.score-cell{font-weight:800;font-size:1.05em;color:var(--gold);}
-.score-cell.top{color:var(--green);font-size:1.2em;}
-.sig-small{display:inline-block;padding:2px 6px;border-radius:10px;font-size:.78em;font-weight:700;}
-.sig-small.good{background:rgba(34,197,94,.2);color:var(--green);}
-.sig-small.okay{background:rgba(245,158,11,.2);color:var(--yellow);}
-.sig-small.warn{background:rgba(239,68,68,.2);color:var(--red);}
-.sig-small.empty{color:#555;}
-.verdict-section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:22px;margin-bottom:18px;}
-.verdict-section h3{color:var(--gold);margin-bottom:14px;font-size:1.05em;}
-.questions{display:flex;flex-direction:column;gap:14px;margin-bottom:18px;}
-.question{display:flex;flex-direction:column;gap:5px;}
-.question label{color:#cde;font-size:.85em;font-weight:600;}
-.question textarea{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;padding:9px;font-size:.85em;resize:vertical;min-height:55px;outline:none;font-family:inherit;transition:border-color .2s;}
-.question textarea:focus{border-color:var(--gold);}
-.verdict-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-@media(max-width:560px){.verdict-row{grid-template-columns:1fr;}}
-.verdict-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;}
-.verdict-box label{color:#9ab;font-size:.72em;text-transform:uppercase;font-weight:600;display:block;margin-bottom:5px;}
-.verdict-box input,.verdict-box textarea{background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,.2);color:#fff;font-size:.9em;width:100%;padding:3px 0;outline:none;font-family:inherit;}
-.verdict-box input:focus,.verdict-box textarea:focus{border-bottom-color:var(--gold);}
-.stars-row{display:flex;gap:6px;margin-top:5px;}
-.star-btn{font-size:1.6em;background:none;border:none;cursor:pointer;opacity:.3;transition:all .15s;}
-.star-btn.lit{opacity:1;}
-.complete-mission-btn{background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;border:none;border-radius:30px;padding:14px 40px;font-size:1.1em;font-weight:800;cursor:pointer;transition:all .2s;width:100%;margin-top:10px;}
-.complete-mission-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(34,197,94,.35);}
-.winner-banner{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(245,200,66,.15));border:1px solid rgba(34,197,94,.3);border-radius:var(--radius);padding:18px 22px;text-align:center;margin-bottom:18px;}
-.winner-banner h2{color:var(--green);font-size:1.3em;margin-bottom:4px;}
-.winner-banner p{color:#aac;font-size:.88em;}
+/* Hero stats */
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  animation: fadeUp .6s ease .4s both;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.hero-stat {
+  flex: 1;
+  padding: 18px 16px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.hero-stat:last-child { border-right: none; }
+.hero-stat-num {
+  font-size: 1.6em;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.hero-stat-label {
+  font-size: .72em;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
 
-/* M2 PORTFOLIO */
-.budget-bar-wrap{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
-.budget-bar-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap;gap:6px;}
-.budget-title{color:var(--gold);font-weight:800;font-size:1em;}
-.budget-nums{display:flex;gap:16px;flex-wrap:wrap;}
-.budget-stat{text-align:right;}
-.budget-stat .val{font-weight:800;font-size:1.1em;}
-.budget-stat .lbl{color:#9ab;font-size:.72em;}
-.budget-track{height:10px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden;}
-.budget-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--yellow));border-radius:10px;transition:width .4s;}
-.stock-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px;}
-.stock-pick-card{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
-.stock-pick-card:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);}
-.stock-pick-card.selected{border-color:var(--gold);background:rgba(245,200,66,.08);}
-.stock-pick-card.added{border-color:var(--green);background:rgba(34,197,94,.06);cursor:default;}
-.spc-logo{font-size:1.6em;margin-bottom:4px;}
-.spc-name{color:#fff;font-size:.78em;font-weight:700;}
-.spc-ticker{color:#777;font-size:.7em;}
-.spc-m1score{margin-top:5px;font-size:.7em;color:var(--green);font-weight:700;}
-.spc-m1score.no-data{color:#555;}
-.spc-added-badge{position:absolute;top:5px;right:5px;background:var(--green);color:#fff;font-size:.6em;font-weight:700;border-radius:10px;padding:1px 5px;}
-.add-form{background:rgba(245,200,66,.06);border:1.5px solid rgba(245,200,66,.3);border-radius:var(--radius);padding:18px;margin-bottom:20px;}
-.add-form h4{color:var(--gold);margin-bottom:14px;font-size:.95em;}
-.add-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:12px;}
-.add-form-total{color:#9ab;font-size:.85em;margin-bottom:12px;}
-.add-form-total strong{color:var(--gold);font-size:1.1em;}
-.portfolio-list{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
-.portfolio-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:16px;}
-.pi-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.pi-left{display:flex;align-items:center;gap:10px;}
-.pi-logo{font-size:1.5em;}
-.pi-name{color:#fff;font-weight:700;font-size:.95em;}
-.pi-ticker{color:var(--gold);font-size:.78em;}
-.pi-sector{font-size:.7em;padding:2px 8px;border-radius:10px;font-weight:600;color:#fff;}
-.pi-remove{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:4px 10px;font-size:.75em;cursor:pointer;}
-.pi-stats{display:flex;gap:14px;flex-wrap:wrap;}
-.pi-stat{display:flex;flex-direction:column;}
-.pi-stat .val{color:#fff;font-size:.9em;font-weight:700;}
-.pi-stat .lbl{color:#777;font-size:.7em;}
-.pie-section{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;margin-bottom:20px;}
-@media(max-width:560px){.pie-section{grid-template-columns:1fr;}}
-.pie-legend{display:flex;flex-direction:column;gap:8px;}
-.pie-legend-item{display:flex;align-items:center;gap:8px;font-size:.82em;color:#ccc;}
-.pie-legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
-.diversification-score{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;}
-.div-score-label{color:#9ab;font-size:.75em;text-transform:uppercase;font-weight:600;margin-bottom:6px;}
-.div-stars{font-size:1.4em;letter-spacing:3px;}
-.div-msg{color:#aac;font-size:.78em;margin-top:4px;}
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: .72em;
+  animation: fadeIn 1s ease 1s both;
+}
+.scroll-dot {
+  width: 20px; height: 32px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 100px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4px;
+}
+.scroll-dot::after {
+  content: '';
+  width: 4px; height: 8px;
+  background: var(--gold);
+  border-radius: 100px;
+  animation: scrollAnim 1.5s ease infinite;
+}
+@keyframes scrollAnim {
+  0% { transform: translateY(0); opacity:1; }
+  100% { transform: translateY(10px); opacity:0; }
+}
 
-/* M2 TRACK */
-.portfolio-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
-.ps-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;text-align:center;}
-.ps-card .val{font-size:1.3em;font-weight:800;}
-.ps-card .lbl{color:#9ab;font-size:.72em;margin-top:2px;}
-.ps-card.positive .val{color:var(--green);}
-.ps-card.negative .val{color:var(--red);}
-.track-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:18px;margin-bottom:12px;}
-.ti-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
-.ti-identity{display:flex;align-items:center;gap:10px;}
-.ti-logo{font-size:1.5em;}
-.ti-name{color:#fff;font-weight:700;}
-.ti-ticker{color:var(--gold);font-size:.8em;}
-.ti-perf{text-align:right;}
-.ti-change{font-size:1.2em;font-weight:800;}
-.ti-change.up{color:var(--green);}
-.ti-change.down{color:var(--red);}
-.ti-change.flat{color:#9ab;}
-.ti-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:12px;}
-.ti-stat .val{color:#fff;font-size:.9em;font-weight:600;}
-.ti-stat .lbl{color:#777;font-size:.7em;}
-.price-history{margin-top:8px;}
-.ph-label{color:#9ab;font-size:.72em;text-transform:uppercase;font-weight:600;margin-bottom:6px;}
-.ph-entries{display:flex;flex-wrap:wrap;gap:6px;}
-.ph-entry{background:rgba(255,255,255,.06);border-radius:8px;padding:4px 10px;font-size:.75em;color:#aac;}
-.ph-entry.latest{background:rgba(245,200,66,.12);border:1px solid rgba(245,200,66,.3);color:var(--gold);}
-.update-form{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;margin-top:10px;}
-.update-form-title{color:var(--gold);font-size:.82em;font-weight:700;margin-bottom:10px;}
-.update-form-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;}
-@media(max-width:480px){.update-form-grid{grid-template-columns:1fr 1fr;}}
-.update-input{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 10px;color:#fff;font-size:.88em;outline:none;width:100%;font-family:inherit;}
-.update-input:focus{border-color:var(--gold);}
-.update-save-btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:.82em;font-weight:700;cursor:pointer;white-space:nowrap;}
-.no-portfolio-msg{text-align:center;padding:40px 20px;color:#9ab;}
-.no-portfolio-msg .big{font-size:2.5em;margin-bottom:10px;}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity:0; }
+  to { opacity:1; }
+}
 
-/* CONFETTI */
-.confetti-area{pointer-events:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;overflow:hidden;}
-.confetti-piece{position:absolute;animation:confettiFall linear forwards;}
-@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+/* ── SECTION COMMONS ── */
+section { position: relative; z-index: 1; }
+.section-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  font-size: .75em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-size: clamp(1.9em, 4vw, 2.8em);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+.section-title em { color: var(--gold); font-style: normal; }
+.section-sub {
+  color: #64748b;
+  font-size: 1em;
+  max-width: 540px;
+  line-height: 1.7;
+}
 
-/* COMPLETION SCREEN */
-.completion-screen{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;}
-.completion-badge{font-size:4em;margin-bottom:16px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
-@keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
-.completion-title{color:var(--green);font-size:2em;font-weight:800;margin-bottom:8px;}
-.completion-sub{color:#9ab;margin-bottom:24px;}
+/* ── LOGO STRIP ── */
+.logo-strip {
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,.015);
+  overflow: hidden;
+}
+.logo-strip-inner {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  animation: marquee 20s linear infinite;
+  width: max-content;
+}
+.logo-strip-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: .85em;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: .6;
+}
+.logo-strip-item span { font-size: 1.3em; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
 
-/* M2 INTRO */
-.intro-hero{text-align:center;padding:40px 20px;}
-.intro-hero h1{color:var(--gold);font-size:2.2em;font-weight:800;margin-bottom:8px;}
-.intro-hero p{color:#9ab;font-size:1em;margin-bottom:24px;}
-.intro-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;max-width:800px;margin:0 auto 28px;}
-.intro-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:18px;color:#fff;text-align:center;}
-.intro-card .ico{font-size:2em;margin-bottom:8px;}
-.intro-card h3{color:var(--green);font-size:.9em;margin-bottom:4px;}
-.intro-card p{color:#9ab;font-size:.8em;line-height:1.5;}
+/* ── FEATURES ── */
+.features { padding: 100px 0; }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 56px;
+}
+.feature-card {
+  background: var(--navy2);
+  padding: 36px 32px;
+  transition: background .2s;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 0% 0%, rgba(245,200,66,.04), transparent 60%);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.feature-card:hover { background: rgba(255,255,255,.025); }
+.feature-card:hover::before { opacity: 1; }
+.feature-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+.feature-title {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+.feature-desc {
+  font-size: .87em;
+  color: var(--muted);
+  line-height: 1.65;
+  position: relative;
+  z-index: 1;
+}
 
-/* METRIC CARD — WHERE TO FIND */
-.mc-find{background:rgba(27,79,138,.25);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:7px 10px;margin-top:10px;font-size:.76em;color:#8bc;line-height:1.6;}
-.mc-find strong{color:#acd;}
-.mc-find .hard{color:var(--yellow);}
-/* LOOKUP LINKS (company panel) */
-.lookup-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-.lookup-tip{display:inline-flex;align-items:center;gap:5px;background:rgba(27,79,138,.4);border:1px solid rgba(27,79,138,.7);border-radius:8px;padding:5px 11px;font-size:.73em;color:#8bc;text-decoration:none;transition:background .2s;}
-.lookup-tip:hover{background:rgba(27,79,138,.7);color:#cdf;}
+/* ── HOW IT WORKS ── */
+.how { padding: 100px 0; background: linear-gradient(180deg, transparent, rgba(255,255,255,.02), transparent); }
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 40px;
+  margin-top: 60px;
+  position: relative;
+}
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 40px; left: calc(16.666% + 20px); right: calc(16.666% + 20px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: .4;
+}
+.step { text-align: center; }
+.step-num {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(245,200,66,.15), rgba(245,200,66,.05));
+  border: 1px solid rgba(245,200,66,.25);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 1.8em;
+  position: relative;
+}
+.step-num-label {
+  position: absolute;
+  top: -6px; right: -6px;
+  width: 22px; height: 22px;
+  background: var(--gold);
+  color: #0a0f1e;
+  font-size: .6em;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.step-title {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.step-desc {
+  font-size: .87em;
+  color: var(--muted);
+  line-height: 1.65;
+}
 
-/* M3 SECTORS */
-.sector-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
-.sector-card{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s;text-align:left;}
-.sector-card:hover{background:rgba(255,255,255,.09);transform:translateY(-2px);}
-.sector-card.selected{transform:translateY(-2px);}
-.sector-card-icon{font-size:2em;margin-bottom:7px;}
-.sector-card-name{color:#fff;font-size:.92em;font-weight:800;margin-bottom:4px;}
-.sector-card-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:.68em;font-weight:700;margin-bottom:7px;}
-.sector-card-badge.defensive{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
-.sector-card-badge.cyclical{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3);}
-.sector-card-desc{color:#8ab;font-size:.75em;line-height:1.45;margin-bottom:5px;}
-.sector-card-examples{color:#555;font-size:.7em;}
-.selected-sector-banner{background:rgba(168,85,247,.08);border:1.5px solid rgba(168,85,247,.35);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-.ssb-icon{font-size:2em;}
-.ssb-title{color:#c084fc;font-weight:800;font-size:.95em;margin-bottom:2px;}
-.ssb-sub{color:#9ab;font-size:.8em;}
-/* HORIZONTAL BAR CHART */
-.hbar-section{margin-bottom:24px;}
-.hbar-item{margin-bottom:16px;}
-.hbar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;flex-wrap:wrap;gap:4px;}
-.hbar-label{color:#fff;font-size:.85em;font-weight:700;display:flex;align-items:center;gap:7px;}
-.hbar-val{color:#9ab;font-size:.8em;}
-.hbar-track{height:30px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;}
-.hbar-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding:0 10px;font-size:.77em;font-weight:700;color:rgba(255,255,255,.9);transition:width .5s ease;white-space:nowrap;}
-.hbar-stocks{margin-top:7px;display:flex;flex-wrap:wrap;gap:6px;}
-.hbar-stock-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 10px;font-size:.76em;color:#ccc;}
-.hbar-source-tag{font-size:.65em;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:2px;}
-.hbar-source-tag.m2{background:rgba(34,197,94,.2);color:var(--green);}
-.hbar-source-tag.m3{background:rgba(168,85,247,.2);color:#c084fc;}
-.combined-totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;}
-/* POWER OF TIME & MONEY */
-.ptm-hero{background:linear-gradient(135deg,rgba(245,200,66,.12),rgba(245,200,66,.04));border:2px solid rgba(245,200,66,.3);border-radius:var(--radius);padding:24px;text-align:center;margin-bottom:20px;animation:glow 3s ease-in-out infinite;}
-.ptm-final-num{color:var(--gold);font-size:3em;font-weight:900;line-height:1;margin-bottom:6px;transition:all .25s;}
-.ptm-final-label{color:#9ab;font-size:.85em;margin-bottom:14px;}
-.ptm-badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-.ptm-badge{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 14px;font-size:.8em;color:#ccc;text-align:center;min-width:80px;}
-.ptm-badge strong{color:var(--gold);display:block;font-size:1.1em;margin-bottom:2px;}
-.ptm-sliders{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:22px;margin-bottom:18px;}
-.ptm-slider-row{margin-bottom:22px;}
-.ptm-slider-row:last-child{margin-bottom:0;}
-.ptm-slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.ptm-slider-label{color:#cde;font-size:.88em;font-weight:600;}
-.ptm-slider-val{color:var(--gold);font-size:1em;font-weight:800;}
-.ptm-range{width:100%;-webkit-appearance:none;appearance:none;height:7px;border-radius:4px;outline:none;cursor:pointer;}
-.ptm-range::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid var(--navy);box-shadow:0 0 12px rgba(245,200,66,.6);}
-.ptm-range::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid var(--navy);}
-.ptm-rate-toggle{display:flex;gap:8px;margin-top:8px;}
-.ptm-rate-btn{flex:1;padding:11px;border-radius:10px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#aaa;font-size:.88em;font-weight:700;cursor:pointer;transition:all .2s;}
-.ptm-rate-btn.active{background:rgba(34,197,94,.15);border-color:var(--green);color:var(--green);}
-.ptm-compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;}
-@media(max-width:500px){.ptm-compare{grid-template-columns:1fr;}}
-.ptm-compare-card{border-radius:var(--radius);padding:18px;text-align:center;}
-.ptm-compare-card.now{background:rgba(245,200,66,.08);border:1.5px solid rgba(245,200,66,.3);}
-.ptm-compare-card.later{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);}
-.ptm-compare-label{font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
-.ptm-compare-card.now .ptm-compare-label{color:var(--gold);}
-.ptm-compare-card.later .ptm-compare-label{color:#666;}
-.ptm-compare-num{font-size:1.7em;font-weight:900;margin-bottom:4px;}
-.ptm-compare-card.now .ptm-compare-num{color:var(--gold);}
-.ptm-compare-card.later .ptm-compare-num{color:#555;}
-.ptm-compare-sub{font-size:.73em;color:#777;}
-.ptm-diff-banner{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px 16px;text-align:center;margin-bottom:18px;color:#f87171;font-size:.88em;line-height:1.5;}
-.ptm-diff-banner strong{color:var(--red);}
-.ptm-chart-wrap{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:20px;margin-bottom:18px;}
-.ptm-chart-title{color:var(--gold);font-size:.9em;font-weight:700;margin-bottom:16px;}
-.ptm-bars{display:flex;align-items:flex-end;gap:6px;height:160px;}
-.ptm-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;}
-.ptm-bar-pair{display:flex;gap:2px;align-items:flex-end;width:100%;}
-.ptm-bar{border-radius:4px 4px 0 0;transition:height .4s ease;flex:1;min-height:3px;}
-.ptm-bar.now{background:linear-gradient(180deg,var(--gold),#d97706);}
-.ptm-bar.later{background:rgba(255,255,255,.15);}
-.ptm-bar-age{color:#666;font-size:.65em;margin-top:5px;text-align:center;}
-.ptm-bar-val{color:#9ab;font-size:.6em;text-align:center;margin-bottom:4px;white-space:nowrap;}
-.ptm-chart-legend{display:flex;gap:16px;justify-content:center;margin-top:10px;}
-.ptm-chart-legend-item{display:flex;align-items:center;gap:6px;font-size:.75em;color:#9ab;}
-.ptm-chart-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
-.ptm-insight{background:linear-gradient(135deg,rgba(34,197,94,.07),rgba(34,197,94,.02));border:1px solid rgba(34,197,94,.22);border-radius:var(--radius);padding:18px 22px;margin-bottom:18px;}
-.ptm-insight-title{color:var(--green);font-size:.9em;font-weight:700;margin-bottom:10px;}
-.ptm-insight-item{display:flex;align-items:flex-start;gap:10px;font-size:.85em;color:#aac;line-height:1.55;margin-bottom:8px;}
-.ptm-insight-item:last-child{margin-bottom:0;}
-.ptm-dash-card{background:linear-gradient(135deg,rgba(245,200,66,.09),rgba(245,200,66,.02));border:1.5px solid rgba(245,200,66,.28);border-radius:var(--radius);padding:16px 20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;margin-bottom:18px;}
-.ptm-dash-card:hover{background:linear-gradient(135deg,rgba(245,200,66,.16),rgba(245,200,66,.06));transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,200,66,.12);}
-.ptm-dash-icon{font-size:2.2em;flex-shrink:0;}
-.ptm-dash-title{color:var(--gold);font-weight:800;font-size:.95em;margin-bottom:3px;}
-.ptm-dash-sub{color:#8ab;font-size:.78em;line-height:1.4;}
-.ptm-dash-arrow{color:var(--gold);font-size:1.3em;flex-shrink:0;opacity:.7;}
-@media(max-width:600px){.metrics-grid,.fields-grid,.add-form-grid{grid-template-columns:1fr;}.pie-section{grid-template-columns:1fr;}}
+/* ── MISSIONS PREVIEW ── */
+.missions { padding: 100px 0; }
+.missions-header { margin-bottom: 56px; }
+.mission-cards {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 16px;
+}
+.mission-card-lp {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px 24px;
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+}
+.mission-card-lp::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.mission-card-lp:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,.12);
+}
+.mission-card-lp:hover::after { opacity: 1; }
+.mc-lp-num {
+  font-size: .72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+  opacity: .6;
+}
+.mc-lp-icon { font-size: 2em; margin-bottom: 14px; display: block; }
+.mc-lp-title {
+  font-size: 1.1em;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.mc-lp-sub {
+  font-size: .84em;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.mc-lp-tag {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: .72em;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+/* ── QUOTE ── */
+.quote { padding: 80px 0; }
+.quote-inner {
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(245,200,66,.05), rgba(245,200,66,.01));
+  padding: 56px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.quote-inner::before {
+  content: '"';
+  position: absolute;
+  top: -20px; left: 24px;
+  font-size: 12em;
+  font-weight: 900;
+  color: rgba(245,200,66,.06);
+  line-height: 1;
+  pointer-events: none;
+}
+.quote-text {
+  font-size: clamp(1.3em, 3vw, 1.9em);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+  letter-spacing: -.5px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+.quote-text em { color: var(--gold); font-style: normal; }
+.quote-attr {
+  font-size: .85em;
+  color: var(--muted);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── CTA FINAL ── */
+.cta-final {
+  padding: 100px 0 120px;
+  text-align: center;
+}
+.cta-final-inner {
+  position: relative;
+  background: linear-gradient(135deg, rgba(245,200,66,.08) 0%, rgba(59,130,246,.06) 100%);
+  border: 1px solid rgba(245,200,66,.2);
+  border-radius: 28px;
+  padding: 72px 40px;
+  overflow: hidden;
+}
+.cta-final-inner::before {
+  content: '';
+  position: absolute;
+  top: -100px; left: 50%;
+  transform: translateX(-50%);
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(245,200,66,.12), transparent 70%);
+  pointer-events: none;
+}
+.cta-title {
+  font-size: clamp(2em, 5vw, 3.2em);
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  color: #fff;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+.cta-title em { color: var(--gold); font-style: normal; }
+.cta-sub {
+  color: var(--muted);
+  font-size: 1em;
+  margin-bottom: 36px;
+  position: relative;
+  z-index: 1;
+}
+.cta-btns {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.cta-note {
+  margin-top: 18px;
+  font-size: .78em;
+  color: var(--muted);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 36px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--muted); font-size: .88em; }
+.footer-logo span { color: var(--gold); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { color: var(--muted); text-decoration: none; font-size: .82em; transition: color .2s; }
+.footer-links a:hover { color: #fff; }
+.footer-right { color: var(--muted); font-size: .78em; }
+
+/* ── UTILITIES ── */
+.text-center { text-align: center; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .features-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .steps::before { display: none; }
+  .mission-cards { grid-template-columns: 1fr; }
+  .nav { padding: 0 20px; }
+  .quote-inner { padding: 36px 24px; }
+  footer { flex-direction: column; text-align: center; }
+  .hero-stats { flex-direction: column; }
+  .hero-stat { border-right: none; border-bottom: 1px solid var(--border); }
+  .hero-stat:last-child { border-bottom: none; }
+}
+
+/* Scroll animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
 </head>
 <body>
 
-<nav class="top-nav" id="topNav">
-  <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
-    <div class="nav-brand" onclick="goTo('dashboard')">🔍 Stock Detective</div>
-    <button class="nav-dash-btn" id="navPtmBtn" onclick="goTo('ptm')" style="display:none">⏰ Time & Money</button>
-  </div>
-  <div class="nav-steps" id="navSteps"></div>
-  <div style="display:flex;gap:6px;flex-shrink:0">
-    <button class="nav-dash-btn" id="navDashBtn" onclick="goTo('dashboard')" style="display:none">🏠 Dashboard</button>
-  </div>
+<!-- ── NAV ── -->
+<nav class="nav" id="mainNav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">🔍</div>
+    Stock <span>Detective</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#missions">Missions</a></li>
+    <li><a href="game.html">Play Now</a></li>
+  </ul>
+  <a href="game.html" class="nav-cta">Start for Free →</a>
 </nav>
 
-<div class="confetti-area" id="confettiArea"></div>
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+  <div class="hero-grid"></div>
 
-<!-- DASHBOARD -->
-<div id="view-dashboard" class="view active">
-  <div class="dash-wrap"><div id="dashContent"></div></div>
-</div>
+  <div class="hero-inner">
+    <div class="hero-badge">Now with Mission 3: Sector Investing</div>
 
-<!-- M1: CHEAT SHEET -->
-<div id="view-m1-cheat" class="view">
-<div class="page-wrap">
-  <div style="background:rgba(245,200,66,.06);border:1px solid rgba(245,200,66,.15);border-radius:14px;padding:20px 20px 16px;margin-bottom:22px">
-    <div style="font-size:1.5em;margin-bottom:8px">🕵️ Welcome to Stock Detective Academy</div>
-    <p style="color:#ccc;font-size:.9em;line-height:1.65;margin:0 0 12px">
-      Every day, millions of people invest money in real companies — Apple, Tesla, McDonald's, and more.
-      Some investors get <strong style="color:var(--green)">rich</strong>. Others <strong style="color:var(--red)">lose everything</strong>. What's the difference?<br><br>
-      The smartest investors know how to read <strong style="color:var(--gold)">6 secret clues</strong> hidden inside every stock.
-      In this mission, you'll learn those clues, then investigate real companies yourself — just like a Wall Street pro.
+    <h1 class="hero-h1">
+      The Stock Market<br>
+      is Your <span class="gold">Case File.</span>
+    </h1>
+
+    <p class="hero-sub">
+      A mission-based investing game that teaches kids how Wall Street actually works.
+      Investigate real companies, build a virtual portfolio, and become a certified Stock Detective.
     </p>
-    <div class="hero-funfact" style="margin:0;font-size:.84em">
-      🤯 <strong>Did you know?</strong> $1,000 invested in Apple in 2004 would be worth over
-      <strong>$700,000 today</strong>. Warren Buffett — one of the world's richest investors —
-      started buying stocks when he was <strong>just 11 years old</strong>. Your turn.
+
+    <div class="hero-btns">
+      <a href="game.html" class="btn-primary-hero">
+        🕵️ Start Investigating
+      </a>
+      <a href="#how" class="btn-ghost-hero">See How It Works</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">Missions</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">$20K</div>
+        <div class="hero-stat-label">Virtual Portfolio</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">11</div>
+        <div class="hero-stat-label">Market Sectors</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">100%</div>
+        <div class="hero-stat-label">Free</div>
+      </div>
     </div>
   </div>
-  <div class="page-title">📋 The 6 Magic Numbers</div>
-  <div class="page-sub">Learn these rules — you'll use them when filling in the Detective Table!</div>
-  <div class="signals-bar">
-    <div class="sig-pill good">✓ CHECK = GOOD (1 point)</div>
-    <div class="sig-pill okay">~ TILDE = OKAY (0 points)</div>
-    <div class="sig-pill warn">✗ CROSS = WARNING (0 points)</div>
+
+  <div class="scroll-hint">
+    <div class="scroll-dot"></div>
+    scroll
   </div>
-  <div class="metrics-grid">
+</section>
 
-    <div class="metric-card">
-      <div class="mc-header"><div class="mc-num-badge">1</div><div class="mc-title-txt">Stock Price ($)</div></div>
-      <div class="mc-desc">How much ONE share costs right now. Compare it to the 52-week range to know if it's cheap or expensive.</div>
-      <div class="mc-analogy">🏷️ Like a sticker price — but is it on sale?</div>
-      <ul class="mc-rules">
-        <li><span class="tag good">✓</span><span>Any price is OK — compare to 52-Wk range</span></li>
-        <li><span class="tag okay">~</span><span>Rising very fast lately? Be careful</span></li>
-        <li><span class="tag warn">✗</span><span>Near all-time high + bad P/E = skip it</span></li>
-      </ul>
-      <div class="mc-find">📍 <strong>Where to find it:</strong> It's the <strong>big number at the very top</strong> of the page on both Yahoo Finance and Google Finance!</div>
-    </div>
-
-    <div class="metric-card">
-      <div class="mc-header"><div class="mc-num-badge">2</div><div class="mc-title-txt">P/E Ratio</div></div>
-      <div class="mc-desc">Imagine you buy a lemonade stand for $200. It earns $10/yr profit. You'd wait 20 years — so P/E = 20. Lower = better deal!</div>
-      <div class="mc-analogy">🍋 Stand costs $100, earns $10/yr → P/E 10 → great deal!</div>
-      <ul class="mc-rules">
-        <li><span class="tag good">✓</span><span>Under 25 = money back in less than 25 years</span></li>
-        <li><span class="tag okay">~</span><span>25–50 = pricey but growing fast</span></li>
-        <li><span class="tag warn">✗</span><span>Over 50 = very expensive!</span></li>
-      </ul>
-      <div class="mc-find">📍 <strong>Yahoo Finance:</strong> look for <strong>"PE Ratio (TTM)"</strong> on the Summary page.<br>
-      <strong>Google Finance:</strong> look for <strong>"P/E ratio"</strong> in the right panel.<br>
-      <em>(TTM = Trailing Twelve Months = last 12 months of profits)</em></div>
-    </div>
-
-    <div class="metric-card">
-      <div class="mc-header"><div class="mc-num-badge">3</div><div class="mc-title-txt">52-Week High / Low</div></div>
-      <div class="mc-desc">The highest and lowest price in the past year. Shows if the stock is "on sale" or overpriced compared to recent history.</div>
-      <div class="mc-analogy">🏷️ Like knowing the original vs. sale price.</div>
-      <ul class="mc-rules">
-        <li><span class="tag good">✓</span><span>Near 52-wk LOW = possibly on sale!</span></li>
-        <li><span class="tag okay">~</span><span>In the middle = normal</span></li>
-        <li><span class="tag warn">✗</span><span>Near 52-wk HIGH = might be too expensive</span></li>
-      </ul>
-      <div class="mc-find">📍 <strong>Yahoo Finance:</strong> look for <strong>"52 Week Range"</strong> on the Summary page — it shows the Low and High in one line (e.g. 57.00 – 74.00).<br>
-      <strong>Google Finance:</strong> look for <strong>"52-wk high"</strong> and <strong>"52-wk low"</strong> listed separately in the right panel.</div>
-    </div>
-
-    <div class="metric-card">
-      <div class="mc-header"><div class="mc-num-badge">4</div><div class="mc-title-txt">Market Cap</div></div>
-      <div class="mc-desc">Total value of ALL shares. Shows how big the company is. Bigger usually means safer!</div>
-      <div class="mc-analogy">🏙️ Small shop vs. big mall vs. giant city!</div>
-      <ul class="mc-rules">
-        <li><span class="tag good">✓</span><span>Large Cap (&gt;$10B) = safer, stable</span></li>
-        <li><span class="tag okay">~</span><span>Mid Cap ($2B–$10B) = some risk</span></li>
-        <li><span class="tag warn">✗</span><span>Small Cap (&lt;$2B) = riskier</span></li>
-      </ul>
-      <div class="mc-find">📍 <strong>Yahoo Finance &amp; Google Finance:</strong> both label it <strong>"Market Cap"</strong>.<br>
-      They shorten big numbers — enter it in billions: <strong>T = Trillion</strong> (2.8T → enter 2800), <strong>B = Billion</strong> (280B → enter 280).</div>
-    </div>
-
-    <div class="metric-card">
-      <div class="mc-header"><div class="mc-num-badge">5</div><div class="mc-title-txt">Revenue Growth %</div></div>
-      <div class="mc-desc">Is the company making MORE money than last year? Positive = growing business. Negative = shrinking!</div>
-      <div class="mc-analogy">🌱 Is it growing taller or wilting?</div>
-      <ul class="mc-rules">
-        <li><span class="tag good">✓</span><span>Over +10% = fast growing!</span></li>
-        <li><span class="tag okay">~</span><span>0% to +10% = steady</span></li>
-        <li><span class="tag warn">✗</span><span>Negative = shrinking!</span></li>
-      </ul>
-      <div class="mc-find">📍 <span class="hard">⚠️ Trickiest one to find!</span><br>
-      <strong>Yahoo Finance:</strong> click the <strong>"Statistics"</strong> tab → scroll down to the "Income Statement" section → look for <strong>"Revenue Growth (YoY)"</strong>.<br>
-      <strong>Google Finance:</strong> click <strong>"Financials"</strong> → look at the Revenue bar chart and compare this year vs last year.</div>
-    </div>
-
-    <div class="metric-card">
-      <div class="mc-header"><div class="mc-num-badge">6</div><div class="mc-title-txt">Dividend Yield %</div></div>
-      <div class="mc-desc">Money the company pays you JUST for holding the stock — like pocket money from your investment!</div>
-      <div class="mc-analogy">🐔 Like a hen that lays eggs — the eggs are your dividend!</div>
-      <ul class="mc-rules">
-        <li><span class="tag good">✓</span><span>Over 2% = bonus income!</span></li>
-        <li><span class="tag okay">~</span><span>Under 2% but &gt;0% = a little</span></li>
-        <li><span class="tag warn">✗</span><span>0% = no dividend (OK if growing fast)</span></li>
-      </ul>
-      <div class="mc-find">📍 <strong>Yahoo Finance:</strong> look for <strong>"Forward Dividend &amp; Yield"</strong> on the Summary page — use the <strong>% number in brackets</strong> (e.g. 3.12%).<br>
-      <strong>Google Finance:</strong> look for <strong>"Dividend yield"</strong> in the right panel.<br>
-      If it shows <em>N/A</em> or <em>—</em>, the company pays no dividend → <strong>enter 0</strong>.</div>
-    </div>
-
-  </div>
-  <div style="margin-top:18px;background:rgba(27,79,138,.2);border:1px solid rgba(27,79,138,.5);border-radius:10px;padding:14px 16px;">
-    <div style="color:#acd;font-size:.82em;font-weight:700;margin-bottom:10px;">🌐 Look up any stock on these free websites — search by ticker (e.g. AAPL, TSLA, KO):</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <a href="https://finance.yahoo.com" target="_blank" class="lookup-tip" style="font-size:.82em;padding:8px 16px;">📊 finance.yahoo.com ↗</a>
-      <a href="https://www.google.com/finance" target="_blank" class="lookup-tip" style="font-size:.82em;padding:8px 16px;">🔍 google.com/finance ↗</a>
-    </div>
-  </div>
-  <div class="nav-row">
-    <button class="btn-secondary" onclick="goTo('dashboard')">← Dashboard</button>
-    <button class="btn-primary" onclick="goTo('m1-table')">Start Investigating →</button>
+<!-- ── LOGO STRIP ── -->
+<div class="logo-strip">
+  <div class="logo-strip-inner">
+    <div class="logo-strip-item"><span>🍎</span> Apple</div>
+    <div class="logo-strip-item"><span>⚡</span> Tesla</div>
+    <div class="logo-strip-item"><span>🔍</span> Google</div>
+    <div class="logo-strip-item"><span>🛍️</span> Amazon</div>
+    <div class="logo-strip-item"><span>💊</span> Pfizer</div>
+    <div class="logo-strip-item"><span>🍟</span> McDonald's</div>
+    <div class="logo-strip-item"><span>💳</span> Visa</div>
+    <div class="logo-strip-item"><span>🎮</span> Nvidia</div>
+    <div class="logo-strip-item"><span>🏦</span> JPMorgan</div>
+    <div class="logo-strip-item"><span>🛢️</span> ExxonMobil</div>
+    <!-- duplicate for seamless loop -->
+    <div class="logo-strip-item"><span>🍎</span> Apple</div>
+    <div class="logo-strip-item"><span>⚡</span> Tesla</div>
+    <div class="logo-strip-item"><span>🔍</span> Google</div>
+    <div class="logo-strip-item"><span>🛍️</span> Amazon</div>
+    <div class="logo-strip-item"><span>💊</span> Pfizer</div>
+    <div class="logo-strip-item"><span>🍟</span> McDonald's</div>
+    <div class="logo-strip-item"><span>💳</span> Visa</div>
+    <div class="logo-strip-item"><span>🎮</span> Nvidia</div>
+    <div class="logo-strip-item"><span>🏦</span> JPMorgan</div>
+    <div class="logo-strip-item"><span>🛢️</span> ExxonMobil</div>
   </div>
 </div>
-</div>
 
-<!-- M1: TABLE -->
-<div id="view-m1-table" class="view">
-<div class="page-wrap">
-  <div class="page-title">🕵️ The Detective Table</div>
-  <div class="page-sub">Look up each company, enter the numbers, and watch the signals appear automatically!</div>
-  <div class="progress-bar-wrap" style="margin-bottom:18px;"><div class="progress-bar" id="m1ProgressBar" style="width:0%"></div></div>
-  <div class="company-tabs" id="companyTabs"></div>
-  <div id="companyPanels"></div>
-  <div class="nav-row">
-    <button class="btn-secondary" onclick="goTo('m1-cheat')">← Cheat Sheet</button>
-    <button class="btn-primary" onclick="goTo('m1-score')">See Scoreboard →</button>
-  </div>
-</div>
-</div>
-
-<!-- M1: SCORE -->
-<div id="view-m1-score" class="view">
-<div class="page-wrap"><div id="m1ScoreContent"></div></div>
-</div>
-
-<!-- M2: INTRO -->
-<div id="view-m2-intro" class="view">
-<div class="page-wrap">
-  <div class="intro-hero">
-    <div style="font-size:3.5em;margin-bottom:12px;">💼</div>
-    <h1>Mission 2: Build Your Portfolio</h1>
-    <p>You've found the best stocks — now invest $10,000 virtual money and watch your portfolio perform in real life!</p>
-    <div class="intro-cards">
-      <div class="intro-card"><div class="ico">💰</div><h3>Virtual $10,000</h3><p>Invest your budget across multiple stocks. Decide how many shares of each to buy.</p></div>
-      <div class="intro-card"><div class="ico">📊</div><h3>Track Performance</h3><p>Enter today's price any time to see your gains and losses. Your history is saved!</p></div>
-      <div class="intro-card"><div class="ico">🥧</div><h3>Diversify</h3><p>Spread your money across different companies and sectors. Don't put all eggs in one basket!</p></div>
+<!-- ── FEATURES ── -->
+<section class="features" id="features">
+  <div class="section-wrap">
+    <div class="text-center reveal">
+      <div class="section-label">⚡ Features</div>
+      <h2 class="section-title">Everything a young investor needs<br>to <em>think like a pro</em></h2>
+      <p class="section-sub" style="margin:0 auto">Built from the ground up to make financial literacy feel like the most exciting game you've ever played.</p>
     </div>
-    <div class="nav-row" style="justify-content:center;">
-      <button class="btn-secondary" onclick="goTo('dashboard')">← Dashboard</button>
-      <button class="btn-primary" onclick="goTo('m2-build')">Build My Portfolio →</button>
-    </div>
-  </div>
-</div>
-</div>
 
-<!-- M2: BUILD -->
-<div id="view-m2-build" class="view">
-<div class="page-wrap"><div id="m2BuildContent"></div></div>
-</div>
-
-<!-- M2: TRACK -->
-<div id="view-m2-track" class="view">
-<div class="page-wrap"><div id="m2TrackContent"></div></div>
-</div>
-
-<!-- M2: VERDICT -->
-<div id="view-m2-verdict" class="view">
-<div class="page-wrap"><div id="m2VerdictContent"></div></div>
-</div>
-
-<!-- M3: INTRO -->
-<div id="view-m3-intro" class="view">
-<div class="page-wrap">
-  <div class="intro-hero">
-    <div style="font-size:3.5em;margin-bottom:12px;">🗺️</div>
-    <h1 style="color:var(--gold);font-size:2.2em;font-weight:800;margin-bottom:8px;">Mission 3: The Sector Bet</h1>
-    <p style="color:#9ab;font-size:1em;margin-bottom:24px;">The stock market is split into 11 sectors. Smart investors pick the sectors they believe will WIN — and put their money there!</p>
-    <div class="intro-cards">
-      <div class="intro-card"><div class="ico">🗺️</div><h3>Explore 11 Sectors</h3><p>From Technology to Healthcare — understand what makes each sector tick.</p></div>
-      <div class="intro-card"><div class="ico">🎯</div><h3>Pick Your Sector</h3><p>Which sector do YOU believe will grow the most? Place your sector bet!</p></div>
-      <div class="intro-card"><div class="ico">🔍</div><h3>Research & Invest</h3><p>Find real stocks on Yahoo Finance. You get a fresh $10,000 to invest!</p></div>
-      <div class="intro-card"><div class="ico">📊</div><h3>Combined View</h3><p>See your M2 + M3 portfolios together — $20,000 total — grouped by sector with a bar chart.</p></div>
-    </div>
-    <div class="hint-box" style="max-width:640px;margin:0 auto 24px">
-      🤯 <strong>Did you know?</strong> In 2020, Technology stocks went UP +40% while Energy stocks CRASHED −30%.
-      Picking the right sector can make a HUGE difference. Warren Buffett bets big on
-      <strong>Financials</strong>. Cathie Wood bets on <strong>Technology</strong>. Now it's your turn to pick!
-    </div>
-    <div class="nav-row" style="justify-content:center;">
-      <button class="btn-secondary" onclick="goTo('dashboard')">← Dashboard</button>
-      <button class="btn-primary" onclick="goTo('m3-explore')">Explore the Sectors →</button>
+    <div class="features-grid reveal">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(59,130,246,.15)">🔍</div>
+        <div class="feature-title">Investigate Real Stocks</div>
+        <div class="feature-desc">Look up live data on Yahoo Finance and Google Finance. Decode 6 real metrics that professional investors use every day.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(34,197,94,.15)">💼</div>
+        <div class="feature-title">Build a Virtual Portfolio</div>
+        <div class="feature-desc">Invest $10,000 of virtual money across real companies. Watch your picks rise and fall with the real market.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(245,200,66,.15)">📈</div>
+        <div class="feature-title">Track Performance Live</div>
+        <div class="feature-desc">Enter real prices any time to see your gains and losses update instantly. Learn what moves markets and why.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(168,85,247,.15)">🗺️</div>
+        <div class="feature-title">Sector Investing</div>
+        <div class="feature-desc">Explore all 11 market sectors — Technology, Healthcare, Energy and more. Place a $10K sector bet and defend your thesis.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(239,68,68,.15)">⏰</div>
+        <div class="feature-title">Power of Time & Money</div>
+        <div class="feature-desc">An interactive compound interest calculator. See what saving $50/month from today becomes by retirement. Mind-blowing.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(245,200,66,.15)">🏆</div>
+        <div class="feature-title">Mission-Based Progression</div>
+        <div class="feature-desc">Structured missions that unlock as you progress. Each one builds real financial knowledge — not just trivia.</div>
+      </div>
     </div>
   </div>
-</div>
-</div>
+</section>
 
-<!-- M3: EXPLORE -->
-<div id="view-m3-explore" class="view">
-<div class="page-wrap"><div id="m3ExploreContent"></div></div>
-</div>
+<hr class="divider">
 
-<!-- M3: BET (Invest) -->
-<div id="view-m3-bet" class="view">
-<div class="page-wrap"><div id="m3BetContent"></div></div>
-</div>
+<!-- ── HOW IT WORKS ── -->
+<section class="how" id="how">
+  <div class="section-wrap">
+    <div class="text-center reveal">
+      <div class="section-label">📋 How It Works</div>
+      <h2 class="section-title">Three steps to becoming<br>a <em>certified detective</em></h2>
+    </div>
 
-<!-- M3: COMBINED Portfolio -->
-<div id="view-m3-combined" class="view">
-<div class="page-wrap"><div id="m3CombinedContent"></div></div>
-</div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">
+          🔍
+          <div class="step-num-label">1</div>
+        </div>
+        <div class="step-title">Learn the 6 Magic Numbers</div>
+        <div class="step-desc">Master the exact metrics every real investor uses — P/E ratio, market cap, revenue growth, and more. With plain-English explanations and real analogies.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">
+          📊
+          <div class="step-num-label">2</div>
+        </div>
+        <div class="step-title">Investigate Real Companies</div>
+        <div class="step-desc">Open Yahoo Finance, look up real tickers, and fill in the Detective Table. See green checks, yellow tildes, and red crosses appear as you type.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">
+          💼
+          <div class="step-num-label">3</div>
+        </div>
+        <div class="step-title">Build & Defend Your Portfolio</div>
+        <div class="step-desc">Invest your virtual $10,000, write your investment thesis, and track how your picks perform against the market over time.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<!-- M3: THESIS (Reflection + Completion) -->
-<div id="view-m3-thesis" class="view">
-<div class="page-wrap"><div id="m3ThesisContent"></div></div>
-</div>
+<hr class="divider">
 
-<!-- POWER OF TIME & MONEY -->
-<div id="view-ptm" class="view">
-<div class="page-wrap"><div id="ptmContent"></div></div>
-</div>
+<!-- ── MISSIONS PREVIEW ── -->
+<section class="missions" id="missions">
+  <div class="section-wrap">
+    <div class="missions-header reveal">
+      <div class="section-label">🗺️ Missions</div>
+      <h2 class="section-title">Start with the basics.<br><em>Master the market.</em></h2>
+      <p class="section-sub">Each mission builds on the last — from reading a stock to running a diversified portfolio like a fund manager.</p>
+    </div>
+
+    <div class="mission-cards">
+      <div class="mission-card-lp reveal" style="border-color:rgba(59,130,246,.25)">
+        <div class="mc-lp-num" style="color:#3b82f6">Mission 01</div>
+        <span class="mc-lp-icon">🕵️</span>
+        <div class="mc-lp-title">The Stock Detective</div>
+        <div class="mc-lp-sub">Learn 6 key metrics, research real companies on Yahoo Finance, and score them on our detective board.</div>
+        <span class="mc-lp-tag" style="background:rgba(59,130,246,.15);color:#3b82f6">Available Now</span>
+      </div>
+      <div class="mission-card-lp reveal" style="border-color:rgba(34,197,94,.25)">
+        <div class="mc-lp-num" style="color:#22c55e">Mission 02</div>
+        <span class="mc-lp-icon">💼</span>
+        <div class="mc-lp-title">The Portfolio Builder</div>
+        <div class="mc-lp-sub">Build a $10K virtual portfolio, track real price movements, and write a reflection on what the market taught you.</div>
+        <span class="mc-lp-tag" style="background:rgba(34,197,94,.15);color:#22c55e">Available Now</span>
+      </div>
+      <div class="mission-card-lp reveal" style="border-color:rgba(168,85,247,.25)">
+        <div class="mc-lp-num" style="color:#a855f7">Mission 03</div>
+        <span class="mc-lp-icon">🗺️</span>
+        <div class="mc-lp-title">The Sector Bet</div>
+        <div class="mc-lp-sub">Pick a market sector, invest a fresh $10K sector bet, and defend your thesis against the other sectors.</div>
+        <span class="mc-lp-tag" style="background:rgba(168,85,247,.15);color:#a855f7">Available Now</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── QUOTE ── -->
+<section class="quote">
+  <div class="section-wrap">
+    <div class="quote-inner reveal">
+      <div class="quote-text">
+        "The best time to start investing was <em>20 years ago.</em><br>
+        The second best time is <em>right now.</em>"
+      </div>
+      <div class="quote-attr">— Warren Buffett started at age 11. What are you waiting for?</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA FINAL ── -->
+<section class="cta-final">
+  <div class="section-wrap">
+    <div class="cta-final-inner reveal">
+      <h2 class="cta-title">Ready to crack the<br><em>market's code?</em></h2>
+      <p class="cta-sub">Free to play. No sign-up. Start your first mission in under 60 seconds.</p>
+      <div class="cta-btns">
+        <a href="game.html" class="btn-primary-hero">🕵️ Start for Free</a>
+        <a href="#missions" class="btn-ghost-hero">Explore Missions</a>
+      </div>
+      <p class="cta-note">✓ No account required &nbsp;·&nbsp; ✓ Works on any device &nbsp;·&nbsp; ✓ 100% free</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">
+    <div class="nav-logo-icon" style="width:28px;height:28px;font-size:.9em">🔍</div>
+    Stock <span>Detective</span> Academy
+  </div>
+  <div class="footer-links">
+    <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+    <a href="#missions">Missions</a>
+    <a href="game.html">Play Now</a>
+  </div>
+  <div class="footer-right">Built for the next generation of investors.</div>
+</footer>
 
 <script>
-/**
- * ╔══════════════════════════════════════════════════════════╗
- * ║         STOCK DETECTIVE ACADEMY — Single-file App        ║
- * ╠══════════════════════════════════════════════════════════╣
- * ║  All state is persisted via localStorage (key below).    ║
- * ║  Views are shown/hidden with goTo(viewId).               ║
- * ║                                                          ║
- * ║  SECTIONS — search the ═══ headers to jump to each:      ║
- * ║   1. CONSTANTS   — company list, mission configs         ║
- * ║   2. STATE       — localStorage load / save              ║
- * ║   3. ROUTER      — goTo(), renderNav()                   ║
- * ║   4. DASHBOARD   — mission hub, name entry               ║
- * ║   5. M1 SIGNALS  — scoring logic (✓ ~ ✗)                ║
- * ║   6. M1 TABLE    — company investigation table           ║
- * ║   7. M1 SCORE    — scoreboard, verdict, completion       ║
- * ║   8. M2 BUILD    — $10k portfolio builder                ║
- * ║   9. M2 TRACK    — price updates, gain/loss display      ║
- * ║  10. M2 VERDICT  — reflection & mission completion       ║
- * ║  11. PIE CHART   — SVG pie chart renderer                ║
- * ║  12. UTILITIES   — formatMoney, confetti                 ║
- * ║  13. M3 EXPLORE  — sector grid & selection               ║
- * ║  14. M3 BET      — $10k sector portfolio builder         ║
- * ║  15. M3 COMBINED — combined M2+M3 portfolio + bar chart  ║
- * ║  16. M3 THESIS   — reflection & completion               ║
- * ║  17. PTM TOOL    — Power of Time & Money calculator      ║
- * ║  18. INIT        — app startup                           ║
- * ║                                                          ║
- * ║  TO ADD A NEW MISSION:                                   ║
- * ║   1. Add entry to MISSIONS_CFG array (section 1)         ║
- * ║   2. Add HTML view divs in <body>                        ║
- * ║   3. Add a JS section with render functions              ║
- * ║   4. Register the view IDs in goTo() (section 3)         ║
- * ╚══════════════════════════════════════════════════════════╝
- */
-
-// ═══════════════════════════════════════════════════════
-// 1. CONSTANTS
-// ═══════════════════════════════════════════════════════
-const COMPANIES = [
-  {id:'ko',   name:'Coca-Cola',   ticker:'KO',   logo:'🥤', bg:'#e63946', example:true,  pre:{price:'64',pe:'24',wkHigh:'74',wkLow:'57',mktCap:'280',revGrowth:'2',divYield:'3.1'}},
-  {id:'aapl', name:'Apple',       ticker:'AAPL', logo:'🍎', bg:'#555555', example:false, pre:null},
-  {id:'googl',name:'Alphabet',    ticker:'GOOGL',logo:'🔵', bg:'#4285F4', example:false, pre:null},
-  {id:'tsla', name:'Tesla',       ticker:'TSLA', logo:'⚡', bg:'#cc0000', example:false, pre:null},
-  {id:'amzn', name:'Amazon',      ticker:'AMZN', logo:'📦', bg:'#ff9900', example:false, pre:null},
-  {id:'nke',  name:'Nike',        ticker:'NKE',  logo:'👟', bg:'#111111', example:false, pre:null},
-  {id:'mcd',  name:"McDonald's",  ticker:'MCD',  logo:'🍔', bg:'#DA291C', example:false, pre:null},
-];
-
-const TICKER_SECTOR = {KO:'Consumer Staples',AAPL:'Technology',GOOGL:'Technology',TSLA:'Consumer Discretionary',AMZN:'Consumer Discretionary',NKE:'Consumer Discretionary',MCD:'Consumer Discretionary'};
-const SECTOR_COLORS = {'Technology':'#3b82f6','Consumer Staples':'#22c55e','Consumer Discretionary':'#f97316','Healthcare':'#a855f7','Energy':'#f59e0b','Financials':'#6366f1','Finance':'#6366f1','Utilities':'#06b6d4','Real Estate':'#84cc16','Materials':'#78716c','Industrials':'#0ea5e9','Communication Services':'#ec4899','Other':'#94a3b8'};
-const ALL_SECTORS = [
-  {id:'Technology',           icon:'💻', badge:'cyclical',  desc:'Software, hardware, AI — the engine of the future!',                      examples:'Apple, Google, Microsoft, Nvidia'},
-  {id:'Healthcare',           icon:'🏥', badge:'defensive', desc:'Medicines, hospitals, biotech — always needed no matter what',              examples:'Johnson & Johnson, Pfizer, UnitedHealth'},
-  {id:'Consumer Staples',     icon:'🛒', badge:'defensive', desc:'Food, drinks, soap — the basics people always buy',                         examples:'Coca-Cola, Procter & Gamble, Walmart'},
-  {id:'Consumer Discretionary',icon:'🛍️',badge:'cyclical',  desc:'Fun stuff people buy when they have extra money',                           examples:"Tesla, Amazon, Nike, McDonald's"},
-  {id:'Energy',               icon:'⚡', badge:'cyclical',  desc:'Oil, gas, solar & wind — powering everything around us',                    examples:'ExxonMobil, Chevron, NextEra Energy'},
-  {id:'Financials',           icon:'🏦', badge:'cyclical',  desc:'Banks, insurance, credit cards — the money movers',                         examples:'JPMorgan, Visa, Berkshire Hathaway'},
-  {id:'Utilities',            icon:'💡', badge:'defensive', desc:'Electricity, water, gas companies — always on!',                            examples:'Duke Energy, Southern Company, Xcel Energy'},
-  {id:'Real Estate',          icon:'🏠', badge:'cyclical',  desc:'Buildings, apartments, shopping malls',                                     examples:'Simon Property Group, Public Storage'},
-  {id:'Materials',            icon:'⛏️', badge:'cyclical',  desc:'Metals, chemicals, paper — raw materials for everything',                   examples:'3M, Dow, Freeport-McMoRan'},
-  {id:'Industrials',          icon:'🏗️', badge:'cyclical',  desc:'Manufacturing, shipping, aerospace, construction',                          examples:'Boeing, Caterpillar, FedEx, Deere & Co.'},
-  {id:'Communication Services',icon:'📡',badge:'cyclical',  desc:'Social media, streaming, telecom, entertainment',                           examples:'Meta, Netflix, AT&T, Disney'},
-];
-
-const MISSIONS_CFG = [
-  {id:'m1',num:1,title:'Find the Best Stock',subtitle:'Stock Detective',icon:'🕵️',color:'#f5c842',
-   learn:['Analyze 6 key stock metrics','Compare 7 real companies','Make your first investment verdict'],
-   steps:['m1-cheat','m1-table','m1-score'],stepLabels:['Cheat Sheet','Investigate','Score'],alwaysUnlocked:true},
-  {id:'m2',num:2,title:'Build Your Portfolio',subtitle:'Virtual Investor',icon:'💼',color:'#22c55e',
-   learn:['Invest $10,000 virtual money','Track real stock performance','Learn about diversification'],
-   steps:['m2-intro','m2-build','m2-track','m2-verdict'],stepLabels:['Intro','Build','Track','Verdict'],requiresM1:true},
-  {id:'m3',num:3,title:'The Sector Bet',subtitle:'Sector Investor',icon:'🗺️',color:'#a855f7',
-   learn:['Explore all 11 market sectors','Pick your winning sector','Invest a fresh $10,000 sector bet'],
-   steps:['m3-intro','m3-explore','m3-bet','m3-combined','m3-thesis'],
-   stepLabels:['Intro','Explore','Invest','Combined','Thesis'],requiresM2:true},
-  {id:'m4',num:4,title:'Bull & Bear Hunt',subtitle:'Coming Soon',icon:'🐻',color:'#f97316',
-   learn:['Understand market cycles','Learn what causes crashes','Strategies for every market'],comingSoon:true},
-];
-
-// ═══════════════════════════════════════════════════════
-// 2. STATE
-// ═══════════════════════════════════════════════════════
-const STATE_KEY = 'stockDetective_v2';
-
-function defaultState() {
-  const sd = {};
-  COMPANIES.forEach(c => { sd[c.id] = {price:'',pe:'',wkHigh:'',wkLow:'',mktCap:'',revGrowth:'',divYield:''}; });
-  sd.ko = {price:'64',pe:'24',wkHigh:'74',wkLow:'57',mktCap:'280',revGrowth:'2',divYield:'3.1'};
-  return {
-    detectiveName:'',
-    m1:{completed:false,completedAt:null,stockData:sd,
-        verdict:{q1:'',q2:'',q3:'',investIn:'',investReason:'',notInvest:'',notReason:'',stars:0}},
-    m2:{completed:false,completedAt:null,budget:10000,portfolio:[],
-        verdict:{q1:'',q2:'',stars:0}},
-    m3:{completed:false,completedAt:null,budget:10000,selectedSector:null,portfolio:[],
-        verdict:{q1:'',q2:'',stars:0}},
-  };
-}
-
-let S = (() => {
-  try {
-    const raw = localStorage.getItem(STATE_KEY);
-    if(raw) {
-      const p = JSON.parse(raw), d = defaultState();
-      return {...d,...p,
-        m1:{...d.m1,...p.m1,stockData:{...d.m1.stockData,...(p.m1?.stockData||{})},verdict:{...d.m1.verdict,...(p.m1?.verdict||{})}},
-        m2:{...d.m2,...p.m2,verdict:{...d.m2.verdict,...(p.m2?.verdict||{})}},
-        m3:{...d.m3,...(p.m3||{}),verdict:{...d.m3.verdict,...(p.m3?.verdict||{})}}};
+// Scroll-based reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      observer.unobserve(el.target);
     }
-  } catch(e){}
-  return defaultState();
-})();
-
-function save(){try{localStorage.setItem(STATE_KEY,JSON.stringify(S));}catch(e){}}
-
-// ═══════════════════════════════════════════════════════
-// 3. ROUTER
-// ═══════════════════════════════════════════════════════
-let currentView = 'dashboard';
-
-function goTo(v) {
-  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  const el = document.getElementById('view-'+v);
-  if(el) el.classList.add('active');
-  currentView = v;
-  renderNav(v);
-  if(v==='dashboard') renderDashboard();
-  if(v==='m1-table'){buildTabs();buildPanels();updateM1Progress();}
-  if(v==='m1-score') renderM1Score();
-  if(v==='m2-build') renderM2Build();
-  if(v==='m2-track') renderM2Track();
-  if(v==='m2-verdict') renderM2Verdict();
-  if(v==='m3-explore') renderM3Explore();
-  if(v==='m3-bet') renderM3Bet();
-  if(v==='m3-combined') renderM3Combined();
-  if(v==='m3-thesis') renderM3Thesis();
-  if(v==='ptm') renderPTM();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function renderNav(v) {
-  const steps = document.getElementById('navSteps');
-  const dashBtn = document.getElementById('navDashBtn');
-  const ptmBtn  = document.getElementById('navPtmBtn');
-  dashBtn.style.display = (v==='dashboard') ? 'none' : 'block';
-  ptmBtn.style.display  = (v==='ptm')       ? 'none' : 'block';
-  if(v==='dashboard'){steps.innerHTML='';return;}
-  const mId = v.split('-')[0]; // 'm1' or 'm2'
-  const mc = MISSIONS_CFG.find(m=>m.id===mId);
-  if(mc&&mc.steps){
-    const idx = mc.steps.indexOf(v);
-    steps.innerHTML = mc.steps.map((s,i)=>`<button class="nav-step${i===idx?' active':i<idx?' done':''}" onclick="goTo('${s}')">${mc.stepLabels[i]}</button>`).join('');
-  } else steps.innerHTML='';
-}
-
-// ═══════════════════════════════════════════════════════
-// 4. DASHBOARD
-// ═══════════════════════════════════════════════════════
-function renderDashboard() {
-  const done  = MISSIONS_CFG.filter(m=>!m.comingSoon&&S[m.id]?.completed).length;
-  const total = MISSIONS_CFG.filter(m=>!m.comingSoon).length;
-  const name  = S.detectiveName;
-
-  // ── Middle card: name entry (new) OR detective profile (returning) ──
-  let middleCard;
-  if(!name){
-    middleCard = `
-      <div class="hero-name-card">
-        <h3>🕵️ What's your detective name?</h3>
-        <p>Every great investor needs a code name. What's yours?</p>
-        <input class="name-input" type="text" id="nameInput" placeholder="Enter your name..." maxlength="24"
-          onkeydown="if(event.key==='Enter')saveName()" style="text-align:center">
-        <br><br>
-        <button class="btn-primary" onclick="saveName()">Accept the Mission →</button>
-      </div>`;
-  } else {
-    const portfolioChange = getPortfolioChange();
-    const portfolioVal    = getPortfolioValue();
-    const checks = getM1TotalChecks();
-    const motivation = done===0
-      ? '🔍 Your first mission is waiting — crack the code!'
-      : done===total
-      ? '🏆 All missions complete — you\'re a certified Stock Detective!'
-      : `⏳ Mission ${done+1} unlocked — keep going, Detective!`;
-
-    let statsHtml = `
-      <div class="stat-box"><div class="stat-num">${done}/${total}</div><div class="stat-label">Missions Done</div></div>
-      <div class="stat-box"><div class="stat-num">${checks}</div><div class="stat-label">✓ Checks Earned</div></div>`;
-    const hasM3 = S.m3?.portfolio?.length>0;
-    const combinedVal = portfolioVal + (hasM3 ? getM3CurrentValue() : 0);
-    if(S.m2.portfolio.length>0 || hasM3){
-      const combinedInvested = getM2Invested() + (hasM3 ? getM3Invested() : 0);
-      const isUp = combinedVal >= combinedInvested;
-      statsHtml += `<div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${fmtMoney(combinedVal)}</div><div class="stat-label">${hasM3?'Combined':'Portfolio'} Value</div></div>`;
-    }
-
-    middleCard = `
-      <div class="hero-name-card">
-        <div class="rh-row" style="justify-content:center;margin-bottom:12px">
-          <div class="rh-badge">🔍</div>
-          <div>
-            <div class="rh-greeting">Detective</div>
-            <div class="rh-name"><span>${name}</span><button class="edit-name-btn" onclick="editName()" title="Rename">✏️</button></div>
-          </div>
-        </div>
-        <div class="rh-stats" style="justify-content:center">${statsHtml}</div>
-        <div style="color:#9ab;font-size:.82em;margin-top:10px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:8px;border-left:3px solid var(--gold);text-align:left">${motivation}</div>
-        <div class="progress-bar-wrap" style="margin-top:12px;margin-bottom:0"><div class="progress-bar" style="width:${(done/total)*100}%"></div></div>
-      </div>`;
-  }
-
-  document.getElementById('dashContent').innerHTML = `
-    <div style="background:linear-gradient(135deg,rgba(13,27,42,1) 0%,rgba(20,40,70,1) 100%);border-bottom:2px solid rgba(245,200,66,.25);padding:28px 24px 24px;text-align:center">
-      <div style="display:inline-flex;align-items:center;gap:12px;margin-bottom:10px">
-        <span style="font-size:2.2em">🔍</span>
-        <div style="text-align:left">
-          <div style="color:var(--gold);font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:3px">Stock Detective Academy</div>
-          <div style="color:#fff;font-size:1.55em;font-weight:900;line-height:1.15">The Stock Market is a Puzzle.<br>You're the <em style="color:var(--gold);font-style:normal">Detective.</em></div>
-        </div>
-      </div>
-      ${middleCard}
-    </div>
-
-    <div style="max-width:1000px;margin:0 auto;padding:20px 16px 32px">
-      <div class="section-heading" style="text-align:center;margin-bottom:14px">🗺️ Your <em>Missions</em></div>
-      <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
-    </div>`;
-}
-
-function renderMissionCard(mc) {
-  if(mc.comingSoon) return `
-    <div class="mission-card locked">
-      <div class="mc-icon" style="opacity:.4">${mc.icon}</div>
-      <div><div class="mc-num">Mission ${mc.num}</div>
-      <div class="mc-card-title" style="color:#555">${mc.title}</div>
-      <div class="mc-subtitle" style="color:#444">${mc.subtitle}</div></div>
-      <div class="mc-action"><div class="mc-status coming-soon">🔒 Coming Soon</div></div>
-    </div>`;
-
-  const ms = S[mc.id];
-  const locked = (mc.requiresM1&&!S.m1.completed)||(mc.requiresM2&&!S.m2.completed);
-  const completed = ms?.completed;
-  const inProgress = !completed&&!locked&&hasProgress(mc.id);
-  const borderColor = locked?'#333':completed?'var(--green)':mc.color;
-
-  let statusHtml, actionHtml;
-  if(locked){
-    statusHtml=`<div class="mc-status locked-status">🔒 Complete Mission ${mc.requiresM2?2:1} first</div>`;
-    actionHtml=`<button class="mc-btn locked-btn" disabled>Locked</button>`;
-  } else if(completed){
-    statusHtml=`<div class="mc-status completed-status">✅ Completed!</div>`;
-    actionHtml=`<button class="mc-btn review-btn" onclick="goTo('${mc.steps[0]}')">Review →</button>`;
-  } else if(inProgress){
-    statusHtml=`<div class="mc-status progress-status">⏳ In Progress</div>`;
-    actionHtml=`<button class="mc-btn continue-btn" onclick="goTo('${mc.steps[0]}')">Continue →</button>`;
-  } else {
-    statusHtml=`<div class="mc-status new-status">🆕 Ready!</div>`;
-    actionHtml=`<button class="mc-btn start-btn" onclick="goTo('${mc.steps[0]}')">Start Mission →</button>`;
-  }
-
-  return `
-    <div class="mission-card ${locked?'locked':''} ${completed?'completed':''}" style="border-color:${borderColor}">
-      <div class="mc-icon">${mc.icon}</div>
-      <div><div class="mc-num">Mission ${mc.num}</div>
-      <div class="mc-card-title" style="color:${locked?'#666':mc.color}">${mc.title}</div>
-      <div class="mc-subtitle">${mc.subtitle}</div></div>
-      <div class="mc-action">${statusHtml}${actionHtml}</div>
-    </div>`;
-}
-
-function hasProgress(mId){
-  if(mId==='m1') return Object.values(S.m1.stockData).some(d=>Object.values(d).some(v=>v!==''));
-  if(mId==='m2') return S.m2.portfolio.length>0;
-  if(mId==='m3') return (S.m3?.portfolio?.length>0)||S.m3?.selectedSector!==null;
-  return false;
-}
-
-// Returns {ok, researched, hasVerdict} — used by checklist + complete guard
-function canCompleteM1(){
-  const nonExample = COMPANIES.filter(c=>!c.example);
-  const researched  = nonExample.filter(c=>{
-    const filled = Object.values(S.m1.stockData[c.id]).filter(v=>v!=='').length;
-    return filled >= 4; // at least 4 of 5 scoring fields filled
-  }).length;
-  const hasVerdict = (S.m1.verdict.investIn||'').trim()!=='';
-  return { ok: researched>=3 && hasVerdict, researched, required:3, hasVerdict };
-}
-
-// Returns {ok, stockCount, hasPriceUpdate, hasReflection} — used by checklist + complete guard
-function canCompleteM2(){
-  const stockCount     = S.m2.portfolio.length;
-  const hasPriceUpdate = S.m2.portfolio.some(p=>p.priceHistory.length>1);
-  const hasReflection  = (S.m2.verdict.q1||'').trim()!=='';
-  return { ok: stockCount>=2 && hasPriceUpdate && hasReflection, stockCount, hasPriceUpdate, hasReflection };
-}
-
-function saveName(){
-  const v=(document.getElementById('nameInput')?.value||'').trim();
-  if(v){S.detectiveName=v;save();renderDashboard();}
-}
-function editName(){
-  const n=prompt('Enter your detective name:',S.detectiveName||'');
-  if(n!==null&&n.trim()){S.detectiveName=n.trim();save();renderDashboard();}
-}
-function getM1TotalChecks(){
-  let t=0;
-  COMPANIES.forEach(c=>{const sg=calcSignals(S.m1.stockData[c.id]);t+=countChecks(sg);});
-  return t;
-}
-
-// ═══════════════════════════════════════════════════════
-// 5. MISSION 1 — SIGNALS  (scoring logic: ✓ ~ ✗)
-// ═══════════════════════════════════════════════════════
-function calcSignals(d){
-  const n=v=>parseFloat(v);
-  const sigs={};
-  // P/E
-  if(d.pe!==''){const pe=n(d.pe);sigs.pe=isNaN(pe)?'empty':pe<25?'good':pe<=50?'okay':'warn';}else sigs.pe='empty';
-  // 52-wk
-  if(d.price!==''&&d.wkHigh!==''&&d.wkLow!==''){
-    const p=n(d.price),hi=n(d.wkHigh),lo=n(d.wkLow);
-    if(!isNaN(p)&&!isNaN(hi)&&!isNaN(lo)&&hi>lo){
-      const pos=(p-lo)/(hi-lo);
-      sigs.wk=pos<=0.25?'good':pos>=0.75?'warn':'okay';
-    }else sigs.wk='empty';
-  }else sigs.wk='empty';
-  // mktCap
-  if(d.mktCap!==''){const mc=n(d.mktCap);sigs.mktCap=isNaN(mc)?'empty':mc>=10?'good':mc>=2?'okay':'warn';}else sigs.mktCap='empty';
-  // revGrowth
-  if(d.revGrowth!==''){const rg=n(d.revGrowth);sigs.revGrowth=isNaN(rg)?'empty':rg>10?'good':rg>=0?'okay':'warn';}else sigs.revGrowth='empty';
-  // divYield
-  if(d.divYield!==''){const dy=n(d.divYield);sigs.divYield=isNaN(dy)?'empty':dy>=2?'good':dy>0?'okay':'warn';}else sigs.divYield='empty';
-  sigs.price=sigs.wk;
-  return sigs;
-}
-function countChecks(sigs){return Object.values(sigs).filter(s=>s==='good').length;}
-function sigLabel(s){return s==='good'?'✓':s==='okay'?'~':s==='warn'?'✗':'—';}
-function sigCls(s){return s==='empty'?'empty':s;}
-
-function sigBadge(sig){
-  const labels={good:'✓ Good',okay:'~ Okay',warn:'✗ Warning',empty:'Enter value'};
-  return `<span class="signal-badge ${sigCls(sig)}">${labels[sig]||'—'}</span>`;
-}
-
-// ═══════════════════════════════════════════════════════
-// 6. MISSION 1 — TABLE  (company investigation panels)
-// ═══════════════════════════════════════════════════════
-let m1CurrentTab = 'ko';
-
-function buildTabs(){
-  document.getElementById('companyTabs').innerHTML = COMPANIES.map(co=>{
-    const d=S.m1.stockData[co.id];
-    const filled=Object.values(d).filter(v=>v!=='').length;
-    return `<button class="co-tab${co.id===m1CurrentTab?' active':''}${filled>=5?' complete':''}" onclick="switchM1Tab('${co.id}')">${co.logo} ${co.name}</button>`;
-  }).join('');
-}
-
-function buildPanels(){
-  document.getElementById('companyPanels').innerHTML = COMPANIES.map(co=>`
-    <div class="company-panel${co.id===m1CurrentTab?' active':''}" id="panel-${co.id}">
-      ${buildPanel(co)}
-    </div>`).join('');
-}
-
-function buildPanel(co){
-  const d=S.m1.stockData[co.id];
-  const sigs=calcSignals(d);
-  const score=countChecks(sigs);
-  const lk=co.example?'locked':'';
-  const ro=co.example?'readonly':'';
-  const sv=k=>d[k]||'';
-
-  return `<div class="co-card">
-    <div class="co-header">
-      <div class="co-logo" style="background:${co.bg}">${co.logo}</div>
-      <div>
-        <div class="co-name">${co.name}${co.example?'<span class="co-example-badge">EXAMPLE ★</span>':''}</div>
-        <div class="co-ticker">${co.ticker}</div>
-      </div>
-    </div>
-    ${co.example
-      ?'<div class="hint-box">⭐ <strong>Pre-filled as example.</strong> Notice how each number gets a ✓ ~ ✗ signal. Use this to fill in the other companies!</div>'
-      :`<div class="hint-box">🔍 <strong>Your turn!</strong> Search <strong>${co.ticker}</strong> on Yahoo Finance or Google Finance, then type the numbers below.</div>`}
-    <div class="fields-grid">
-      <div class="field-group">
-        <div class="field-label">① Stock Price <span>($)</span></div>
-        <input class="field-input ${lk}" type="number" step="0.01" placeholder="e.g. 150.25" ${ro} value="${sv('price')}" oninput="m1Update('${co.id}','price',this.value)">
-      </div>
-      <div class="field-group">
-        <div class="field-label">② P/E Ratio</div>
-        <input class="field-input ${lk}" type="number" step="0.1" placeholder="e.g. 28" ${ro} value="${sv('pe')}" oninput="m1Update('${co.id}','pe',this.value)">
-        <div class="signal-display" id="sig-pe-${co.id}">${sigBadge(sigs.pe)}</div>
-      </div>
-      <div class="field-group">
-        <div class="field-label">③ 52-Wk High</div>
-        <input class="field-input ${lk}" type="number" step="0.01" placeholder="e.g. 200" ${ro} value="${sv('wkHigh')}" oninput="m1Update('${co.id}','wkHigh',this.value)">
-      </div>
-      <div class="field-group">
-        <div class="field-label">③ 52-Wk Low</div>
-        <input class="field-input ${lk}" type="number" step="0.01" placeholder="e.g. 130" ${ro} value="${sv('wkLow')}" oninput="m1Update('${co.id}','wkLow',this.value)">
-        <div class="signal-display" id="sig-wk-${co.id}">${sigBadge(sigs.wk)}</div>
-      </div>
-      <div class="field-group">
-        <div class="field-label">④ Market Cap <span>(billions)</span></div>
-        <input class="field-input ${lk}" type="number" step="1" placeholder="e.g. 2800" ${ro} value="${sv('mktCap')}" oninput="m1Update('${co.id}','mktCap',this.value)">
-        <div class="signal-display" id="sig-mktCap-${co.id}">${sigBadge(sigs.mktCap)}</div>
-      </div>
-      <div class="field-group">
-        <div class="field-label">⑤ Revenue Growth <span>(%)</span></div>
-        <input class="field-input ${lk}" type="number" step="0.1" placeholder="e.g. 5.2" ${ro} value="${sv('revGrowth')}" oninput="m1Update('${co.id}','revGrowth',this.value)">
-        <div class="signal-display" id="sig-revGrowth-${co.id}">${sigBadge(sigs.revGrowth)}</div>
-      </div>
-      <div class="field-group">
-        <div class="field-label">⑥ Dividend Yield <span>(%)</span></div>
-        <input class="field-input ${lk}" type="number" step="0.01" placeholder="e.g. 1.5" ${ro} value="${sv('divYield')}" oninput="m1Update('${co.id}','divYield',this.value)">
-        <div class="signal-display" id="sig-divYield-${co.id}">${sigBadge(sigs.divYield)}</div>
-      </div>
-    </div>
-    <div class="co-score-bar">
-      <div><div style="color:#9ab;font-size:.82em">Score for ${co.name}</div>
-        <div><span class="co-score-num" id="coscore-${co.id}">${score}</span> <span style="color:#555;font-size:.82em">/ 5 ✓</span></div>
-      </div>
-      <div class="score-pips" id="pips-${co.id}">${[1,2,3,4,5].map(i=>`<div class="pip${i<=score?' filled':''}"></div>`).join('')}</div>
-    </div>
-    <div class="lookup-links">
-      <a class="lookup-tip" href="https://finance.yahoo.com/quote/${co.ticker}" target="_blank">📊 Yahoo Finance: ${co.ticker} ↗</a>
-      <a class="lookup-tip" href="https://www.google.com/finance/quote/${co.ticker}" target="_blank">🔍 Google Finance: ${co.ticker} ↗</a>
-    </div>
-  </div>`;
-}
-
-function switchM1Tab(id){
-  m1CurrentTab=id;
-  document.querySelectorAll('.company-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.co-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('panel-'+id)?.classList.add('active');
-  buildTabs();
-}
-
-function m1Update(coId,field,value){
-  S.m1.stockData[coId][field]=value;
-  save();
-  const sigs=calcSignals(S.m1.stockData[coId]);
-  ['pe','wk','mktCap','revGrowth','divYield'].forEach(k=>{
-    const el=document.getElementById(`sig-${k}-${coId}`);
-    if(el) el.innerHTML=sigBadge(sigs[k]);
   });
-  const score=countChecks(sigs);
-  const scoreEl=document.getElementById(`coscore-${coId}`);
-  if(scoreEl) scoreEl.textContent=score;
-  const pipsEl=document.getElementById(`pips-${coId}`);
-  if(pipsEl) pipsEl.innerHTML=[1,2,3,4,5].map(i=>`<div class="pip${i<=score?' filled':''}"></div>`).join('');
-  buildTabs();
-  updateM1Progress();
-}
-
-function updateM1Progress(){
-  let filled=0,total=COMPANIES.length*5;
-  COMPANIES.forEach(c=>{filled+=Object.values(S.m1.stockData[c.id]).filter(v=>v!=='').length;});
-  const bar=document.getElementById('m1ProgressBar');
-  if(bar) bar.style.width=Math.min(100,Math.round(filled/total*100))+'%';
-}
-
-// ═══════════════════════════════════════════════════════
-// 7. MISSION 1 — SCORE  (scoreboard, verdict, completion)
-// ═══════════════════════════════════════════════════════
-function renderM1Score(){
-  const rows=COMPANIES.map(co=>{const sigs=calcSignals(S.m1.stockData[co.id]);return{co,sigs,score:countChecks(sigs)};});
-  const maxScore=Math.max(...rows.map(r=>r.score));
-  const winner=rows.reduce((a,b)=>b.score>a.score?b:a);
-  const v=S.m1.verdict;
-
-  document.getElementById('m1ScoreContent').innerHTML=`
-    <div class="page-title">🏆 Score & My Verdict</div>
-    <div class="page-sub">Tally scores then write your final investment decision!</div>
-    ${maxScore>0?`<div class="winner-banner"><h2>🏆 Current Leader: ${winner.co.logo} ${winner.co.name}</h2><p>Score: ${winner.score}/5 check marks — highest by the numbers!</p></div>`:''}
-    <div class="verdict-section">
-      <h3>📊 Final Scoreboard</h3>
-      <div style="overflow-x:auto">
-        <table class="scoreboard-table">
-          <thead><tr><th>Company</th><th>① Price</th><th>② P/E</th><th>③ 52-Wk</th><th>④ Cap</th><th>⑤ Revenue</th><th>⑥ Dividend</th><th>TOTAL ✓</th></tr></thead>
-          <tbody>${rows.map(({co,sigs,score})=>`
-            <tr class="${score===maxScore&&score>0?'top-row':''}">
-              <td>${co.logo} ${co.name}</td>
-              <td><span class="sig-small ${sigCls(sigs.price)}">${sigLabel(sigs.price)}</span></td>
-              <td><span class="sig-small ${sigCls(sigs.pe)}">${sigLabel(sigs.pe)}</span></td>
-              <td><span class="sig-small ${sigCls(sigs.wk)}">${sigLabel(sigs.wk)}</span></td>
-              <td><span class="sig-small ${sigCls(sigs.mktCap)}">${sigLabel(sigs.mktCap)}</span></td>
-              <td><span class="sig-small ${sigCls(sigs.revGrowth)}">${sigLabel(sigs.revGrowth)}</span></td>
-              <td><span class="sig-small ${sigCls(sigs.divYield)}">${sigLabel(sigs.divYield)}</span></td>
-              <td class="score-cell ${score===maxScore&&score>0?'top':''}">${score}${score===maxScore&&score>0?' 🏆':''}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="verdict-section">
-      <h3>🤔 Think Like an Investor!</h3>
-      <div class="questions">
-        <div class="question"><label>Q1: Which company got the MOST check marks? Would you invest in it? Why?</label>
-          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q1=this.value;save()">${v.q1}</textarea></div>
-        <div class="question"><label>Q2: Tesla is famous and cool — but what do the numbers say?</label>
-          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q2=this.value;save()">${v.q2}</textarea></div>
-        <div class="question"><label>Q3: Coca-Cola has been around 130+ years. Which number says it's "safe"? Which says it's not growing fast?</label>
-          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q3=this.value;save()">${v.q3}</textarea></div>
-      </div>
-    </div>
-    <div class="verdict-section">
-      <h3>🏆 My Investment Verdict — If I Had $1,000 to Invest...</h3>
-      <div class="verdict-row" style="margin-bottom:14px">
-        <div class="verdict-box"><label>I would invest in:</label><input type="text" placeholder="Company name..." value="${v.investIn}" oninput="S.m1.verdict.investIn=this.value;save();refreshM1VerdictCheck(this.value)"></div>
-        <div class="verdict-box"><label>Because (2 reasons):</label><textarea style="min-height:48px" placeholder="1.&#10;2." oninput="S.m1.verdict.investReason=this.value;save()">${v.investReason}</textarea></div>
-      </div>
-      <div class="verdict-row">
-        <div class="verdict-box"><label>I would NOT invest in:</label><input type="text" placeholder="Company name..." value="${v.notInvest}" oninput="S.m1.verdict.notInvest=this.value;save()"></div>
-        <div class="verdict-box"><label>Because the numbers showed:</label><textarea style="min-height:48px" placeholder="The numbers showed..." oninput="S.m1.verdict.notReason=this.value;save()">${v.notReason}</textarea></div>
-      </div>
-      <div style="margin-top:16px">
-        <div style="color:#9ab;font-size:.75em;margin-bottom:6px;font-weight:600;text-transform:uppercase">How much did you enjoy this?</div>
-        <div class="stars-row" id="m1StarsRow">${[1,2,3,4,5].map(i=>`<button class="star-btn${i<=(v.stars||0)?' lit':''}" onclick="setM1Star(${i})">⭐</button>`).join('')}</div>
-      </div>
-    </div>
-    <div style="background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);border-radius:10px;padding:14px 18px;color:#f5c842cc;font-size:.83em;line-height:1.7;margin-bottom:18px">
-      💡 <strong style="color:var(--gold)">Fun Fact:</strong> Warren Buffett started buying stocks when he was just <strong>11 years old!</strong> He bought 3 shares for $38 each. Today he's worth over $100 billion. The best time to start is <em>right now!</em>
-    </div>
-    ${S.m1.completed ? '' : m1Checklist()}
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goTo('m1-table')">← Back to Table</button>
-      ${S.m1.completed
-        ?`<button class="btn-green" onclick="goTo('m2-intro')">Go to Mission 2 →</button>`
-        :`<button class="complete-mission-btn" onclick="completeM1()">✅ Complete Mission 1 — Unlock Portfolio Builder!</button>`}
-    </div>`;
-}
-
-function m1Checklist(){
-  const c = canCompleteM1();
-  return `
-  <div class="ccl-wrap">
-    <div class="ccl-title">📋 Complete these steps before you can finish Mission 1</div>
-    <div class="ccl-item ${c.researched>=3?'done':'todo'}">
-      <div class="ccl-icon">${c.researched>=3?'✅':'⬜'}</div>
-      <div>Research at least 3 companies in the Investigate tab
-        <span class="ccl-sub">${c.researched} of 3 researched (need 4+ fields filled per company)</span>
-      </div>
-    </div>
-    <div class="ccl-item ${c.hasVerdict?'done':'todo'}">
-      <div class="ccl-icon">${c.hasVerdict?'✅':'⬜'}</div>
-      <div>Fill in your Investment Verdict below — which company would you invest in?
-        <span class="ccl-sub">${c.hasVerdict?'Done ✓':'Fill in the "I would invest in" box below'}</span>
-      </div>
-    </div>
-  </div>
-  <div class="complete-error" id="m1CompleteError">
-    ⛔ Not quite done yet! Check the list above and complete those steps first.
-  </div>`;
-}
-
-// Refresh only the verdict checklist item live as they type
-function refreshM1VerdictCheck(val){
-  const filled = val.trim()!=='';
-  const item = document.querySelector('.ccl-item:last-child');
-  if(!item) return;
-  item.className = 'ccl-item '+(filled?'done':'todo');
-  item.querySelector('.ccl-icon').textContent = filled?'✅':'⬜';
-  item.querySelector('.ccl-sub').textContent   = filled?'Done ✓':'Fill in the "I would invest in" box below';
-}
-
-function setM1Star(n){
-  S.m1.verdict.stars=n;save();
-  document.querySelectorAll('#m1StarsRow .star-btn').forEach((b,i)=>b.classList.toggle('lit',i<n));
-}
-
-function completeM1(){
-  const check = canCompleteM1();
-  if(!check.ok){
-    const err = document.getElementById('m1CompleteError');
-    if(err){ err.classList.add('show'); err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); }
-    return;
-  }
-  S.m1.completed=true;S.m1.completedAt=new Date().toISOString();save();
-  confetti();
-  document.getElementById('m1ScoreContent').innerHTML=`
-    <div class="completion-screen">
-      <div class="completion-badge">🏆</div>
-      <div class="completion-title">Mission 1 Complete!</div>
-      <div class="completion-sub" style="margin-bottom:20px">You've earned your Stock Detective badge!<br>Mission 2 is now unlocked.</div>
-      <button class="btn-green" onclick="goTo('m2-intro')">Start Mission 2: Build Your Portfolio →</button>
-      <br><br><button class="btn-secondary" onclick="goTo('dashboard')">Go to Dashboard</button>
-    </div>`;
-}
-
-// ═══════════════════════════════════════════════════════
-// 8. MISSION 2 — BUILD  ($10k portfolio builder)
-// ═══════════════════════════════════════════════════════
-let m2SelectedStock = null;
-
-function getM2Invested(){return S.m2.portfolio.reduce((s,p)=>s+p.buyPrice*p.shares,0);}
-function getM2Remaining(){return S.m2.budget-getM2Invested();}
-
-function renderM2Build(){
-  const remaining=getM2Remaining();
-  const invested=getM2Invested();
-  const pct=Math.min(100,(invested/S.m2.budget)*100);
-
-  // Build stock options (M1 companies + custom)
-  const addedTickers=new Set(S.m2.portfolio.map(p=>p.ticker));
-
-  const stockCards=COMPANIES.map(co=>{
-    const sigs=calcSignals(S.m1.stockData[co.id]);
-    const score=countChecks(sigs);
-    const isAdded=addedTickers.has(co.ticker);
-    const isSelected=m2SelectedStock===co.id&&!isAdded;
-    const hasData=Object.values(S.m1.stockData[co.id]).some(v=>v!=='');
-    return `<div class="stock-pick-card${isSelected?' selected':''}${isAdded?' added':''}" onclick="${isAdded?'':`selectM2Stock('${co.id}')`}">
-      ${isAdded?'<div class="spc-added-badge">✓ Added</div>':''}
-      <div class="spc-logo">${co.logo}</div>
-      <div class="spc-name">${co.name}</div>
-      <div class="spc-ticker">${co.ticker}</div>
-      <div class="spc-m1score ${hasData?'':'no-data'}">${hasData?`M1: ${score}/5 ✓`:'Not researched'}</div>
-    </div>`;
-  }).join('');
-
-  const addForm = m2SelectedStock&&!addedTickers.has(COMPANIES.find(c=>c.id===m2SelectedStock)?.ticker) ? buildAddForm() : '';
-
-  const portfolioList = S.m2.portfolio.length===0
-    ? '<div style="color:#666;font-size:.85em;padding:10px 0">No stocks added yet — pick one above!</div>'
-    : S.m2.portfolio.map(p=>buildPortfolioItem(p)).join('');
-
-  const pieData = buildPieData();
-
-  document.getElementById('m2BuildContent').innerHTML=`
-    <div class="page-title">💼 Build Your Portfolio</div>
-    <div class="page-sub">You have $10,000 virtual dollars. Pick stocks, decide how many shares, and build your portfolio!</div>
-
-    <div class="budget-bar-wrap">
-      <div class="budget-bar-header">
-        <div class="budget-title">💰 Budget Tracker</div>
-        <div class="budget-nums">
-          <div class="budget-stat"><div class="val" style="color:var(--red)">${fmtMoney(invested)}</div><div class="lbl">Invested</div></div>
-          <div class="budget-stat"><div class="val" style="color:var(--green)">${fmtMoney(remaining)}</div><div class="lbl">Remaining</div></div>
-        </div>
-      </div>
-      <div class="budget-track"><div class="budget-fill" style="width:${pct}%"></div></div>
-    </div>
-
-    <div class="card" style="margin-bottom:18px">
-      <div style="color:var(--gold);font-weight:700;margin-bottom:12px;font-size:.95em">🔎 Pick a Stock to Add <span style="color:#666;font-size:.8em;font-weight:400">(tap to select)</span></div>
-      <div class="stock-picker">${stockCards}
-        <div class="stock-pick-card${m2SelectedStock==='custom'?' selected':''}" onclick="selectM2Stock('custom')">
-          <div class="spc-logo">➕</div>
-          <div class="spc-name">Custom</div>
-          <div class="spc-ticker">Any stock</div>
-          <div class="spc-m1score no-data">Enter ticker</div>
-        </div>
-      </div>
-      ${addForm}
-    </div>
-
-    ${S.m2.portfolio.length>0?`
-    <div class="card" style="margin-bottom:18px">
-      <div style="color:var(--gold);font-weight:700;margin-bottom:14px;font-size:.95em">📋 Your Portfolio (${S.m2.portfolio.length} stocks)</div>
-      <div class="portfolio-list">${portfolioList}</div>
-    </div>
-    <div class="pie-section">
-      <div>
-        <div style="color:var(--gold);font-weight:700;margin-bottom:10px;font-size:.9em">🥧 Portfolio Allocation</div>
-        <div id="pieChartWrap"></div>
-      </div>
-      <div>
-        <div style="color:var(--gold);font-weight:700;margin-bottom:10px;font-size:.9em">📊 Sector Breakdown</div>
-        <div class="pie-legend" id="pieLegend"></div>
-        <br>
-        <div class="diversification-score">
-          <div class="div-score-label">Diversification Score</div>
-          <div class="div-stars">${getDivStars()}</div>
-          <div class="div-msg">${getDivMsg()}</div>
-        </div>
-      </div>
-    </div>`:''}
-
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goTo('m2-intro')">← Intro</button>
-      ${S.m2.portfolio.length>=2
-        ?`<button class="btn-primary" onclick="goTo('m2-track')">Track Performance →</button>`
-        :`<button class="btn-secondary" disabled style="opacity:.4" title="Add at least 2 stocks first">Add 2+ stocks to continue →</button>`}
-    </div>`;
-
-  if(S.m2.portfolio.length>0) drawPieChart('pieChartWrap','pieLegend',pieData);
-}
-
-function buildAddForm(){
-  const co = m2SelectedStock==='custom' ? null : COMPANIES.find(c=>c.id===m2SelectedStock);
-  const remaining=getM2Remaining();
-  const isCustom=m2SelectedStock==='custom';
-  const today=new Date().toISOString().split('T')[0];
-
-  return `<div class="add-form">
-    <h4>${co?`${co.logo} Add ${co.name} (${co.ticker}) to Portfolio`:'➕ Add Custom Stock'}</h4>
-    ${isCustom?`<div class="add-form-grid">
-      <div class="field-group"><div class="field-label">Ticker</div><input class="field-input" id="customTicker" type="text" placeholder="e.g. MSFT" style="text-transform:uppercase"></div>
-      <div class="field-group"><div class="field-label">Company Name</div><input class="field-input" id="customName" type="text" placeholder="e.g. Microsoft"></div>
-      <div class="field-group"><div class="field-label">Sector</div>
-        <select class="field-input" id="customSector" style="background:#1a2a3a;color:#fff">
-          ${Object.keys(SECTOR_COLORS).map(s=>`<option value="${s}">${s}</option>`).join('')}
-        </select>
-      </div>
-    </div>`:''}
-    <div class="add-form-grid">
-      <div class="field-group"><div class="field-label">Shares</div><input class="field-input" id="addShares" type="number" min="1" step="1" placeholder="e.g. 5" oninput="updateAddTotal()"></div>
-      <div class="field-group"><div class="field-label">Buy Price ($)</div><input class="field-input" id="addPrice" type="number" min="0.01" step="0.01" placeholder="e.g. 185.50" oninput="updateAddTotal()"></div>
-      <div class="field-group"><div class="field-label">Buy Date</div><input class="field-input" id="addDate" type="date" value="${today}"></div>
-    </div>
-    <div class="add-form-total">Total cost: <strong id="addTotal">$0.00</strong> &nbsp;|&nbsp; Remaining after: <strong id="addRemaining">${fmtMoney(remaining)}</strong></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn-primary" style="padding:9px 24px;font-size:.88em" onclick="confirmAddStock()">Add to Portfolio ✓</button>
-      <button class="btn-secondary" style="padding:9px 20px;font-size:.88em" onclick="m2SelectedStock=null;renderM2Build()">Cancel</button>
-    </div>
-  </div>`;
-}
-
-function selectM2Stock(id){m2SelectedStock=id;renderM2Build();}
-
-function updateAddTotal(){
-  const shares=parseFloat(document.getElementById('addShares')?.value)||0;
-  const price=parseFloat(document.getElementById('addPrice')?.value)||0;
-  const total=shares*price;
-  const remaining=getM2Remaining()-total;
-  const el=document.getElementById('addTotal');
-  const el2=document.getElementById('addRemaining');
-  if(el) el.textContent=fmtMoney(total);
-  if(el2){el2.textContent=fmtMoney(remaining);el2.style.color=remaining<0?'var(--red)':'var(--green)';}
-}
-
-function confirmAddStock(){
-  const shares=parseFloat(document.getElementById('addShares')?.value);
-  const price=parseFloat(document.getElementById('addPrice')?.value);
-  const date=document.getElementById('addDate')?.value||new Date().toISOString().split('T')[0];
-  if(!shares||!price||shares<=0||price<=0){alert('Please enter valid shares and price!');return;}
-
-  const isCustom=m2SelectedStock==='custom';
-  let ticker,name,logo,bg;
-  if(isCustom){
-    ticker=(document.getElementById('customTicker')?.value||'').toUpperCase().trim();
-    name=document.getElementById('customName')?.value.trim()||ticker;
-    logo='📈';bg='#334';
-    if(!ticker){alert('Please enter a ticker!');return;}
-  } else {
-    const co=COMPANIES.find(c=>c.id===m2SelectedStock);
-    ticker=co.ticker;name=co.name;logo=co.logo;bg=co.bg;
-  }
-
-  const total=shares*price;
-  if(total>getM2Remaining()){alert(`Not enough budget! You have ${fmtMoney(getM2Remaining())} remaining.`);return;}
-
-  const sector=isCustom?(document.getElementById('customSector')?.value||'Other'):(TICKER_SECTOR[ticker]||'Other');
-
-  S.m2.portfolio.push({
-    id:Date.now().toString(),ticker,name,logo,bg,sector,shares,buyPrice:price,buyDate:date,
-    priceHistory:[{date,price,note:'Purchase price'}]
-  });
-  save();
-  m2SelectedStock=null;
-  renderM2Build();
-}
-
-function removeFromPortfolio(stockId){
-  if(!confirm('Remove this stock from your portfolio?')) return;
-  S.m2.portfolio=S.m2.portfolio.filter(p=>p.id!==stockId);save();renderM2Build();
-}
-
-function buildPortfolioItem(p){
-  const currentPrice=p.priceHistory[p.priceHistory.length-1].price;
-  const invested=p.buyPrice*p.shares;
-  const current=currentPrice*p.shares;
-  const gl=current-invested;
-  const glPct=(gl/invested)*100;
-  const pctOfTotal=(invested/S.m2.budget*100).toFixed(1);
-
-  return `<div class="portfolio-item">
-    <div class="pi-header">
-      <div class="pi-left">
-        <div class="pi-logo">${p.logo}</div>
-        <div>
-          <div class="pi-name">${p.name}</div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <div class="pi-ticker">${p.ticker}</div>
-            <div class="pi-sector" style="background:${SECTOR_COLORS[p.sector]||'#555'}">${p.sector}</div>
-          </div>
-        </div>
-      </div>
-      <button class="pi-remove" onclick="removeFromPortfolio('${p.id}')">✕ Remove</button>
-    </div>
-    <div class="pi-stats">
-      <div class="pi-stat"><div class="val">${p.shares} shares</div><div class="lbl">Shares owned</div></div>
-      <div class="pi-stat"><div class="val">${fmtMoney(p.buyPrice)}</div><div class="lbl">Buy price</div></div>
-      <div class="pi-stat"><div class="val">${fmtMoney(invested)}</div><div class="lbl">Total invested</div></div>
-      <div class="pi-stat"><div class="val">${pctOfTotal}%</div><div class="lbl">of budget</div></div>
-    </div>
-  </div>`;
-}
-
-function buildPieData(){
-  const total=getM2Invested()||1;
-  const sectorMap={};
-  S.m2.portfolio.forEach(p=>{
-    const val=p.buyPrice*p.shares;
-    sectorMap[p.sector]=(sectorMap[p.sector]||0)+val;
-  });
-  return Object.entries(sectorMap).map(([sector,val])=>({
-    label:sector,value:(val/total)*100,color:SECTOR_COLORS[sector]||'#555'
-  }));
-}
-
-function getDivStars(){
-  if(S.m2.portfolio.length===0) return '☆☆☆☆☆';
-  const sectors=new Set(S.m2.portfolio.map(p=>p.sector)).size;
-  const stocks=S.m2.portfolio.length;
-  const maxPct=Math.max(...S.m2.portfolio.map(p=>(p.buyPrice*p.shares)/Math.max(getM2Invested(),1)*100));
-  let score=0;
-  if(sectors>=3) score+=2; else if(sectors>=2) score+=1;
-  if(stocks>=4) score+=2; else if(stocks>=2) score+=1;
-  if(maxPct<=40) score+=1;
-  const filled=Math.min(5,score);
-  return '⭐'.repeat(filled)+'☆'.repeat(5-filled);
-}
-
-function getDivMsg(){
-  if(S.m2.portfolio.length===0) return 'Add stocks to see your score';
-  const sectors=new Set(S.m2.portfolio.map(p=>p.sector)).size;
-  const stocks=S.m2.portfolio.length;
-  if(sectors>=3&&stocks>=4) return '🌟 Excellent diversification!';
-  if(sectors>=2&&stocks>=3) return '👍 Good spread across sectors';
-  if(stocks>=2) return '⚠️ Try adding different sectors';
-  return '⚠️ Add more stocks to diversify';
-}
-
-// ═══════════════════════════════════════════════════════
-// 9. MISSION 2 — TRACK  (price updates, gain/loss display)
-// ═══════════════════════════════════════════════════════
-function getPortfolioValue(){
-  return S.m2.portfolio.reduce((s,p)=>{
-    const cur=p.priceHistory[p.priceHistory.length-1].price;
-    return s+cur*p.shares;
-  },0);
-}
-function getPortfolioChange(){return getPortfolioValue()-getM2Invested();}
-
-function renderM2Track(){
-  if(S.m2.portfolio.length===0){
-    document.getElementById('m2TrackContent').innerHTML=`
-      <div class="page-title">📊 Track Performance</div>
-      <div class="no-portfolio-msg"><div class="big">💼</div><p>No portfolio yet! Go to Build first.</p>
-      <br><button class="btn-primary" onclick="goTo('m2-build')">Build Portfolio →</button></div>`;
-    return;
-  }
-
-  const totalInvested=getM2Invested();
-  const totalValue=getPortfolioValue();
-  const change=totalValue-totalInvested;
-  const changePct=(change/totalInvested)*100;
-  const isUp=change>=0;
-
-  const summaryCards=`
-    <div class="portfolio-summary">
-      <div class="ps-card"><div class="val">${fmtMoney(totalInvested)}</div><div class="lbl">Total Invested</div></div>
-      <div class="ps-card ${isUp?'positive':'negative'}"><div class="val">${fmtMoney(totalValue)}</div><div class="lbl">Current Value</div></div>
-      <div class="ps-card ${isUp?'positive':'negative'}"><div class="val">${isUp?'+':''}${fmtMoney(change)}</div><div class="lbl">Gain / Loss</div></div>
-      <div class="ps-card ${isUp?'positive':'negative'}"><div class="val">${isUp?'+':''}${changePct.toFixed(2)}%</div><div class="lbl">% Return</div></div>
-    </div>`;
-
-  const trackItems=S.m2.portfolio.map(p=>buildTrackItem(p)).join('');
-
-  document.getElementById('m2TrackContent').innerHTML=`
-    <div class="page-title">📊 Portfolio Performance</div>
-    <div class="page-sub">Enter today's prices to see how your investments are doing. Your history is saved automatically!</div>
-    ${summaryCards}
-    <div style="color:var(--gold);font-weight:700;margin-bottom:14px;font-size:.95em">📈 Your Stocks</div>
-    ${trackItems}
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goTo('m2-build')">← Build</button>
-      <button class="btn-primary" onclick="goTo('m2-verdict')">Verdict →</button>
-    </div>`;
-}
-
-function buildTrackItem(p){
-  const hist=p.priceHistory;
-  const buyPrice=p.buyPrice;
-  const currentPrice=hist[hist.length-1].price;
-  const invested=buyPrice*p.shares;
-  const current=currentPrice*p.shares;
-  const gl=current-invested;
-  const glPct=(gl/invested)*100;
-  const isUp=gl>=0;
-  const today=new Date().toISOString().split('T')[0];
-
-  const histHtml=hist.slice().reverse().map((h,i)=>`
-    <div class="ph-entry${i===0?' latest':''}">
-      ${h.date}: ${fmtMoney(h.price)}${h.note?` (${h.note})`:''}
-    </div>`).join('');
-
-  return `<div class="track-item">
-    <div class="ti-header">
-      <div class="ti-identity">
-        <div class="ti-logo">${p.logo}</div>
-        <div>
-          <div class="ti-name">${p.name}</div>
-          <div style="display:flex;gap:6px;align-items:center">
-            <span class="ti-ticker">${p.ticker}</span>
-            <span class="pi-sector" style="background:${SECTOR_COLORS[p.sector]||'#555'};font-size:.68em;padding:1px 7px;border-radius:10px;color:#fff">${p.sector}</span>
-          </div>
-        </div>
-      </div>
-      <div class="ti-perf">
-        <div class="ti-change ${isUp?'up':'down'}">${isUp?'+':''}${fmtMoney(gl)}</div>
-        <div style="color:${isUp?'var(--green)':'var(--red)'};font-size:.8em;font-weight:600">${isUp?'+':''}${glPct.toFixed(2)}%</div>
-      </div>
-    </div>
-    <div class="ti-stats">
-      <div class="ti-stat"><div class="val">${p.shares} shares</div><div class="lbl">Shares</div></div>
-      <div class="ti-stat"><div class="val">${fmtMoney(buyPrice)}</div><div class="lbl">Buy price</div></div>
-      <div class="ti-stat"><div class="val">${fmtMoney(currentPrice)}</div><div class="lbl">Last price</div></div>
-      <div class="ti-stat"><div class="val">${fmtMoney(current)}</div><div class="lbl">Current value</div></div>
-    </div>
-    <div class="price-history">
-      <div class="ph-label">Price History</div>
-      <div class="ph-entries">${histHtml}</div>
-    </div>
-    <div class="update-form" id="updateForm-${p.id}" style="display:none">
-      <div class="update-form-title">Update ${p.ticker} price</div>
-      <div class="update-form-grid">
-        <div class="field-group"><div class="field-label" style="font-size:.7em">Today's Price ($)</div>
-          <input class="update-input" id="upPrice-${p.id}" type="number" step="0.01" placeholder="e.g. 192.50" value="${currentPrice}"></div>
-        <div class="field-group"><div class="field-label" style="font-size:.7em">Date</div>
-          <input class="update-input" id="upDate-${p.id}" type="date" value="${today}"></div>
-        <button class="update-save-btn" onclick="saveUpdate('${p.id}')">Save ✓</button>
-      </div>
-    </div>
-    <div style="margin-top:10px">
-      <button class="btn-sm" style="background:rgba(245,200,66,.15);color:var(--gold);border:1px solid rgba(245,200,66,.3)" onclick="toggleUpdateForm('${p.id}')">📝 Update Today's Price</button>
-    </div>
-  </div>`;
-}
-
-function toggleUpdateForm(stockId){
-  const form=document.getElementById('updateForm-'+stockId);
-  if(form) form.style.display=form.style.display==='none'?'block':'none';
-}
-
-function saveUpdate(stockId){
-  const priceEl=document.getElementById('upPrice-'+stockId);
-  const dateEl=document.getElementById('upDate-'+stockId);
-  const price=parseFloat(priceEl?.value);
-  const date=dateEl?.value||new Date().toISOString().split('T')[0];
-  if(!price||isNaN(price)||price<=0){alert('Please enter a valid price!');return;}
-  const stock=S.m2.portfolio.find(p=>p.id===stockId);
-  if(stock){
-    stock.priceHistory.push({date,price,note:'Manual update'});
-    save();
-    renderM2Track();
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-// 10. MISSION 2 — VERDICT  (reflection & completion)
-// ═══════════════════════════════════════════════════════
-function renderM2Verdict(){
-  const v=S.m2.verdict;
-  const totalInvested=getM2Invested();
-  const totalValue=getPortfolioValue();
-  const change=totalValue-totalInvested;
-  const isUp=change>=0;
-
-  const bestStock=S.m2.portfolio.length>0
-    ?S.m2.portfolio.reduce((best,p)=>{
-        const cur=p.priceHistory[p.priceHistory.length-1].price;
-        const gl=(cur-p.buyPrice)/p.buyPrice*100;
-        const bestGl=(best.priceHistory[best.priceHistory.length-1].price-best.buyPrice)/best.buyPrice*100;
-        return gl>bestGl?p:best;
-      })
-    :null;
-
-  document.getElementById('m2VerdictContent').innerHTML=`
-    <div class="page-title">🏆 Portfolio Verdict</div>
-    <div class="page-sub">Reflect on your virtual investing experience!</div>
-    <div class="verdict-section">
-      <h3>📊 Your Portfolio Report Card</h3>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px">
-        <div class="stat-box"><div class="stat-num">${fmtMoney(totalInvested)}</div><div class="stat-label">Total Invested</div></div>
-        <div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${fmtMoney(totalValue)}</div><div class="stat-label">Current Value</div></div>
-        <div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${isUp?'+':''}${((change/Math.max(totalInvested,1))*100).toFixed(2)}%</div><div class="stat-label">Total Return</div></div>
-        ${bestStock?`<div class="stat-box"><div class="stat-num" style="color:var(--green)">${bestStock.logo} ${bestStock.ticker}</div><div class="stat-label">Best Performer</div></div>`:''}
-      </div>
-      <div style="color:#9ab;font-size:.82em">Diversification: <strong>${getDivStars()}</strong> &nbsp;|&nbsp; ${getDivMsg()}</div>
-    </div>
-    <div class="verdict-section">
-      <h3>🤔 Reflect on Your Portfolio</h3>
-      <div class="questions">
-        <div class="question"><label>Q1: Why did you choose the stocks you picked? Did your Mission 1 research help?</label>
-          <textarea placeholder="Write your answer..." oninput="S.m2.verdict.q1=this.value;save()">${v.q1}</textarea></div>
-        <div class="question"><label>Q2: How is your portfolio performing? What would you do differently next time?</label>
-          <textarea placeholder="Write your answer..." oninput="S.m2.verdict.q2=this.value;save()">${v.q2}</textarea></div>
-      </div>
-      <div style="margin-top:10px">
-        <div style="color:#9ab;font-size:.75em;margin-bottom:6px;font-weight:600;text-transform:uppercase">How much did you enjoy Mission 2?</div>
-        <div class="stars-row" id="m2StarsRow">${[1,2,3,4,5].map(i=>`<button class="star-btn${i<=(v.stars||0)?' lit':''}" onclick="setM2Star(${i})">⭐</button>`).join('')}</div>
-      </div>
-    </div>
-    ${S.m2.completed ? '' : m2Checklist()}
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goTo('m2-track')">← Track</button>
-      ${S.m2.completed
-        ?`<button class="btn-green" onclick="goTo('dashboard')">🏠 Dashboard</button>`
-        :`<button class="complete-mission-btn" onclick="completeM2()">✅ Complete Mission 2!</button>`}
-    </div>`;
-}
-
-function m2Checklist(){
-  const c = canCompleteM2();
-  return `
-  <div class="ccl-wrap">
-    <div class="ccl-title">📋 Complete these steps before you can finish Mission 2</div>
-    <div class="ccl-item ${c.stockCount>=2?'done':'todo'}">
-      <div class="ccl-icon">${c.stockCount>=2?'✅':'⬜'}</div>
-      <div>Add at least 2 stocks to your portfolio
-        <span class="ccl-sub">${c.stockCount} of 2 stocks added — go to the Build tab to add more</span>
-      </div>
-    </div>
-    <div class="ccl-item ${c.hasPriceUpdate?'done':'todo'}">
-      <div class="ccl-icon">${c.hasPriceUpdate?'✅':'⬜'}</div>
-      <div>Update today's price for at least one stock
-        <span class="ccl-sub">${c.hasPriceUpdate?'Done ✓':'Go to the Track tab and click "Update Today\'s Price"'}</span>
-      </div>
-    </div>
-    <div class="ccl-item ${c.hasReflection?'done':'todo'}">
-      <div class="ccl-icon">${c.hasReflection?'✅':'⬜'}</div>
-      <div>Write your reflection in Q1 below
-        <span class="ccl-sub">${c.hasReflection?'Done ✓':'Answer Q1 in the reflection section above'}</span>
-      </div>
-    </div>
-  </div>
-  <div class="complete-error" id="m2CompleteError">
-    ⛔ Not quite done yet! Check the list above and complete those steps first.
-  </div>`;
-}
-
-function setM2Star(n){
-  S.m2.verdict.stars=n;save();
-  document.querySelectorAll('#m2StarsRow .star-btn').forEach((b,i)=>b.classList.toggle('lit',i<n));
-}
-
-function completeM2(){
-  const check = canCompleteM2();
-  if(!check.ok){
-    const err = document.getElementById('m2CompleteError');
-    if(err){ err.classList.add('show'); err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); }
-    return;
-  }
-  S.m2.completed=true;S.m2.completedAt=new Date().toISOString();save();
-  confetti();
-  document.getElementById('m2VerdictContent').innerHTML=`
-    <div class="completion-screen">
-      <div class="completion-badge">💼</div>
-      <div class="completion-title">Mission 2 Complete!</div>
-      <div class="completion-sub" style="margin-bottom:20px">You're a real virtual investor now!<br>Mission 3 is now unlocked — place your sector bet!</div>
-      <button class="btn-green" onclick="goTo('m3-intro')">Start Mission 3: The Sector Bet →</button>
-      <br><br><button class="btn-secondary" onclick="goTo('dashboard')">🏠 Back to Dashboard</button>
-    </div>`;
-}
-
-// ═══════════════════════════════════════════════════════
-// 11. PIE CHART (SVG)  — no external libraries needed
-// ═══════════════════════════════════════════════════════
-function polarToCartesian(cx,cy,r,deg){
-  const rad=(deg-90)*Math.PI/180;
-  return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};
-}
-function pieSlicePath(cx,cy,r,start,end){
-  const s=polarToCartesian(cx,cy,r,start);
-  const e=polarToCartesian(cx,cy,r,end);
-  const large=(end-start)>180?1:0;
-  return `M${cx},${cy} L${s.x.toFixed(2)},${s.y.toFixed(2)} A${r},${r},0,${large},1,${e.x.toFixed(2)},${e.y.toFixed(2)} Z`;
-}
-function drawPieChart(chartId,legendId,items){
-  const total=items.reduce((s,i)=>s+i.value,0);
-  if(!total) return;
-  let angle=0;
-  const slices=items.map(item=>{
-    const sweep=(item.value/total)*360;
-    const path=pieSlicePath(150,150,120,angle,angle+sweep);
-    angle+=sweep;
-    return `<path d="${path}" fill="${item.color}" stroke="#0d1b2a" stroke-width="3"><title>${item.label}: ${item.value.toFixed(1)}%</title></path>`;
-  }).join('');
-  const el=document.getElementById(chartId);
-  if(el) el.innerHTML=`<svg viewBox="0 0 300 300" style="width:100%;max-width:220px;display:block;margin:auto">${slices}</svg>`;
-  const leg=document.getElementById(legendId);
-  if(leg) leg.innerHTML=items.map(i=>`
-    <div class="pie-legend-item">
-      <div class="pie-legend-dot" style="background:${i.color}"></div>
-      <span>${i.label}: <strong>${i.value.toFixed(1)}%</strong></span>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════════════════════
-// 12. UTILITIES  — fmtMoney, fmtPct, confetti
-// ═══════════════════════════════════════════════════════
-function fmtMoney(n){return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function fmtPct(n){return(n>=0?'+':'')+n.toFixed(2)+'%';}
-
-function confetti(){
-  const colors=['#f5c842','#22c55e','#3b82f6','#ef4444','#a855f7','#f97316'];
-  const area=document.getElementById('confettiArea');
-  area.innerHTML='';
-  for(let i=0;i<80;i++){
-    const el=document.createElement('div');
-    el.className='confetti-piece';
-    el.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.8}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};`;
-    area.appendChild(el);
-  }
-  setTimeout(()=>area.innerHTML='',4000);
-}
-
-// ═══════════════════════════════════════════════════════
-// 13. MISSION 3 — EXPLORE  (sector grid, selection)
-// ═══════════════════════════════════════════════════════
-function renderM3Explore(){
-  const sel = S.m3.selectedSector;
-  const sectorCards = ALL_SECTORS.map(s=>{
-    const isSelected = sel===s.id;
-    const color = SECTOR_COLORS[s.id]||'#555';
-    return `<div class="sector-card${isSelected?' selected':''}"
-      style="${isSelected?`border-color:${color};background:${color}18`:''}"
-      onclick="selectM3Sector('${s.id}')">
-      <div class="sector-card-icon">${s.icon}</div>
-      <div class="sector-card-name">${s.id}</div>
-      <div class="sector-card-badge ${s.badge}">${s.badge==='defensive'?'🛡️ Defensive':'⚡ Cyclical'}</div>
-      <div class="sector-card-desc">${s.desc}</div>
-      <div class="sector-card-examples">e.g. ${s.examples}</div>
-      ${isSelected?`<div style="margin-top:8px;color:${color};font-weight:800;font-size:.8em">✓ YOUR BET!</div>`:''}
-    </div>`;
-  }).join('');
-
-  const selectedBanner = sel ? (()=>{
-    const si = ALL_SECTORS.find(s=>s.id===sel);
-    const color = SECTOR_COLORS[sel]||'#a855f7';
-    return `<div class="selected-sector-banner" style="border-color:${color}50">
-      <div class="ssb-icon">${si.icon}</div>
-      <div><div class="ssb-title" style="color:${color}">🎯 Your Sector Bet: ${sel}</div>
-      <div class="ssb-sub">${si.desc}</div></div>
-    </div>`;
-  })() : '';
-
-  document.getElementById('m3ExploreContent').innerHTML=`
-    <div class="page-title">🗺️ Explore the 11 Sectors</div>
-    <div class="page-sub">Every stock belongs to a sector. Tap a sector to learn about it — then pick the one you believe in most!</div>
-    <div class="hint-box">
-      <strong>🛡️ Defensive sectors</strong> (Healthcare, Utilities, Consumer Staples) stay strong even in recessions — people always need food, medicine, and electricity.<br>
-      <strong>⚡ Cyclical sectors</strong> (Technology, Energy, Financials) grow fast in boom times but can fall hard in downturns.
-    </div>
-    ${selectedBanner}
-    <div class="sector-grid">${sectorCards}</div>
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goTo('m3-intro')">← Intro</button>
-      ${sel
-        ?`<button class="btn-primary" onclick="goTo('m3-bet')">Invest in ${sel} →</button>`
-        :`<button class="btn-secondary" disabled style="opacity:.4">Pick a sector to continue →</button>`}
-    </div>`;
-}
-
-function selectM3Sector(sectorId){
-  S.m3.selectedSector=sectorId;
-  save();
-  renderM3Explore();
-}
-
-// ═══════════════════════════════════════════════════════
-// 14. MISSION 3 — BET  ($10k sector portfolio builder)
-// ═══════════════════════════════════════════════════════
-let m3SelectedStock = null;
-
-function getM3Invested(){ return S.m3.portfolio.reduce((s,p)=>s+p.buyPrice*p.shares,0); }
-function getM3Remaining(){ return S.m3.budget-getM3Invested(); }
-function getM3CurrentValue(){
-  return S.m3.portfolio.reduce((s,p)=>{
-    const cur=p.priceHistory[p.priceHistory.length-1].price;
-    return s+cur*p.shares;
-  },0);
-}
-
-function renderM3Bet(){
-  const remaining = getM3Remaining();
-  const invested  = getM3Invested();
-  const pct       = Math.min(100,(invested/S.m3.budget)*100);
-  const sel       = S.m3.selectedSector;
-  const si        = ALL_SECTORS.find(s=>s.id===sel);
-  const selColor  = SECTOR_COLORS[sel]||'#a855f7';
-
-  const sectorBanner = sel ? `
-    <div class="selected-sector-banner" style="border-color:${selColor}50">
-      <div class="ssb-icon">${si?.icon||'🎯'}</div>
-      <div style="flex:1">
-        <div class="ssb-title" style="color:${selColor}">🎯 Your Sector Bet: ${sel}</div>
-        <div class="ssb-sub">Research stocks in <strong>${sel}</strong> on Yahoo Finance, then add them below!</div>
-      </div>
-      <button class="btn-secondary" style="padding:6px 14px;font-size:.78em;flex-shrink:0" onclick="goTo('m3-explore')">Change Sector</button>
-    </div>` : `<div class="hint-box">⚠️ You haven't picked a sector yet!
-    <button class="btn-sm" style="background:var(--gold);color:var(--navy);margin-left:8px" onclick="goTo('m3-explore')">Pick a Sector →</button></div>`;
-
-  const portfolioList = S.m3.portfolio.length===0
-    ? '<div style="color:#666;font-size:.85em;padding:10px 0">No stocks added yet — click "Add Stock" above!</div>'
-    : S.m3.portfolio.map(p=>buildM3PortfolioItem(p)).join('');
-
-  const addForm = m3SelectedStock ? buildM3AddForm() : '';
-
-  document.getElementById('m3BetContent').innerHTML=`
-    <div class="page-title">💰 Place Your Sector Bet</div>
-    <div class="page-sub">You have $10,000 fresh money. Research stocks in your chosen sector and invest!</div>
-    ${sectorBanner}
-    <div class="budget-bar-wrap">
-      <div class="budget-bar-header">
-        <div class="budget-title">💰 M3 Budget Tracker</div>
-        <div class="budget-nums">
-          <div class="budget-stat"><div class="val" style="color:var(--red)">${fmtMoney(invested)}</div><div class="lbl">Invested</div></div>
-          <div class="budget-stat"><div class="val" style="color:var(--green)">${fmtMoney(remaining)}</div><div class="lbl">Remaining</div></div>
-        </div>
-      </div>
-      <div class="budget-track"><div class="budget-fill" style="width:${pct}%;background:${selColor}"></div></div>
-    </div>
-
-    <div class="card" style="margin-bottom:18px">
-      <div style="color:var(--gold);font-weight:700;margin-bottom:12px;font-size:.95em">🔍 Add a Stock
-        <span style="color:#666;font-size:.8em;font-weight:400"> — find stocks in
-        <strong style="color:${selColor}">${sel||'your sector'}</strong> on Yahoo Finance</span>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
-        <div class="stock-pick-card${m3SelectedStock==='custom'?' selected':''}" onclick="selectM3Stock('custom')" style="max-width:160px">
-          <div class="spc-logo">🔍</div>
-          <div class="spc-name">Add Stock</div>
-          <div class="spc-ticker">Enter ticker</div>
-          <div class="spc-m1score no-data">Find on Yahoo Finance</div>
-        </div>
-      </div>
-      ${addForm}
-    </div>
-    ${S.m3.portfolio.length>0?`
-    <div class="card" style="margin-bottom:18px">
-      <div style="color:var(--gold);font-weight:700;margin-bottom:14px;font-size:.95em">📋 My Sector Portfolio (${S.m3.portfolio.length} stocks)</div>
-      <div class="portfolio-list">${portfolioList}</div>
-    </div>`:''}
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goTo('m3-explore')">← Explore</button>
-      ${S.m3.portfolio.length>=1
-        ?`<button class="btn-primary" onclick="goTo('m3-combined')">View Combined Portfolio →</button>`
-        :`<button class="btn-secondary" disabled style="opacity:.4">Add a stock to continue →</button>`}
-    </div>`;
-}
-
-function selectM3Stock(id){ m3SelectedStock=id; renderM3Bet(); }
-
-function buildM3AddForm(){
-  const remaining = getM3Remaining();
-  const today = new Date().toISOString().split('T')[0];
-  const selColor = SECTOR_COLORS[S.m3.selectedSector]||'#a855f7';
-  return `<div class="add-form" style="border-color:${selColor}40">
-    <h4>🔍 Add a Stock to Your Sector Portfolio</h4>
-    <div class="hint-box" style="margin-bottom:12px">
-      Search on <a href="https://finance.yahoo.com" target="_blank" class="lookup-tip" style="display:inline-flex;margin:0 3px">📊 Yahoo Finance ↗</a>
-      or <a href="https://www.google.com/finance" target="_blank" class="lookup-tip" style="display:inline-flex;margin:0 3px">🔍 Google Finance ↗</a>
-      for a stock in the <strong>${S.m3.selectedSector||'your chosen'}</strong> sector!
-    </div>
-    <div class="add-form-grid">
-      <div class="field-group"><div class="field-label">Ticker Symbol</div>
-        <input class="field-input" id="m3Ticker" type="text" placeholder="e.g. MSFT" oninput="this.value=this.value.toUpperCase()"></div>
-      <div class="field-group"><div class="field-label">Company Name</div>
-        <input class="field-input" id="m3Name" type="text" placeholder="e.g. Microsoft"></div>
-      <div class="field-group"><div class="field-label">Sector</div>
-        <select class="field-input" id="m3Sector" style="background:#1a2a3a;color:#fff">
-          ${ALL_SECTORS.map(s=>`<option value="${s.id}"${s.id===S.m3.selectedSector?' selected':''}>${s.icon} ${s.id}</option>`).join('')}
-          <option value="Other">📊 Other</option>
-        </select>
-      </div>
-    </div>
-    <div class="add-form-grid">
-      <div class="field-group"><div class="field-label">Shares</div>
-        <input class="field-input" id="m3Shares" type="number" min="1" step="1" placeholder="e.g. 5" oninput="updateM3AddTotal()"></div>
-      <div class="field-group"><div class="field-label">Buy Price ($)</div>
-        <input class="field-input" id="m3Price" type="number" min="0.01" step="0.01" placeholder="e.g. 185.50" oninput="updateM3AddTotal()"></div>
-      <div class="field-group"><div class="field-label">Buy Date</div>
-        <input class="field-input" id="m3Date" type="date" value="${today}"></div>
-    </div>
-    <div class="add-form-total">Total cost: <strong id="m3AddTotal">$0.00</strong> &nbsp;|&nbsp; Remaining: <strong id="m3AddRemaining">${fmtMoney(remaining)}</strong></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn-primary" style="padding:9px 24px;font-size:.88em" onclick="confirmAddM3Stock()">Add to Portfolio ✓</button>
-      <button class="btn-secondary" style="padding:9px 20px;font-size:.88em" onclick="m3SelectedStock=null;renderM3Bet()">Cancel</button>
-    </div>
-  </div>`;
-}
-
-function updateM3AddTotal(){
-  const shares = parseFloat(document.getElementById('m3Shares')?.value)||0;
-  const price  = parseFloat(document.getElementById('m3Price')?.value)||0;
-  const total  = shares*price;
-  const rem    = getM3Remaining()-total;
-  const el  = document.getElementById('m3AddTotal');
-  const el2 = document.getElementById('m3AddRemaining');
-  if(el)  el.textContent=fmtMoney(total);
-  if(el2){ el2.textContent=fmtMoney(rem); el2.style.color=rem<0?'var(--red)':'var(--green)'; }
-}
-
-function confirmAddM3Stock(){
-  const ticker = (document.getElementById('m3Ticker')?.value||'').toUpperCase().trim();
-  const name   = document.getElementById('m3Name')?.value.trim()||ticker;
-  const sector = document.getElementById('m3Sector')?.value||S.m3.selectedSector||'Other';
-  const shares = parseFloat(document.getElementById('m3Shares')?.value);
-  const price  = parseFloat(document.getElementById('m3Price')?.value);
-  const date   = document.getElementById('m3Date')?.value||new Date().toISOString().split('T')[0];
-  if(!ticker){ alert('Please enter a ticker symbol!'); return; }
-  if(!shares||!price||shares<=0||price<=0){ alert('Please enter valid shares and price!'); return; }
-  if(shares*price>getM3Remaining()){ alert(`Not enough budget! You have ${fmtMoney(getM3Remaining())} remaining.`); return; }
-  S.m3.portfolio.push({
-    id:'m3_'+Date.now(),ticker,name,logo:'📈',bg:'#334',sector,shares,
-    buyPrice:price,buyDate:date,priceHistory:[{date,price,note:'Purchase price'}]
-  });
-  save();
-  m3SelectedStock=null;
-  renderM3Bet();
-}
-
-function buildM3PortfolioItem(p){
-  const currentPrice = p.priceHistory[p.priceHistory.length-1].price;
-  const invested = p.buyPrice*p.shares;
-  const color = SECTOR_COLORS[p.sector]||'#555';
-  return `<div class="portfolio-item">
-    <div class="pi-header">
-      <div class="pi-left">
-        <div class="pi-logo">${p.logo}</div>
-        <div>
-          <div class="pi-name">${p.name}</div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <div class="pi-ticker">${p.ticker}</div>
-            <div class="pi-sector" style="background:${color}">${p.sector}</div>
-          </div>
-        </div>
-      </div>
-      <button class="pi-remove" onclick="removeFromM3Portfolio('${p.id}')">✕ Remove</button>
-    </div>
-    <div class="pi-stats">
-      <div class="pi-stat"><div class="val">${p.shares} shares</div><div class="lbl">Shares</div></div>
-      <div class="pi-stat"><div class="val">${fmtMoney(p.buyPrice)}</div><div class="lbl">Buy price</div></div>
-      <div class="pi-stat"><div class="val">${fmtMoney(invested)}</div><div class="lbl">Invested</div></div>
-    </div>
-  </div>`;
-}
-
-function removeFromM3Portfolio(stockId){
-  if(!confirm('Remove this stock?')) return;
-  S.m3.portfolio=S.m3.portfolio.filter(p=>p.id!==stockId);
-  save();
-  renderM3Bet();
-}
-
-// ═══════════════════════════════════════════════════════
-// 15. MISSION 3 — COMBINED  (M2 + M3 by sector + bar chart)
-// ═══════════════════════════════════════════════════════
-function renderM3Combined(){
-  const m2 = S.m2.portfolio.map(p=>({...p,source:'m2'}));
-  const m3 = S.m3.portfolio.map(p=>({...p,source:'m3'}));
-  const all = [...m2,...m3];
-
-  if(all.length===0){
-    document.getElementById('m3CombinedContent').innerHTML=`
-      <div class="page-title">📊 Combined Portfolio</div>
-      <div class="no-portfolio-msg"><div class="big">💼</div><p>No portfolio yet — build M2 and M3 first.</p>
-      <br><button class="btn-primary" onclick="goTo('m3-bet')">Go to Invest →</button></div>`;
-    return;
-  }
-
-  // Group by sector
-  const sectorMap={};
-  all.forEach(p=>{
-    const val=p.buyPrice*p.shares;
-    if(!sectorMap[p.sector]) sectorMap[p.sector]={value:0,stocks:[]};
-    sectorMap[p.sector].value+=val;
-    sectorMap[p.sector].stocks.push(p);
-  });
-
-  const totalInvested = all.reduce((s,p)=>s+p.buyPrice*p.shares,0)||1;
-  const m2Invested = getM2Invested();
-  const m3Invested = getM3Invested();
-  const m2Value    = getPortfolioValue();
-  const m3Value    = getM3CurrentValue();
-  const totalValue = m2Value+m3Value;
-  const totalChange = totalValue-totalInvested;
-  const isUp = totalChange>=0;
-
-  const sortedSectors = Object.entries(sectorMap).sort((a,b)=>b[1].value-a[1].value);
-  const barChart = sortedSectors.map(([sector,data])=>{
-    const pct = (data.value/totalInvested*100).toFixed(1);
-    const color = SECTOR_COLORS[sector]||'#555';
-    const si = ALL_SECTORS.find(s=>s.id===sector);
-    const pills = data.stocks.map(p=>`<span class="hbar-stock-pill">${p.logo} ${p.ticker}
-      <span class="hbar-source-tag ${p.source}">${p.source==='m2'?'M2':'M3'}</span></span>`).join('');
-    return `<div class="hbar-item">
-      <div class="hbar-header">
-        <div class="hbar-label">${si?si.icon:'📊'} ${sector}</div>
-        <div class="hbar-val">${fmtMoney(data.value)} &middot; ${pct}%</div>
-      </div>
-      <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}">${pct}%</div></div>
-      <div class="hbar-stocks">${pills}</div>
-    </div>`;
-  }).join('');
-
-  document.getElementById('m3CombinedContent').innerHTML=`
-    <div class="page-title">📊 Combined Portfolio</div>
-    <div class="page-sub">Your Mission 2 + Mission 3 investments — $20,000 total — grouped by sector!</div>
-    <div class="combined-totals">
-      <div class="ps-card"><div class="val">${fmtMoney(m2Invested)}</div><div class="lbl">M2 Invested</div></div>
-      <div class="ps-card"><div class="val" style="color:#c084fc">${fmtMoney(m3Invested)}</div><div class="lbl">M3 Invested</div></div>
-      <div class="ps-card"><div class="val" style="color:var(--gold)">${fmtMoney(totalInvested)}</div><div class="lbl">Total Invested</div></div>
-      <div class="ps-card ${isUp?'positive':'negative'}"><div class="val">${isUp?'+':''}${fmtMoney(totalChange)}</div><div class="lbl">Combined G/L</div></div>
-      <div class="ps-card ${isUp?'positive':'negative'}"><div class="val">${fmtPct((totalChange/totalInvested)*100)}</div><div class="lbl">Total Return</div></div>
-    </div>
-    <div class="verdict-section">
-      <h3>🗺️ Where Is Your Money? — By Sector</h3>
-      <div class="hbar-section">${barChart}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;align-items:center">
-        <span style="font-size:.78em;color:#9ab">Legend:</span>
-        <span class="hbar-source-tag m2" style="font-size:.78em;padding:3px 10px;border-radius:10px">M2 = Mission 2 stocks</span>
-        <span class="hbar-source-tag m3" style="font-size:.78em;padding:3px 10px;border-radius:10px">M3 = Mission 3 stocks</span>
-      </div>
-    </div>
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goTo('m3-bet')">← Invest</button>
-      <button class="btn-primary" onclick="goTo('m3-thesis')">Write My Thesis →</button>
-    </div>`;
-}
-
-// ═══════════════════════════════════════════════════════
-// 16. MISSION 3 — THESIS  (reflection & completion)
-// ═══════════════════════════════════════════════════════
-function canCompleteM3(){
-  const hasStocks = S.m3.portfolio.length>=1;
-  const hasSector = S.m3.selectedSector!==null;
-  const hasThesis = (S.m3.verdict.q1||'').trim()!=='';
-  return { ok: hasStocks&&hasSector&&hasThesis, hasStocks, hasSector, hasThesis };
-}
-
-function renderM3Thesis(){
-  const v   = S.m3.verdict;
-  const sel = S.m3.selectedSector;
-  const si  = ALL_SECTORS.find(s=>s.id===sel);
-  const selColor = SECTOR_COLORS[sel]||'#a855f7';
-
-  document.getElementById('m3ThesisContent').innerHTML=`
-    <div class="page-title">📝 Your Sector Thesis</div>
-    <div class="page-sub">A "thesis" is an investor's written reason for making a bet. Write yours!</div>
-    ${sel?`<div class="selected-sector-banner" style="border-color:${selColor}50">
-      <div class="ssb-icon">${si?.icon||'🎯'}</div>
-      <div><div class="ssb-title" style="color:${selColor}">Your Bet: ${sel}</div>
-      <div class="ssb-sub">${si?.desc||''}</div></div>
-    </div>`:''}
-    <div class="verdict-section">
-      <h3>✍️ Write Your Investment Thesis</h3>
-      <div class="questions">
-        <div class="question">
-          <label>Q1: Why did you choose the <strong>${sel||'sector'}</strong> sector? What makes you believe it will grow?</label>
-          <textarea placeholder="Write your thesis here... What's happening in this sector? Why is now a good time to invest?"
-            oninput="S.m3.verdict.q1=this.value;save();refreshM3ThesisCheck(this.value)">${v.q1}</textarea>
-        </div>
-        <div class="question">
-          <label>Q2: Which stock in your M3 portfolio are you most excited about and why?</label>
-          <textarea placeholder="Name the stock and explain your reasons..." oninput="S.m3.verdict.q2=this.value;save()">${v.q2}</textarea>
-        </div>
-      </div>
-      <div style="margin-top:10px">
-        <div style="color:#9ab;font-size:.75em;margin-bottom:6px;font-weight:600;text-transform:uppercase">How confident are you in your sector bet?</div>
-        <div class="stars-row" id="m3StarsRow">${[1,2,3,4,5].map(i=>`<button class="star-btn${i<=(v.stars||0)?' lit':''}" onclick="setM3Star(${i})">⭐</button>`).join('')}</div>
-      </div>
-    </div>
-    ${S.m3.completed ? '' : m3Checklist()}
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goTo('m3-combined')">← Combined View</button>
-      ${S.m3.completed
-        ?`<button class="btn-green" onclick="goTo('dashboard')">🏠 Dashboard</button>`
-        :`<button class="complete-mission-btn" onclick="completeM3()">✅ Complete Mission 3 — Sector Detective!</button>`}
-    </div>`;
-}
-
-function m3Checklist(){
-  const c = canCompleteM3();
-  return `
-  <div class="ccl-wrap">
-    <div class="ccl-title">📋 Complete these steps to finish Mission 3</div>
-    <div class="ccl-item ${c.hasSector?'done':'todo'}">
-      <div class="ccl-icon">${c.hasSector?'✅':'⬜'}</div>
-      <div>Pick your sector in the Explore tab
-        <span class="ccl-sub">${c.hasSector?`Sector: ${S.m3.selectedSector} ✓`:'Go to Explore and tap a sector'}</span>
-      </div>
-    </div>
-    <div class="ccl-item ${c.hasStocks?'done':'todo'}">
-      <div class="ccl-icon">${c.hasStocks?'✅':'⬜'}</div>
-      <div>Add at least 1 stock to your M3 portfolio
-        <span class="ccl-sub">${S.m3.portfolio.length} stock${S.m3.portfolio.length!==1?'s':''} added — go to Invest to add more</span>
-      </div>
-    </div>
-    <div class="ccl-item ${c.hasThesis?'done':'todo'}">
-      <div class="ccl-icon">${c.hasThesis?'✅':'⬜'}</div>
-      <div>Write your investment thesis in Q1 below
-        <span class="ccl-sub">${c.hasThesis?'Done ✓':'Explain why you chose your sector above'}</span>
-      </div>
-    </div>
-  </div>
-  <div class="complete-error" id="m3CompleteError">
-    ⛔ Not quite done yet! Check the list above and complete those steps first.
-  </div>`;
-}
-
-function refreshM3ThesisCheck(val){
-  const filled = val.trim()!=='';
-  const items = document.querySelectorAll('.ccl-item');
-  if(!items||items.length<3) return;
-  const item = items[2];
-  item.className='ccl-item '+(filled?'done':'todo');
-  item.querySelector('.ccl-icon').textContent=filled?'✅':'⬜';
-  item.querySelector('.ccl-sub').textContent=filled?'Done ✓':'Explain why you chose your sector above';
-}
-
-function setM3Star(n){
-  S.m3.verdict.stars=n; save();
-  document.querySelectorAll('#m3StarsRow .star-btn').forEach((b,i)=>b.classList.toggle('lit',i<n));
-}
-
-function completeM3(){
-  const check = canCompleteM3();
-  if(!check.ok){
-    const err = document.getElementById('m3CompleteError');
-    if(err){ err.classList.add('show'); err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); }
-    return;
-  }
-  S.m3.completed=true; S.m3.completedAt=new Date().toISOString(); save();
-  confetti();
-  document.getElementById('m3ThesisContent').innerHTML=`
-    <div class="completion-screen">
-      <div class="completion-badge">🗺️</div>
-      <div class="completion-title">Mission 3 Complete!</div>
-      <div class="completion-sub" style="margin-bottom:20px">
-        You placed your sector bet on <strong style="color:#c084fc">${S.m3.selectedSector}</strong>!<br>
-        Keep watching the market — your sector bet is live!
-      </div>
-      <button class="btn-green" onclick="goTo('dashboard')">🏠 Back to Dashboard</button>
-    </div>`;
-}
-
-// ═══════════════════════════════════════════════════════
-// 17. PTM TOOL  — Power of Time & Money calculator
-// ═══════════════════════════════════════════════════════
-let ptmState = { age:12, retireAge:65, monthly:50, target:1000000, rate:8 };
-
-// Compound interest: FV of monthly contributions
-function calcCompound(fromAge, monthlyPMT, annualRate, toAge){
-  if(toAge<=fromAge) return 0;
-  const r = annualRate/12/100;
-  const n = (toAge-fromAge)*12;
-  if(r===0) return monthlyPMT*n;
-  return monthlyPMT*(Math.pow(1+r,n)-1)/r;
-}
-function calcRequiredMonthly(fromAge, annualRate, targetAmount, toAge=65){
-  const r = annualRate/12/100;
-  const n = (toAge-fromAge)*12;
-  if(n<=0) return Infinity;
-  if(r===0) return targetAmount/n;
-  return targetAmount*r/(Math.pow(1+r,n)-1);
-}
-function calcAgeToReach(fromAge, monthlyPMT, annualRate, targetAmount){
-  for(let a=fromAge+1;a<=65;a++){
-    if(calcCompound(fromAge,monthlyPMT,annualRate,a)>=targetAmount) return a;
-  }
-  return null;
-}
-function fmtShort(n){
-  if(n>=1000000) return '$'+(n/1000000).toFixed(1)+'M';
-  if(n>=1000) return '$'+(n/1000).toFixed(0)+'K';
-  return '$'+Math.round(n);
-}
-function fmtLarge(n){
-  if(n>=1000000) return '$'+(n/1000000).toFixed(2)+'M';
-  if(n>=1000) return '$'+(n/1000).toFixed(0)+'K';
-  return fmtMoney(n);
-}
-function updateSliderFill(id,min,max,val){
-  const el=document.getElementById(id);
-  if(!el) return;
-  const pct=((val-min)/(max-min))*100;
-  el.style.background=`linear-gradient(to right,var(--gold) ${pct}%,rgba(255,255,255,.12) ${pct}%)`;
-}
-
-function renderPTM(){
-  const {age,retireAge,monthly,target,rate}=ptmState;
-  document.getElementById('ptmContent').innerHTML=`
-    <div class="page-title">⏰ Power of Time & Money</div>
-    <div class="page-sub">Drag any slider — target and monthly savings update each other automatically!</div>
-
-    <div class="ptm-hero">
-      <div style="color:#9ab;font-size:.82em;margin-bottom:5px" id="ptmHeroEyebrow">Saving ${fmtMoney(monthly)}/month from age ${age} to age ${retireAge}</div>
-      <div style="color:#aac;font-size:.78em;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px">You'll have</div>
-      <div class="ptm-final-num" id="ptmFinalNum">$0</div>
-      <div class="ptm-final-label" id="ptmFinalLabel">by age ${retireAge}</div>
-      <div id="ptmGoalStatus" style="margin:10px 0 4px;font-size:.85em;font-weight:600"></div>
-      <div class="ptm-badges" id="ptmBadges"></div>
-    </div>
-
-    <div class="ptm-sliders">
-      <div style="font-size:.7em;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">🔗 All four values update each other</div>
-      <div class="ptm-slider-row">
-        <div class="ptm-slider-header">
-          <div class="ptm-slider-label">🎂 Current age</div>
-          <div class="ptm-slider-val" id="ptmAgeVal">${age} years old</div>
-        </div>
-        <input type="range" class="ptm-range" id="ptmAge" min="8" max="25" step="1" value="${age}"
-          oninput="ptmState.age=+this.value;if(ptmState.retireAge<=ptmState.age+5){ptmState.retireAge=ptmState.age+5;document.getElementById('ptmRetire').value=ptmState.retireAge;}var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">
-        <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>Age 8</span><span>Age 16</span><span>Age 25</span></div>
-      </div>
-      <div class="ptm-slider-row">
-        <div class="ptm-slider-header">
-          <div class="ptm-slider-label">🏁 Target age (retire / goal age)</div>
-          <div class="ptm-slider-val" id="ptmRetireVal">age ${retireAge}</div>
-        </div>
-        <input type="range" class="ptm-range" id="ptmRetire" min="20" max="75" step="1" value="${retireAge}"
-          oninput="ptmState.retireAge=Math.max(+this.value,ptmState.age+5);this.value=ptmState.retireAge;var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,ptmState.retireAge);ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">
-        <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>Age 20</span><span>Age 45</span><span>Age 75</span></div>
-      </div>
-      <div class="ptm-slider-row">
-        <div class="ptm-slider-header">
-          <div class="ptm-slider-label">🎯 Target amount</div>
-          <div class="ptm-slider-val" id="ptmTargetVal">${fmtShort(target)}</div>
-        </div>
-        <input type="range" class="ptm-range" id="ptmTarget" min="10000" max="25000000" step="10000" value="${target}"
-          oninput="ptmState.target=+this.value;var nm=calcRequiredMonthly(ptmState.age,ptmState.rate,ptmState.target,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.monthly=Math.min(Math.max(10,Math.round(nm/10)*10),5000);document.getElementById('ptmMonthly').value=ptmState.monthly;updatePTMCalc()">
-        <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>$10K</span><span>$5M</span><span>$25M</span></div>
-      </div>
-      <div class="ptm-slider-row">
-        <div class="ptm-slider-header">
-          <div class="ptm-slider-label">💵 Monthly savings</div>
-          <div class="ptm-slider-val" id="ptmMonthlyVal">${fmtMoney(monthly)}/mo</div>
-        </div>
-        <input type="range" class="ptm-range" id="ptmMonthly" min="10" max="5000" step="10" value="${monthly}"
-          oninput="ptmState.monthly=+this.value;var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">
-        <div style="display:flex;justify-content:space-between;font-size:.67em;color:#555;margin-top:4px;padding:0 2px"><span>$10/mo</span><span>$2,500/mo</span><span>$5,000/mo</span></div>
-      </div>
-      <div class="ptm-slider-row">
-        <div class="ptm-slider-header">
-          <div class="ptm-slider-label">📈 Expected market return</div>
-          <div class="ptm-slider-val" id="ptmRateVal">${rate}% per year</div>
-        </div>
-        <div class="ptm-rate-toggle">
-          <button class="ptm-rate-btn${rate===8?' active':''}" onclick="ptmState.rate=8;var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">8% Conservative</button>
-          <button class="ptm-rate-btn${rate===10?' active':''}" onclick="ptmState.rate=10;var p=calcCompound(ptmState.age,ptmState.monthly,ptmState.rate,Math.max(ptmState.retireAge,ptmState.age+5));ptmState.target=Math.min(Math.max(10000,Math.round(p/10000)*10000),25000000);document.getElementById('ptmTarget').value=ptmState.target;updatePTMCalc()">10% Optimistic</button>
-        </div>
-      </div>
-    </div>
-
-    <div style="color:var(--gold);font-weight:700;margin-bottom:10px;font-size:.92em">⚡ The Cost of Waiting — Start Now vs Start Later</div>
-    <div class="ptm-compare">
-      <div class="ptm-compare-card now">
-        <div class="ptm-compare-label" id="ptmNowLabel">🚀 Start at age ${age}</div>
-        <div class="ptm-compare-num" id="ptmNowNum">$0</div>
-        <div class="ptm-compare-sub" id="ptmNowSub">you'd have by age ${retireAge}</div>
-      </div>
-      <div class="ptm-compare-card later">
-        <div class="ptm-compare-label" id="ptmLaterLabel">⏳ Wait until age ${age+5}</div>
-        <div class="ptm-compare-num" id="ptmLaterNum">$0</div>
-        <div class="ptm-compare-sub" id="ptmLaterSub">you'd have by age ${retireAge}</div>
-      </div>
-    </div>
-    <div class="ptm-diff-banner" id="ptmDiffBanner"></div>
-
-    <div class="ptm-chart-wrap">
-      <div class="ptm-chart-title" id="ptmChartTitle">📊 Your Wealth Over Time</div>
-      <div class="ptm-bars" id="ptmBars"></div>
-      <div class="ptm-chart-legend">
-        <div class="ptm-chart-legend-item"><div class="ptm-chart-legend-dot" style="background:var(--gold)"></div><span id="ptmLegendNow">Start at age ${age}</span></div>
-        <div class="ptm-chart-legend-item"><div class="ptm-chart-legend-dot" style="background:rgba(255,255,255,.2)"></div><span id="ptmLegendLater">Start at age ${age+5}</span></div>
-      </div>
-    </div>
-
-    <div class="ptm-insight" id="ptmInsight"></div>
-
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goTo('dashboard')">← Dashboard</button>
-    </div>`;
-
-  updatePTMCalc();
-}
-
-function updatePTMCalc(){
-  const {age,monthly,target,rate}=ptmState;
-  const retireAge = Math.max(ptmState.retireAge, age+5);
-  const yearsLeft = retireAge-age;
-
-  // Slider fills
-  updateSliderFill('ptmAge',8,25,age);
-  updateSliderFill('ptmRetire',20,75,retireAge);
-  updateSliderFill('ptmTarget',10000,25000000,target);
-  updateSliderFill('ptmMonthly',10,5000,monthly);
-
-  // Label updates
-  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-  const setHTML=(id,v)=>{const el=document.getElementById(id);if(el)el.innerHTML=v;};
-  set('ptmAgeVal',age+' years old');
-  set('ptmRetireVal','age '+retireAge);
-  set('ptmTargetVal',fmtShort(target));
-  set('ptmRateVal',rate+'% per year');
-  set('ptmMonthlyVal',fmtMoney(monthly)+'/mo');
-  set('ptmNowLabel','🚀 Start at age '+age);
-  set('ptmLaterLabel','⏳ Wait until age '+(age+5));
-  set('ptmNowSub','you\'d have by age '+retireAge);
-  set('ptmLaterSub','you\'d have by age '+retireAge);
-  set('ptmLegendNow','Start at age '+age);
-  set('ptmLegendLater','Start at age '+(age+5));
-  set('ptmFinalLabel','by age '+retireAge);
-
-  // Rate buttons
-  document.querySelectorAll('.ptm-rate-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&rate===8)||(i===1&&rate===10)));
-
-  // Core calculations
-  const projected   = calcCompound(age,monthly,rate,retireAge);
-  const projLater   = calcCompound(age+5,monthly,rate,retireAge);
-  const needed      = calcRequiredMonthly(age,rate,target,retireAge);
-  const totalContrib = monthly*yearsLeft*12;
-  const marketAdds   = Math.max(0,projected-totalContrib);
-
-  // Hero eyebrow + big number = projected total
-  set('ptmHeroEyebrow',`Saving ${fmtMoney(monthly)}/month from age ${age} to age ${retireAge}`);
-  set('ptmFinalNum', fmtShort(projected));
-
-  // Goal status — am I on track?
-  const diff = projected - target;
-  const statusEl = document.getElementById('ptmGoalStatus');
-  if(statusEl){
-    if(diff>=0){
-      statusEl.innerHTML=`<span style="color:var(--green)">🎉 ${fmtShort(diff)} over your ${fmtShort(target)} goal!</span>`;
-    } else {
-      statusEl.innerHTML=`<span style="color:#f97316">📊 ${fmtShort(Math.abs(diff))} short of your ${fmtShort(target)} goal</span>`;
-    }
-  }
-
-  const badgesEl=document.getElementById('ptmBadges');
-  if(badgesEl) badgesEl.innerHTML=`
-    <div class="ptm-badge"><strong>${fmtShort(target)}</strong>Your goal</div>
-    <div class="ptm-badge"><strong>${yearsLeft} yrs</strong>Time you have</div>
-    <div class="ptm-badge"><strong style="color:var(--gold)">${needed>99999?'Very high':fmtMoney(needed)+'/mo'}</strong>Needed/month</div>
-    <div class="ptm-badge"><strong style="color:var(--green)">${fmtShort(marketAdds)}</strong>Market adds</div>`;
-
-  // Compare — same monthly, start now vs wait 5 years → different projected totals
-  set('ptmNowNum', fmtShort(projected));
-  set('ptmLaterNum', fmtShort(projLater));
-
-  const wealthLost = projected - projLater;
-  const diffEl=document.getElementById('ptmDiffBanner');
-  if(diffEl) diffEl.innerHTML=wealthLost>0
-    ?`😱 Waiting just <strong>5 years</strong> means you'd end up with <strong>${fmtShort(wealthLost)} LESS</strong> by age ${retireAge}!`
-    :'';
-
-  // Chart title + bars
-  set('ptmChartTitle',`📊 Your Wealth Over Time — saving ${fmtMoney(monthly)}/month`);
-
-  const checkpoints=[];
-  const startDecade=Math.ceil((age+1)/5)*5;
-  for(let a=startDecade;a<retireAge;a+=5) checkpoints.push(a);
-  if(!checkpoints.includes(retireAge)) checkpoints.push(retireAge);
-
-  const valsNow   = checkpoints.map(a=>calcCompound(age,monthly,rate,a));
-  const valsLater = checkpoints.map(a=>a>(age+5)?calcCompound(age+5,monthly,rate,a):0);
-  const maxVal    = Math.max(...valsNow,1);
-
-  const barsEl=document.getElementById('ptmBars');
-  if(barsEl) barsEl.innerHTML=checkpoints.map((a,i)=>{
-    const vNow=valsNow[i], vLater=valsLater[i];
-    const hNow=Math.max(4,(vNow/maxVal)*140);
-    const hLater=Math.max(0,(vLater/maxVal)*140);
-    const isTarget=a===retireAge;
-    return `<div class="ptm-bar-group">
-      <div class="ptm-bar-val">${fmtShort(vNow)}</div>
-      <div class="ptm-bar-pair" style="height:${hNow}px;align-items:flex-end">
-        <div class="ptm-bar now" style="height:${hNow}px${isTarget?';box-shadow:0 0 10px rgba(245,200,66,.7)':''}"></div>
-        <div class="ptm-bar later" style="height:${hLater}px"></div>
-      </div>
-      <div class="ptm-bar-age" style="${isTarget?'color:var(--gold);font-weight:700':''}">${isTarget?'🏁 ':''}${a}</div>
-    </div>`;
-  }).join('');
-
-  // Insight
-  const insightEl=document.getElementById('ptmInsight');
-  if(insightEl){
-    const items=[];
-    items.push(`💰 Saving <strong>${fmtMoney(monthly)}/month</strong> from age ${age} grows to <strong style="color:var(--gold)">${fmtShort(projected)}</strong> by age ${retireAge}.`);
-    if(diff>=0){
-      items.push(`🎯 You'd beat your ${fmtShort(target)} goal by <strong style="color:var(--green)">${fmtShort(diff)}</strong> — amazing! You could even lower your monthly savings and still hit it.`);
-    } else if(needed<=99999){
-      items.push(`📈 To hit ${fmtShort(target)} exactly you'd need <strong>${fmtMoney(needed)}/month</strong> — just <strong>${fmtMoney(needed-monthly)} more</strong> per month than you're saving now.`);
-    } else {
-      items.push(`💡 Your goal is very ambitious for this timeline. Try a longer time horizon or adjust your target.`);
-    }
-    items.push(`🧠 Of your ${fmtShort(projected)} total, you only put in <strong>${fmtShort(totalContrib)}</strong> — the market contributes <strong style="color:var(--green)">${fmtShort(marketAdds)}</strong> in growth!`);
-    items.push(`⏰ Starting at age ${age} vs age ${age+5}: you'd have <strong style="color:var(--green)">${fmtShort(wealthLost)} more</strong> just by starting now!`);
-    insightEl.innerHTML=`<div class="ptm-insight-title">💡 What This Means For You</div>`
-      +items.map(i=>`<div class="ptm-insight-item">• <span>${i}</span></div>`).join('');
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-// 18. INIT  — app startup
-// ═══════════════════════════════════════════════════════
-function init(){
-  goTo('dashboard');
-  // Pre-render M1 table so tabs are built
-  buildTabs();
-  buildPanels();
-}
-init();
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('mainNav');
+  nav.style.background = window.scrollY > 40
+    ? 'rgba(10,15,30,.95)'
+    : 'rgba(10,15,30,.7)';
+});
 </script>
+
 </body>
 </html>
