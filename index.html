@@ -427,10 +427,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 <body>
 
 <nav class="top-nav" id="topNav">
-  <div class="nav-brand" onclick="goTo('dashboard')">🔍 Stock Detective</div>
+  <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+    <div class="nav-brand" onclick="goTo('dashboard')">🔍 Stock Detective</div>
+    <button class="nav-dash-btn" id="navPtmBtn" onclick="goTo('ptm')" style="display:none">⏰ Time & Money</button>
+  </div>
   <div class="nav-steps" id="navSteps"></div>
   <div style="display:flex;gap:6px;flex-shrink:0">
-    <button class="nav-dash-btn" id="navPtmBtn" onclick="goTo('ptm')" style="display:none">⏰ Time & Money</button>
     <button class="nav-dash-btn" id="navDashBtn" onclick="goTo('dashboard')" style="display:none">🏠 Dashboard</button>
   </div>
 </nav>
@@ -445,6 +447,20 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 <!-- M1: CHEAT SHEET -->
 <div id="view-m1-cheat" class="view">
 <div class="page-wrap">
+  <div style="background:rgba(245,200,66,.06);border:1px solid rgba(245,200,66,.15);border-radius:14px;padding:20px 20px 16px;margin-bottom:22px">
+    <div style="font-size:1.5em;margin-bottom:8px">🕵️ Welcome to Stock Detective Academy</div>
+    <p style="color:#ccc;font-size:.9em;line-height:1.65;margin:0 0 12px">
+      Every day, millions of people invest money in real companies — Apple, Tesla, McDonald's, and more.
+      Some investors get <strong style="color:var(--green)">rich</strong>. Others <strong style="color:var(--red)">lose everything</strong>. What's the difference?<br><br>
+      The smartest investors know how to read <strong style="color:var(--gold)">6 secret clues</strong> hidden inside every stock.
+      In this mission, you'll learn those clues, then investigate real companies yourself — just like a Wall Street pro.
+    </p>
+    <div class="hero-funfact" style="margin:0;font-size:.84em">
+      🤯 <strong>Did you know?</strong> $1,000 invested in Apple in 2004 would be worth over
+      <strong>$700,000 today</strong>. Warren Buffett — one of the world's richest investors —
+      started buying stocks when he was <strong>just 11 years old</strong>. Your turn.
+    </div>
+  </div>
   <div class="page-title">📋 The 6 Magic Numbers</div>
   <div class="page-sub">Learn these rules — you'll use them when filling in the Detective Table!</div>
   <div class="signals-bar">
@@ -868,52 +884,16 @@ function renderDashboard() {
   }
 
   document.getElementById('dashContent').innerHTML = `
-    <div style="text-align:center;padding:44px 16px 28px">
+    <div style="text-align:center;padding:36px 16px 20px">
       <div class="hero-badge-anim">🔍</div>
-      <div class="hero-eyebrow" style="margin-top:14px">Stock Detective Academy</div>
-      <h1 class="hero-h1">The Stock Market is a Puzzle.<br>You're the <em>Detective.</em></h1>
-      <p class="hero-story">
-        Every day, millions of people invest money in real companies — Apple, Tesla, McDonald's, and more.
-        Some investors get <strong style="color:var(--green)">rich</strong>.
-        Others <strong style="color:var(--red)">lose everything</strong>.
-        What's the difference?<br><br>
-        The smartest investors know how to read <strong style="color:var(--gold)">6 secret clues</strong> hidden inside the numbers.
-        At Stock Detective Academy, you'll crack those clues, build your own virtual stock portfolio,
-        and find out if YOUR picks beat the market — just like a real Wall Street pro.
-      </p>
-      <div class="hero-funfact">
-        🤯 <strong>Did you know?</strong> $1,000 invested in Apple in 2004 would be worth over
-        <strong>$700,000 today</strong>. Warren Buffett — one of the world's richest investors —
-        started buying stocks when he was <strong>just 11 years old</strong>. Your turn.
-      </div>
+      <div class="hero-eyebrow" style="margin-top:10px">Stock Detective Academy</div>
+      <h1 class="hero-h1" style="font-size:1.7em;margin:8px 0 20px">The Stock Market is a Puzzle.<br>You're the <em>Detective.</em></h1>
       ${middleCard}
     </div>
 
-    <div style="max-width:1000px;margin:0 auto;padding:0 16px 16px">
-      <div class="hero-eyebrow" style="text-align:center;margin-bottom:14px">What You'll Master</div>
-      <div class="hero-learn-grid">
-        <div class="hlc"><div class="hlc-icon">🔍</div><div><h4>Decode 6 Secret Numbers</h4><p>Learn the exact metrics every real investor uses to find great stocks vs risky ones.</p></div></div>
-        <div class="hlc"><div class="hlc-icon">📊</div><div><h4>Investigate Real Companies</h4><p>Analyze Apple, Tesla, McDonald's and more — look up live data on Yahoo Finance.</p></div></div>
-        <div class="hlc"><div class="hlc-icon">💼</div><div><h4>Build a $10,000 Portfolio</h4><p>Invest virtual money across real stocks and see how well you diversify your picks.</p></div></div>
-        <div class="hlc"><div class="hlc-icon">📈</div><div><h4>Track the Market Live</h4><p>Enter real prices any time to see your gains and losses update in real-time.</p></div></div>
-      </div>
-
-      <div class="section-divider">
-        <div class="section-heading" style="text-align:center;margin-bottom:12px">🛠️ <em>Tools</em></div>
-        <div class="ptm-dash-card" onclick="goTo('ptm')">
-          <div class="ptm-dash-icon">⏰</div>
-          <div style="flex:1">
-            <div class="ptm-dash-title">Power of Time & Money</div>
-            <div class="ptm-dash-sub">Drag sliders to see what saving $50/month from today becomes by retirement. The answer will blow your mind! 🤯</div>
-          </div>
-          <div class="ptm-dash-arrow">→</div>
-        </div>
-      </div>
-
-      <div class="section-divider" style="padding-top:16px">
-        <div class="section-heading" style="text-align:center">🗺️ Your <em>Missions</em></div>
-        <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
-      </div>
+    <div style="max-width:1000px;margin:0 auto;padding:0 16px 32px">
+      <div class="section-heading" style="text-align:center;margin-bottom:14px">🗺️ Your <em>Missions</em></div>
+      <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
     </div>`;
 }
 
@@ -923,7 +903,7 @@ function renderMissionCard(mc) {
       <div class="mc-icon" style="opacity:.4">${mc.icon}</div>
       <div><div class="mc-num">Mission ${mc.num}</div>
       <div class="mc-card-title" style="color:#555">${mc.title}</div>
-      <div class="mc-learn">${mc.learn.map(l=>`<div class="mc-learn-item locked-text">• ${l}</div>`).join('')}</div></div>
+      <div class="mc-subtitle" style="color:#444">${mc.subtitle}</div></div>
       <div class="mc-action"><div class="mc-status coming-soon">🔒 Coming Soon</div></div>
     </div>`;
 
@@ -953,8 +933,7 @@ function renderMissionCard(mc) {
       <div class="mc-icon">${mc.icon}</div>
       <div><div class="mc-num">Mission ${mc.num}</div>
       <div class="mc-card-title" style="color:${locked?'#666':mc.color}">${mc.title}</div>
-      <div class="mc-subtitle">${mc.subtitle}</div>
-      <div class="mc-learn">${mc.learn.map(l=>`<div class="mc-learn-item ${locked?'locked-text':''}">• ${l}</div>`).join('')}</div></div>
+      <div class="mc-subtitle">${mc.subtitle}</div></div>
       <div class="mc-action">${statusHtml}${actionHtml}</div>
     </div>`;
 }
