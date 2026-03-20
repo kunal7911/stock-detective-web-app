@@ -765,7 +765,37 @@ const MISSIONS_CFG = [
 ];
 
 // ═══════════════════════════════════════════════════════
-// 2. STATE
+// 2. RANKS & CLUECOINS
+// ═══════════════════════════════════════════════════════
+const RANKS = [
+  {missions:0, title:'Rookie Detective',    icon:'🔍', medal:'',   color:'#64748b', coins:0},
+  {missions:1, title:'Junior Investigator', icon:'⭐',  medal:'⭐', color:'#f5c842', coins:100},
+  {missions:2, title:'Field Agent',         icon:'⭐⭐', medal:'⭐⭐',color:'#f59e0b', coins:150},
+  {missions:3, title:'Stock Detective',     icon:'🥉',  medal:'🥉', color:'#cd7f32', coins:150},
+  {missions:4, title:'Senior Detective',    icon:'🥈',  medal:'🥈', color:'#94a3b8', coins:200},
+  {missions:5, title:'Lead Investigator',   icon:'🥇',  medal:'🥇', color:'#f5c842', coins:200},
+  {missions:6, title:'Chief Detective',     icon:'💎',  medal:'💎', color:'#3b82f6', coins:250},
+  {missions:7, title:'Master Investigator', icon:'🏆',  medal:'🏆', color:'#a855f7', coins:250},
+  {missions:8, title:'Elite Detective',     icon:'🌟',  medal:'🌟', color:'#ec4899', coins:300},
+  {missions:9, title:'Legendary Detective', icon:'👑',  medal:'👑', color:'#f5c842', coins:500},
+];
+
+const MISSION_COINS = {m1:100, m2:150, m3:150};
+
+function getDetectiveRank(){
+  const done = MISSIONS_CFG.filter(m=>!m.comingSoon&&S[m.id]?.completed).length;
+  return RANKS[Math.min(done, RANKS.length-1)];
+}
+
+function awardCoins(mission){
+  const coins = MISSION_COINS[mission] || 0;
+  S.clueCoins = (S.clueCoins||0) + coins;
+  save();
+  return coins;
+}
+
+// ═══════════════════════════════════════════════════════
+// 3. STATE
 // ═══════════════════════════════════════════════════════
 const STATE_KEY = 'stockDetective_v2';
 
@@ -775,6 +805,7 @@ function defaultState() {
   sd.ko = {price:'64',pe:'24',wkHigh:'74',wkLow:'57',mktCap:'280',revGrowth:'2',divYield:'3.1'};
   return {
     detectiveName:'',
+    clueCoins:0,
     m1:{completed:false,completedAt:null,stockData:sd,
         verdict:{q1:'',q2:'',q3:'',investIn:'',investReason:'',notInvest:'',notReason:'',stars:0}},
     m2:{completed:false,completedAt:null,budget:10000,portfolio:[],
@@ -790,6 +821,7 @@ let S = (() => {
     if(raw) {
       const p = JSON.parse(raw), d = defaultState();
       return {...d,...p,
+        clueCoins: p.clueCoins||0,
         m1:{...d.m1,...p.m1,stockData:{...d.m1.stockData,...(p.m1?.stockData||{})},verdict:{...d.m1.verdict,...(p.m1?.verdict||{})}},
         m2:{...d.m2,...p.m2,verdict:{...d.m2.verdict,...(p.m2?.verdict||{})}},
         m3:{...d.m3,...(p.m3||{}),verdict:{...d.m3.verdict,...(p.m3?.verdict||{})}}};
@@ -832,12 +864,13 @@ function renderNav(v) {
   dashBtn.style.display = (v==='dashboard') ? 'none' : 'block';
   ptmBtn.style.display  = (v==='ptm')       ? 'none' : 'block';
 
-  // Detective name pill — always show if name is set
+  // Detective rank + name pill — always show if name is set
   const nameEl = document.getElementById('navDetectiveName');
   const nameText = document.getElementById('navNameText');
   if(nameEl && nameText){
     if(S.detectiveName){
-      nameText.textContent = 'Det. '+S.detectiveName;
+      const rank = getDetectiveRank();
+      nameText.innerHTML = `<span title="${rank.title}" style="color:${rank.color}">${rank.medal||rank.icon}</span> ${S.detectiveName} <span style="color:var(--gold);font-size:.85em;margin-left:4px">🪙 ${(S.clueCoins||0).toLocaleString()}</span>`;
       nameEl.style.display = 'flex';
     } else {
       nameEl.style.display = 'none';
@@ -874,38 +907,40 @@ function renderDashboard() {
         <button class="btn-primary" onclick="saveName()">Accept the Mission →</button>
       </div>`;
   } else {
-    const portfolioChange = getPortfolioChange();
-    const portfolioVal    = getPortfolioValue();
+    const portfolioVal = getPortfolioValue();
     const checks = getM1TotalChecks();
+    const rank = getDetectiveRank();
+    const nextRank = RANKS[Math.min(done+1, RANKS.length-1)];
     const motivation = done===0
       ? '🔍 Your first mission is waiting — crack the code!'
       : done===total
-      ? '🏆 All missions complete — you\'re a certified Stock Detective!'
-      : `⏳ Mission ${done+1} unlocked — keep going, Detective!`;
+      ? '👑 All missions complete — you\'re a Legendary Detective!'
+      : `⏳ Complete Mission ${done+1} to become a <strong style="color:${nextRank.color}">${nextRank.title}</strong>!`;
 
     let statsHtml = `
       <div class="stat-box"><div class="stat-num">${done}/${total}</div><div class="stat-label">Missions Done</div></div>
-      <div class="stat-box"><div class="stat-num">${checks}</div><div class="stat-label">✓ Checks Earned</div></div>`;
+      <div class="stat-box"><div class="stat-num" style="color:var(--gold)">🪙 ${(S.clueCoins||0).toLocaleString()}</div><div class="stat-label">ClueCoins</div></div>
+      <div class="stat-box"><div class="stat-num">${checks}</div><div class="stat-label">✓ Checks</div></div>`;
     const hasM3 = S.m3?.portfolio?.length>0;
     const combinedVal = portfolioVal + (hasM3 ? getM3CurrentValue() : 0);
     if(S.m2.portfolio.length>0 || hasM3){
       const combinedInvested = getM2Invested() + (hasM3 ? getM3Invested() : 0);
       const isUp = combinedVal >= combinedInvested;
-      statsHtml += `<div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${fmtMoney(combinedVal)}</div><div class="stat-label">${hasM3?'Combined':'Portfolio'} Value</div></div>`;
+      statsHtml += `<div class="stat-box"><div class="stat-num" style="color:${isUp?'var(--green)':'var(--red)'}">${fmtMoney(combinedVal)}</div><div class="stat-label">${hasM3?'Combined':'Portfolio'}</div></div>`;
     }
 
     middleCard = `
       <div class="hero-name-card">
-        <div class="rh-row" style="justify-content:center;margin-bottom:12px">
-          <div class="rh-badge">🔍</div>
-          <div>
-            <div class="rh-greeting">Detective</div>
-            <div class="rh-name"><span>${name}</span><button class="edit-name-btn" onclick="editName()" title="Rename">✏️</button></div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:6px 16px 6px 10px;margin-bottom:14px">
+          <span style="font-size:1.6em">${rank.icon}</span>
+          <div style="text-align:left">
+            <div style="color:${rank.color};font-size:.7em;font-weight:700;text-transform:uppercase;letter-spacing:.8px">${rank.title}</div>
+            <div style="color:#fff;font-size:1.1em;font-weight:800">${name} <button class="edit-name-btn" onclick="editName()" title="Rename">✏️</button></div>
           </div>
         </div>
         <div class="rh-stats" style="justify-content:center">${statsHtml}</div>
-        <div style="color:#9ab;font-size:.82em;margin-top:10px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:8px;border-left:3px solid var(--gold);text-align:left">${motivation}</div>
-        <div class="progress-bar-wrap" style="margin-top:12px;margin-bottom:0"><div class="progress-bar" style="width:${(done/total)*100}%"></div></div>
+        <div style="color:#9ab;font-size:.82em;margin-top:10px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:8px;border-left:3px solid ${rank.color};text-align:left">${motivation}</div>
+        <div class="progress-bar-wrap" style="margin-top:12px;margin-bottom:0"><div class="progress-bar" style="width:${(done/total)*100}%;background:linear-gradient(90deg,${rank.color},var(--gold))"></div></div>
       </div>`;
   }
 
@@ -1277,13 +1312,19 @@ function completeM1(){
     if(err){ err.classList.add('show'); err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); }
     return;
   }
-  S.m1.completed=true;S.m1.completedAt=new Date().toISOString();save();
+  S.m1.completed=true;S.m1.completedAt=new Date().toISOString();
+  const coins1 = awardCoins('m1');
+  const rank1 = getDetectiveRank();
   confetti();
   document.getElementById('m1ScoreContent').innerHTML=`
     <div class="completion-screen">
-      <div class="completion-badge">🏆</div>
+      <div class="completion-badge">${rank1.icon}</div>
       <div class="completion-title">Mission 1 Complete!</div>
-      <div class="completion-sub" style="margin-bottom:20px">You've earned your Stock Detective badge!<br>Mission 2 is now unlocked.</div>
+      <div style="font-size:1.1em;font-weight:800;color:${rank1.color};margin-bottom:6px">🎖️ You are now a ${rank1.title}!</div>
+      <div style="background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.3);border-radius:10px;padding:10px 20px;display:inline-block;margin-bottom:16px;font-size:.95em">
+        🪙 <strong style="color:var(--gold)">+${coins1} ClueCoins earned!</strong> &nbsp;·&nbsp; Total: ${(S.clueCoins||0).toLocaleString()} CC
+      </div>
+      <div class="completion-sub" style="margin-bottom:20px">Mission 2 is now unlocked — time to build your portfolio!</div>
       <button class="btn-green" onclick="goTo('m2-intro')">Start Mission 2: Build Your Portfolio →</button>
       <br><br><button class="btn-secondary" onclick="goTo('dashboard')">Go to Dashboard</button>
     </div>`;
@@ -1755,12 +1796,18 @@ function completeM2(){
     if(err){ err.classList.add('show'); err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); }
     return;
   }
-  S.m2.completed=true;S.m2.completedAt=new Date().toISOString();save();
+  S.m2.completed=true;S.m2.completedAt=new Date().toISOString();
+  const coins2 = awardCoins('m2');
+  const rank2 = getDetectiveRank();
   confetti();
   document.getElementById('m2VerdictContent').innerHTML=`
     <div class="completion-screen">
-      <div class="completion-badge">💼</div>
+      <div class="completion-badge">${rank2.icon}</div>
       <div class="completion-title">Mission 2 Complete!</div>
+      <div style="font-size:1.1em;font-weight:800;color:${rank2.color};margin-bottom:6px">🎖️ You are now a ${rank2.title}!</div>
+      <div style="background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.3);border-radius:10px;padding:10px 20px;display:inline-block;margin-bottom:16px;font-size:.95em">
+        🪙 <strong style="color:var(--gold)">+${coins2} ClueCoins earned!</strong> &nbsp;·&nbsp; Total: ${(S.clueCoins||0).toLocaleString()} CC
+      </div>
       <div class="completion-sub" style="margin-bottom:20px">You're a real virtual investor now!<br>Mission 3 is now unlocked — place your sector bet!</div>
       <button class="btn-green" onclick="goTo('m3-intro')">Start Mission 3: The Sector Bet →</button>
       <br><br><button class="btn-secondary" onclick="goTo('dashboard')">🏠 Back to Dashboard</button>
@@ -2236,12 +2283,18 @@ function completeM3(){
     if(err){ err.classList.add('show'); err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); }
     return;
   }
-  S.m3.completed=true; S.m3.completedAt=new Date().toISOString(); save();
+  S.m3.completed=true; S.m3.completedAt=new Date().toISOString();
+  const coins3 = awardCoins('m3');
+  const rank3 = getDetectiveRank();
   confetti();
   document.getElementById('m3ThesisContent').innerHTML=`
     <div class="completion-screen">
-      <div class="completion-badge">🗺️</div>
+      <div class="completion-badge">${rank3.icon}</div>
       <div class="completion-title">Mission 3 Complete!</div>
+      <div style="font-size:1.1em;font-weight:800;color:${rank3.color};margin-bottom:6px">🎖️ You are now a ${rank3.title}!</div>
+      <div style="background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.3);border-radius:10px;padding:10px 20px;display:inline-block;margin-bottom:16px;font-size:.95em">
+        🪙 <strong style="color:var(--gold)">+${coins3} ClueCoins earned!</strong> &nbsp;·&nbsp; Total: ${(S.clueCoins||0).toLocaleString()} CC
+      </div>
       <div class="completion-sub" style="margin-bottom:20px">
         You placed your sector bet on <strong style="color:#c084fc">${S.m3.selectedSector}</strong>!<br>
         Keep watching the market — your sector bet is live!
