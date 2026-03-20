@@ -16,7 +16,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--navy);min-height:1
 
 /* NAV */
 .top-nav{background:rgba(13,27,42,.97);border-bottom:2px solid var(--gold);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:8px;}
-.nav-brand{color:var(--gold);font-size:1em;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.nav-brand{color:var(--gold);font-size:1.05em;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;letter-spacing:.3px;}
 .nav-steps{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
 .nav-step{padding:5px 12px;border-radius:20px;font-size:.75em;font-weight:600;background:rgba(255,255,255,.08);color:#aaa;cursor:pointer;border:none;transition:all .2s;}
 .nav-step.active{background:var(--gold);color:var(--navy);}
@@ -884,14 +884,18 @@ function renderDashboard() {
   }
 
   document.getElementById('dashContent').innerHTML = `
-    <div style="text-align:center;padding:36px 16px 20px">
-      <div class="hero-badge-anim">🔍</div>
-      <div class="hero-eyebrow" style="margin-top:10px">Stock Detective Academy</div>
-      <h1 class="hero-h1" style="font-size:1.7em;margin:8px 0 20px">The Stock Market is a Puzzle.<br>You're the <em>Detective.</em></h1>
+    <div style="background:linear-gradient(135deg,rgba(13,27,42,1) 0%,rgba(20,40,70,1) 100%);border-bottom:2px solid rgba(245,200,66,.25);padding:28px 24px 24px;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:12px;margin-bottom:10px">
+        <span style="font-size:2.2em">🔍</span>
+        <div style="text-align:left">
+          <div style="color:var(--gold);font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:3px">Stock Detective Academy</div>
+          <div style="color:#fff;font-size:1.55em;font-weight:900;line-height:1.15">The Stock Market is a Puzzle.<br>You're the <em style="color:var(--gold);font-style:normal">Detective.</em></div>
+        </div>
+      </div>
       ${middleCard}
     </div>
 
-    <div style="max-width:1000px;margin:0 auto;padding:0 16px 32px">
+    <div style="max-width:1000px;margin:0 auto;padding:20px 16px 32px">
       <div class="section-heading" style="text-align:center;margin-bottom:14px">🗺️ Your <em>Missions</em></div>
       <div class="missions-grid">${MISSIONS_CFG.map(mc=>renderMissionCard(mc)).join('')}</div>
     </div>`;
@@ -2481,7 +2485,7 @@ function updatePTMCalc(){
 // 18. INIT  — app startup
 // ═══════════════════════════════════════════════════════
 function init(){
-  renderDashboard();
+  goTo('dashboard');
   // Pre-render M1 table so tabs are built
   buildTabs();
   buildPanels();
