@@ -833,7 +833,12 @@ let S = (() => {
 function save(){try{localStorage.setItem(STATE_KEY,JSON.stringify(S));}catch(e){}}
 
 // ═══════════════════════════════════════════════════════
-// 3. ROUTER
+// 3. UTILITIES
+// ═══════════════════════════════════════════════════════
+function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+// ═══════════════════════════════════════════════════════
+// 4. ROUTER
 // ═══════════════════════════════════════════════════════
 let currentView = 'dashboard';
 
@@ -870,7 +875,7 @@ function renderNav(v) {
   if(nameEl && nameText){
     if(S.detectiveName){
       const rank = getDetectiveRank();
-      nameText.innerHTML = `<span title="${rank.title}" style="color:${rank.color}">${rank.medal||rank.icon}</span> ${S.detectiveName} <span style="color:var(--gold);font-size:.85em;margin-left:4px">🪙 ${(S.clueCoins||0).toLocaleString()}</span>`;
+      nameText.innerHTML = `<span title="${escHtml(rank.title)}" style="color:${rank.color}">${rank.medal||rank.icon}</span> ${escHtml(S.detectiveName)} <span style="color:var(--gold);font-size:.85em;margin-left:4px">🪙 ${(S.clueCoins||0).toLocaleString()}</span>`;
       nameEl.style.display = 'flex';
     } else {
       nameEl.style.display = 'none';
@@ -1233,22 +1238,22 @@ function renderM1Score(){
       <h3>🤔 Think Like an Investor!</h3>
       <div class="questions">
         <div class="question"><label>Q1: Which company got the MOST check marks? Would you invest in it? Why?</label>
-          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q1=this.value;save()">${v.q1}</textarea></div>
+          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q1=this.value;save()">${escHtml(v.q1)}</textarea></div>
         <div class="question"><label>Q2: Tesla is famous and cool — but what do the numbers say?</label>
-          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q2=this.value;save()">${v.q2}</textarea></div>
+          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q2=this.value;save()">${escHtml(v.q2)}</textarea></div>
         <div class="question"><label>Q3: Coca-Cola has been around 130+ years. Which number says it's "safe"? Which says it's not growing fast?</label>
-          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q3=this.value;save()">${v.q3}</textarea></div>
+          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q3=this.value;save()">${escHtml(v.q3)}</textarea></div>
       </div>
     </div>
     <div class="verdict-section">
       <h3>🏆 My Investment Verdict — If I Had $1,000 to Invest...</h3>
       <div class="verdict-row" style="margin-bottom:14px">
-        <div class="verdict-box"><label>I would invest in:</label><input type="text" placeholder="Company name..." value="${v.investIn}" oninput="S.m1.verdict.investIn=this.value;save();refreshM1VerdictCheck(this.value)"></div>
-        <div class="verdict-box"><label>Because (2 reasons):</label><textarea style="min-height:48px" placeholder="1.&#10;2." oninput="S.m1.verdict.investReason=this.value;save()">${v.investReason}</textarea></div>
+        <div class="verdict-box"><label>I would invest in:</label><input type="text" placeholder="Company name..." value="${escHtml(v.investIn)}" oninput="S.m1.verdict.investIn=this.value;save();refreshM1VerdictCheck(this.value)"></div>
+        <div class="verdict-box"><label>Because (2 reasons):</label><textarea style="min-height:48px" placeholder="1.&#10;2." oninput="S.m1.verdict.investReason=this.value;save()">${escHtml(v.investReason)}</textarea></div>
       </div>
       <div class="verdict-row">
-        <div class="verdict-box"><label>I would NOT invest in:</label><input type="text" placeholder="Company name..." value="${v.notInvest}" oninput="S.m1.verdict.notInvest=this.value;save()"></div>
-        <div class="verdict-box"><label>Because the numbers showed:</label><textarea style="min-height:48px" placeholder="The numbers showed..." oninput="S.m1.verdict.notReason=this.value;save()">${v.notReason}</textarea></div>
+        <div class="verdict-box"><label>I would NOT invest in:</label><input type="text" placeholder="Company name..." value="${escHtml(v.notInvest)}" oninput="S.m1.verdict.notInvest=this.value;save()"></div>
+        <div class="verdict-box"><label>Because the numbers showed:</label><textarea style="min-height:48px" placeholder="The numbers showed..." oninput="S.m1.verdict.notReason=this.value;save()">${escHtml(v.notReason)}</textarea></div>
       </div>
       <div style="margin-top:16px">
         <div style="color:#9ab;font-size:.75em;margin-bottom:6px;font-weight:600;text-transform:uppercase">How much did you enjoy this?</div>
@@ -1737,9 +1742,9 @@ function renderM2Verdict(){
       <h3>🤔 Reflect on Your Portfolio</h3>
       <div class="questions">
         <div class="question"><label>Q1: Why did you choose the stocks you picked? Did your Mission 1 research help?</label>
-          <textarea placeholder="Write your answer..." oninput="S.m2.verdict.q1=this.value;save()">${v.q1}</textarea></div>
+          <textarea placeholder="Write your answer..." oninput="S.m2.verdict.q1=this.value;save()">${escHtml(v.q1)}</textarea></div>
         <div class="question"><label>Q2: How is your portfolio performing? What would you do differently next time?</label>
-          <textarea placeholder="Write your answer..." oninput="S.m2.verdict.q2=this.value;save()">${v.q2}</textarea></div>
+          <textarea placeholder="Write your answer..." oninput="S.m2.verdict.q2=this.value;save()">${escHtml(v.q2)}</textarea></div>
       </div>
       <div style="margin-top:10px">
         <div style="color:#9ab;font-size:.75em;margin-bottom:6px;font-weight:600;text-transform:uppercase">How much did you enjoy Mission 2?</div>
@@ -2211,11 +2216,11 @@ function renderM3Thesis(){
         <div class="question">
           <label>Q1: Why did you choose the <strong>${sel||'sector'}</strong> sector? What makes you believe it will grow?</label>
           <textarea placeholder="Write your thesis here... What's happening in this sector? Why is now a good time to invest?"
-            oninput="S.m3.verdict.q1=this.value;save();refreshM3ThesisCheck(this.value)">${v.q1}</textarea>
+            oninput="S.m3.verdict.q1=this.value;save();refreshM3ThesisCheck(this.value)">${escHtml(v.q1)}</textarea>
         </div>
         <div class="question">
           <label>Q2: Which stock in your M3 portfolio are you most excited about and why?</label>
-          <textarea placeholder="Name the stock and explain your reasons..." oninput="S.m3.verdict.q2=this.value;save()">${v.q2}</textarea>
+          <textarea placeholder="Name the stock and explain your reasons..." oninput="S.m3.verdict.q2=this.value;save()">${escHtml(v.q2)}</textarea>
         </div>
       </div>
       <div style="margin-top:10px">
