@@ -429,6 +429,44 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ptm-dash-arrow{color:var(--gold);font-size:1.3em;flex-shrink:0;opacity:.7;}
 @media(max-width:600px){.metrics-grid,.fields-grid,.add-form-grid{grid-template-columns:1fr;}.pie-section{grid-template-columns:1fr;}}
 
+/* ── MISSION 1 IMPROVEMENTS ── */
+/* Detective briefing */
+.m1-briefing{background:linear-gradient(135deg,rgba(245,200,66,.07),rgba(27,79,138,.12));border:1.5px solid rgba(245,200,66,.3);border-radius:16px;padding:22px 24px;margin-bottom:24px;position:relative;overflow:hidden;}
+.m1-briefing::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(245,200,66,.12),transparent);border-radius:50%;}
+.briefing-stamp{display:inline-flex;align-items:center;gap:7px;background:rgba(245,200,66,.15);border:1px solid rgba(245,200,66,.35);border-radius:6px;padding:4px 12px;font-size:.68em;font-weight:800;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+.briefing-name{color:var(--gold);font-weight:900;}
+/* Company fun fact */
+.co-funfact{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(59,130,246,.04));border-left:3px solid #3b82f6;border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:14px;font-size:.82em;color:#93c5fd;line-height:1.6;}
+/* Signal tooltip */
+.sig-tip{font-size:.75em;color:#94a3b8;margin-top:4px;line-height:1.4;padding:4px 8px;background:rgba(255,255,255,.04);border-radius:6px;border-left:2px solid rgba(255,255,255,.1);}
+.sig-tip.good{color:#86efac;border-left-color:var(--green);}
+.sig-tip.okay{color:#fcd34d;border-left-color:var(--yellow);}
+.sig-tip.warn{color:#fca5a5;border-left-color:var(--red);}
+/* Quiz */
+.quiz-section{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:22px;margin-top:28px;}
+.quiz-title{color:var(--gold);font-size:1em;font-weight:800;margin-bottom:4px;}
+.quiz-sub{color:#9ab;font-size:.8em;margin-bottom:18px;}
+.quiz-q{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.07);}
+.quiz-q:last-of-type{border-bottom:none;margin-bottom:8px;}
+.quiz-q-text{color:#e2e8f0;font-size:.88em;font-weight:600;margin-bottom:10px;line-height:1.5;}
+.quiz-opts{display:flex;flex-direction:column;gap:7px;}
+.quiz-opt{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 14px;color:#ccc;font-size:.83em;cursor:pointer;text-align:left;transition:all .2s;font-family:inherit;}
+.quiz-opt:hover:not([disabled]){background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff;}
+.quiz-opt.correct{background:rgba(34,197,94,.15);border-color:var(--green);color:var(--green);cursor:default;}
+.quiz-opt.wrong{background:rgba(239,68,68,.12);border-color:var(--red);color:var(--red);cursor:default;}
+.quiz-opt[disabled]:not(.correct):not(.wrong){opacity:.4;cursor:default;}
+.quiz-explain{margin-top:8px;padding:9px 13px;border-radius:8px;font-size:.8em;line-height:1.55;}
+.quiz-explain.right{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#86efac;}
+.quiz-explain.wrong{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5;}
+.quiz-result{text-align:center;padding:14px;border-radius:10px;font-size:.88em;font-weight:700;margin-top:12px;display:none;}
+.quiz-result.good{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--green);}
+.quiz-result.meh{background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.25);color:var(--gold);}
+/* Detective Final Report */
+.report-header{background:linear-gradient(135deg,rgba(245,200,66,.08),rgba(245,200,66,.02));border:1.5px solid rgba(245,200,66,.25);border-radius:14px;padding:18px 22px;margin-bottom:22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.report-stamp{background:var(--gold);color:var(--navy);font-size:.65em;font-weight:900;padding:4px 10px;border-radius:6px;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;}
+.report-case{color:#9ab;font-size:.75em;}
+.report-title{color:#fff;font-size:1.1em;font-weight:800;}
+
 /* ─────────────────────────────────────────────────────
    MOBILE  ≤ 640px
 ───────────────────────────────────────────────────── */
@@ -617,18 +655,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- M1: CHEAT SHEET -->
 <div id="view-m1-cheat" class="view">
 <div class="page-wrap">
-  <div style="background:rgba(245,200,66,.06);border:1px solid rgba(245,200,66,.15);border-radius:14px;padding:20px 20px 16px;margin-bottom:22px">
-    <div style="font-size:1.5em;margin-bottom:8px">🕵️ Welcome to Stock Detective Academy</div>
-    <p style="color:#ccc;font-size:.9em;line-height:1.65;margin:0 0 12px">
-      Every day, millions of people invest money in real companies — Apple, Tesla, McDonald's, and more.
-      Some investors get <strong style="color:var(--green)">rich</strong>. Others <strong style="color:var(--red)">lose everything</strong>. What's the difference?<br><br>
-      The smartest investors know how to read <strong style="color:var(--gold)">6 secret clues</strong> hidden inside every stock.
-      In this mission, you'll learn those clues, then investigate real companies yourself — just like a Wall Street pro.
+  <div class="m1-briefing">
+    <div class="briefing-stamp">📁 Classified Mission Briefing</div>
+    <div style="color:#fff;font-size:1.15em;font-weight:900;margin-bottom:10px;line-height:1.3">
+      Detective <span class="briefing-name" id="briefingDetName">—</span>, your mission:
+    </div>
+    <p style="color:#cde;font-size:.9em;line-height:1.7;margin:0 0 14px">
+      Every day, millions of people invest money in real companies — Apple, Tesla, McDonald's and more.
+      Some get <strong style="color:var(--green)">rich</strong>. Others <strong style="color:var(--red)">lose everything</strong>.
+      The difference? The smartest investors know how to read <strong style="color:var(--gold)">6 secret clues</strong> hidden inside every stock.<br><br>
+      Study the 6 clues below. Then investigate <strong>7 real companies</strong> and decide where you'd put your money.
     </p>
-    <div class="hero-funfact" style="margin:0;font-size:.84em">
-      🤯 <strong>Did you know?</strong> $1,000 invested in Apple in 2004 would be worth over
-      <strong>$700,000 today</strong>. Warren Buffett — one of the world's richest investors —
-      started buying stocks when he was <strong>just 11 years old</strong>. Your turn.
+    <div style="background:rgba(0,0,0,.2);border-radius:10px;padding:11px 16px;font-size:.82em;color:#f5c842cc;line-height:1.65">
+      🤯 <strong style="color:var(--gold)">Did you know?</strong> Warren Buffett bought his first stock at age <strong>11</strong>.
+      $1,000 invested in Apple in 2004 would be worth over <strong>$700,000 today</strong>.
+      The earlier you learn this, the better. Let's go.
     </div>
   </div>
   <div class="page-title">📋 The 6 Magic Numbers</div>
@@ -728,6 +769,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <a href="https://www.google.com/finance" target="_blank" class="lookup-tip" style="font-size:.82em;padding:8px 16px;">🔍 google.com/finance ↗</a>
     </div>
   </div>
+  <div id="m1QuizSection"></div>
   <div class="nav-row">
     <button class="btn-secondary" onclick="goTo('dashboard')">← Dashboard</button>
     <button class="btn-primary" onclick="goTo('m1-table')">Start Investigating →</button>
@@ -897,13 +939,20 @@ const fbDb   = firebase.firestore();
 // 1. CONSTANTS
 // ═══════════════════════════════════════════════════════
 const COMPANIES = [
-  {id:'ko',   name:'Coca-Cola',   ticker:'KO',   logo:'🥤', bg:'#e63946', example:true,  pre:{price:'64',pe:'24',wkHigh:'74',wkLow:'57',mktCap:'280',revGrowth:'2',divYield:'3.1'}},
-  {id:'aapl', name:'Apple',       ticker:'AAPL', logo:'🍎', bg:'#555555', example:false, pre:null},
-  {id:'googl',name:'Alphabet',    ticker:'GOOGL',logo:'🔵', bg:'#4285F4', example:false, pre:null},
-  {id:'tsla', name:'Tesla',       ticker:'TSLA', logo:'⚡', bg:'#cc0000', example:false, pre:null},
-  {id:'amzn', name:'Amazon',      ticker:'AMZN', logo:'📦', bg:'#ff9900', example:false, pre:null},
-  {id:'nke',  name:'Nike',        ticker:'NKE',  logo:'👟', bg:'#111111', example:false, pre:null},
-  {id:'mcd',  name:"McDonald's",  ticker:'MCD',  logo:'🍔', bg:'#DA291C', example:false, pre:null},
+  {id:'ko',   name:'Coca-Cola',   ticker:'KO',   logo:'🥤', bg:'#e63946', example:true,  pre:{price:'64',pe:'24',wkHigh:'74',wkLow:'57',mktCap:'280',revGrowth:'2',divYield:'3.1'},
+   funFact:'Coca-Cola sells over <strong>2 billion drinks every single day</strong> in 200+ countries. It\'s been around since 1886 — older than the Eiffel Tower! Already filled in as your example.'},
+  {id:'aapl', name:'Apple',       ticker:'AAPL', logo:'🍎', bg:'#555555', example:false, pre:null,
+   funFact:'Apple makes over <strong>$1 million profit every 3 minutes</strong> and is the most valuable company on Earth. $1,000 invested in Apple in 2004 would be worth over $700,000 today. Is the stock still a good deal right now?'},
+  {id:'googl',name:'Alphabet',    ticker:'GOOGL',logo:'🔵', bg:'#4285F4', example:false, pre:null,
+   funFact:'Google handles <strong>8.5 billion searches every day</strong> — you\'ve probably used it today! Alphabet also owns YouTube, Waymo self-driving cars, and DeepMind AI. But is the stock price reasonable?'},
+  {id:'tsla', name:'Tesla',       ticker:'TSLA', logo:'⚡', bg:'#cc0000', example:false, pre:null,
+   funFact:'Tesla delivered <strong>1.8 million cars in 2023</strong> and is the most talked-about EV company on Earth. But famous and popular doesn\'t always mean a good stock. What do the 6 numbers say?'},
+  {id:'amzn', name:'Amazon',      ticker:'AMZN', logo:'📦', bg:'#ff9900', example:false, pre:null,
+   funFact:'Amazon ships millions of packages daily AND powers websites for Netflix, NASA and the CIA through AWS cloud. Fun fact: <strong>AWS cloud is its biggest profit maker</strong> — not the boxes!'},
+  {id:'nke',  name:'Nike',        ticker:'NKE',  logo:'👟', bg:'#111111', example:false, pre:null,
+   funFact:'Nike sells over <strong>1 billion pairs of shoes per year</strong>. The famous swoosh logo was designed by a student for just $35 in 1971. Today it\'s one of the most recognised brands on the planet!'},
+  {id:'mcd',  name:"McDonald's",  ticker:'MCD',  logo:'🍔', bg:'#DA291C', example:false, pre:null,
+   funFact:"McDonald's feeds <strong>69 million people every day</strong> — more than the entire population of the UK! Here's the twist: most of McDonald's profits actually come from <strong>real estate</strong>, not burgers."},
 ];
 
 const TICKER_SECTOR = {KO:'Consumer Staples',AAPL:'Technology',GOOGL:'Technology',TSLA:'Consumer Discretionary',AMZN:'Consumer Discretionary',NKE:'Consumer Discretionary',MCD:'Consumer Discretionary'};
@@ -979,7 +1028,7 @@ function defaultState() {
   return {
     detectiveName:'',
     clueCoins:0,
-    m1:{completed:false,completedAt:null,stockData:sd,
+    m1:{completed:false,completedAt:null,quizScore:null,stockData:sd,
         verdict:{q1:'',q2:'',q3:'',investIn:'',investReason:'',notInvest:'',notReason:'',stars:0}},
     m2:{completed:false,completedAt:null,budget:10000,portfolio:[],
         verdict:{q1:'',q2:'',stars:0}},
@@ -1013,6 +1062,7 @@ function goTo(v) {
   currentView = v;
   renderNav(v);
   if(v==='dashboard') renderDashboard();
+  if(v==='m1-cheat'){const n=document.getElementById('briefingDetName');if(n)n.textContent=S.detectiveName||'Detective';renderM1Quiz();}
   if(v==='m1-table'){buildTabs();buildPanels();updateM1Progress();}
   if(v==='m1-score') renderM1Score();
   if(v==='m2-build') renderM2Build();
@@ -1246,6 +1296,130 @@ function sigBadge(sig){
   return `<span class="signal-badge ${sigCls(sig)}">${labels[sig]||'—'}</span>`;
 }
 
+function sigTooltip(metric, sig, d){
+  if(sig==='empty') return '';
+  const pe=parseFloat(d?.pe), mc=parseFloat(d?.mktCap);
+  const rv=parseFloat(d?.revGrowth), dy=parseFloat(d?.divYield);
+  const pr=parseFloat(d?.price), hi=parseFloat(d?.wkHigh), lo=parseFloat(d?.wkLow);
+  const pct=(!isNaN(pr)&&!isNaN(hi)&&!isNaN(lo)&&hi>lo)?Math.round((pr-lo)/(hi-lo)*100):null;
+  const tips = {
+    pe:{
+      good:`P/E ${pe} — reasonable! The stock costs ${pe}× yearly earnings. Under 25 = green zone. 👍`,
+      okay:`P/E ${pe} — pricey. This company needs to keep growing fast to justify the price. 🤔`,
+      warn:`P/E ${pe} — very expensive! Over 50× earnings. Only worth it if growth is exceptional. ⚠️`,
+    },
+    wk:{
+      good:`${pct!==null?pct+'% above its low':''} — near its 52-week LOW. Could be "on sale" right now! 🛒`,
+      okay:`${pct!==null?pct+'% above its low':''} — in the middle of its 52-week range. Normal price. 📊`,
+      warn:`${pct!==null?pct+'% above its low':''} — near its 52-week HIGH. Might be expensive right now. ⚠️`,
+    },
+    mktCap:{
+      good:`$${mc}B market cap — Large Cap. Big, established company. Generally safer to invest in. 🏙️`,
+      okay:`$${mc}B market cap — Mid Cap. Some growth potential but more risk than large companies. 🏘️`,
+      warn:`$${mc}B market cap — Small Cap. Higher risk! Could grow fast or disappear. 🎲`,
+    },
+    revGrowth:{
+      good:`Revenue growing ${rv}% — this company is expanding fast! Great sign for investors. 🌱`,
+      okay:`Revenue growing ${rv}% — steady but not spectacular. Watch if it picks up speed. 📈`,
+      warn:`Revenue ${rv<0?'shrinking '+Math.abs(rv)+'%':'barely growing'} — the business ${rv<0?'is getting smaller':'is stalling'}. Investigate why. 🚨`,
+    },
+    divYield:{
+      good:`Dividend yield ${dy}% — pays you extra income just for holding the stock! Like rent from a house. 🐔`,
+      okay:`Small dividend of ${dy}% — a little bonus income on top of any price growth. 💰`,
+      warn:`No dividend (0%) — the company reinvests all profit to grow. OK if it\'s growing fast. ℹ️`,
+    },
+  };
+  return tips[metric]?.[sig] || '';
+}
+
+function sigWithTip(metric, sig, d){
+  const badge = sigBadge(sig);
+  if(sig==='empty') return badge;
+  const tip = sigTooltip(metric, sig, d);
+  if(!tip) return badge;
+  return `${badge}<div class="sig-tip ${sig}">${tip}</div>`;
+}
+
+// ── MINI QUIZ ─────────────────────────────────────────
+const M1_QUIZ = [
+  { q:'A company has a P/E ratio of 20. What does that tell you as an investor?',
+    opts:['Very expensive — danger! Avoid it.', 'Reasonable deal — you\'d get your money back in ~20 years of profits.', 'The company pays a 20% dividend.'],
+    ans:1, explain:'P/E = how many years of profits equals the stock price. P/E 20 is reasonable — under 25 is the green zone!' },
+  { q:'Which type of company is generally the SAFEST place to invest your money?',
+    opts:['Small Cap (under $2B) — exciting and fast-growing!', 'Mid Cap ($2B–$10B) — middle ground', 'Large Cap (over $10B) — big, established companies'],
+    ans:2, explain:'Large Cap companies like Apple and Coca-Cola are more established and stable. Less likely to disappear overnight!' },
+  { q:'A stock is trading near its 52-week LOW. What might this mean?',
+    opts:['The company is definitely failing — avoid it!', 'It could be "on sale" — worth investigating the other numbers!', 'It\'s guaranteed to go up from here.'],
+    ans:1, explain:'Near the 52-week low COULD be a buying opportunity — like a sale at a shop. But always check all 6 clues before deciding!' },
+];
+let m1QuizAnswers = {};
+
+function renderM1Quiz(){
+  const el = document.getElementById('m1QuizSection');
+  if(!el) return;
+  const done = S.m1.quizScore !== null;
+  el.innerHTML = `
+    <div class="quiz-section">
+      <div class="quiz-title">🧠 Quick Detective Test</div>
+      <div class="quiz-sub">Answer 3 questions to earn <strong style="color:var(--gold)">25 🪙 ClueCoins</strong> — then start your investigation!
+        ${done?`<span style="color:var(--green);font-weight:700"> ✅ Already completed — score: ${S.m1.quizScore}/3</span>`:''}
+      </div>
+      ${M1_QUIZ.map((q,i)=>renderQuizQ(q,i)).join('')}
+      <div id="quizResult" class="quiz-result" style="display:none"></div>
+    </div>`;
+}
+
+function renderQuizQ(q, i){
+  const saved = m1QuizAnswers[i];
+  const answered = saved !== undefined;
+  const opts = q.opts.map((opt,j)=>{
+    let cls = 'quiz-opt';
+    if(answered){cls+=(j===q.ans?' correct':j===saved&&j!==q.ans?' wrong':'');}
+    return `<button class="${cls}" onclick="answerM1Quiz(${i},${j})" ${answered?'disabled':''}>${opt}</button>`;
+  }).join('');
+  const explain = answered
+    ? `<div class="quiz-explain ${saved===q.ans?'right':'wrong'}">${saved===q.ans?'✅':'❌'} ${q.explain}</div>`
+    : '';
+  return `<div class="quiz-q"><div class="quiz-q-text"><strong>Q${i+1}:</strong> ${q.q}</div><div class="quiz-opts">${opts}</div>${explain}</div>`;
+}
+
+function answerM1Quiz(qi, ai){
+  if(m1QuizAnswers[qi] !== undefined) return;
+  m1QuizAnswers[qi] = ai;
+  // Re-render this question
+  const q = M1_QUIZ[qi];
+  const qEl = document.querySelectorAll('.quiz-q')[qi];
+  if(qEl){
+    const optsEl = qEl.querySelector('.quiz-opts');
+    optsEl.querySelectorAll('.quiz-opt').forEach((btn,j)=>{
+      btn.disabled = true;
+      if(j===q.ans) btn.classList.add('correct');
+      else if(j===ai&&j!==q.ans) btn.classList.add('wrong');
+    });
+    const exp = document.createElement('div');
+    exp.className = `quiz-explain ${ai===q.ans?'right':'wrong'}`;
+    exp.innerHTML = `${ai===q.ans?'✅':'❌'} ${q.explain}`;
+    qEl.appendChild(exp);
+  }
+  // All answered?
+  if(Object.keys(m1QuizAnswers).length === M1_QUIZ.length && S.m1.quizScore === null){
+    const score = M1_QUIZ.filter((_,i)=>m1QuizAnswers[i]===M1_QUIZ[i].ans).length;
+    S.m1.quizScore = score; save();
+    const resultEl = document.getElementById('quizResult');
+    if(resultEl){
+      if(score >= 2){
+        S.clueCoins = (S.clueCoins||0) + 25; save();
+        resultEl.className = 'quiz-result good';
+        resultEl.innerHTML = `🎉 ${score}/3 correct — brilliant! +25 🪙 ClueCoins earned! You're ready to investigate real companies!`;
+      } else {
+        resultEl.className = 'quiz-result meh';
+        resultEl.innerHTML = `${score}/3 correct — no worries! Review the 6 clues above, then start investigating. It'll click as you use them!`;
+      }
+      resultEl.style.display = 'block';
+    }
+  }
+}
+
 // ═══════════════════════════════════════════════════════
 // 6. MISSION 1 — TABLE  (company investigation panels)
 // ═══════════════════════════════════════════════════════
@@ -1282,9 +1456,10 @@ function buildPanel(co){
         <div class="co-ticker">${co.ticker}</div>
       </div>
     </div>
+    <div class="co-funfact">🔎 ${co.funFact||''}</div>
     ${co.example
-      ?'<div class="hint-box">⭐ <strong>Pre-filled as example.</strong> Notice how each number gets a ✓ ~ ✗ signal. Use this to fill in the other companies!</div>'
-      :`<div class="hint-box">🔍 <strong>Your turn!</strong> Search <strong>${co.ticker}</strong> on Yahoo Finance or Google Finance, then type the numbers below.</div>`}
+      ?'<div class="hint-box">⭐ <strong>Pre-filled as example.</strong> Notice how each number gets a ✓ ~ ✗ signal AND an explanation. Use this to fill in the other companies!</div>'
+      :`<div class="hint-box">🕵️ <strong>Your turn!</strong> Search <strong>${co.ticker}</strong> on Yahoo Finance or Google Finance, then type the numbers below.</div>`}
     <div class="fields-grid">
       <div class="field-group">
         <div class="field-label">① Stock Price <span>($)</span></div>
@@ -1293,7 +1468,7 @@ function buildPanel(co){
       <div class="field-group">
         <div class="field-label">② P/E Ratio</div>
         <input class="field-input ${lk}" type="number" step="0.1" placeholder="e.g. 28" ${ro} value="${sv('pe')}" oninput="m1Update('${co.id}','pe',this.value)">
-        <div class="signal-display" id="sig-pe-${co.id}">${sigBadge(sigs.pe)}</div>
+        <div class="signal-display" id="sig-pe-${co.id}">${sigWithTip('pe',sigs.pe,d)}</div>
       </div>
       <div class="field-group">
         <div class="field-label">③ 52-Wk High</div>
@@ -1302,22 +1477,22 @@ function buildPanel(co){
       <div class="field-group">
         <div class="field-label">③ 52-Wk Low</div>
         <input class="field-input ${lk}" type="number" step="0.01" placeholder="e.g. 130" ${ro} value="${sv('wkLow')}" oninput="m1Update('${co.id}','wkLow',this.value)">
-        <div class="signal-display" id="sig-wk-${co.id}">${sigBadge(sigs.wk)}</div>
+        <div class="signal-display" id="sig-wk-${co.id}">${sigWithTip('wk',sigs.wk,d)}</div>
       </div>
       <div class="field-group">
         <div class="field-label">④ Market Cap <span>(billions)</span></div>
         <input class="field-input ${lk}" type="number" step="1" placeholder="e.g. 2800" ${ro} value="${sv('mktCap')}" oninput="m1Update('${co.id}','mktCap',this.value)">
-        <div class="signal-display" id="sig-mktCap-${co.id}">${sigBadge(sigs.mktCap)}</div>
+        <div class="signal-display" id="sig-mktCap-${co.id}">${sigWithTip('mktCap',sigs.mktCap,d)}</div>
       </div>
       <div class="field-group">
         <div class="field-label">⑤ Revenue Growth <span>(%)</span></div>
         <input class="field-input ${lk}" type="number" step="0.1" placeholder="e.g. 5.2" ${ro} value="${sv('revGrowth')}" oninput="m1Update('${co.id}','revGrowth',this.value)">
-        <div class="signal-display" id="sig-revGrowth-${co.id}">${sigBadge(sigs.revGrowth)}</div>
+        <div class="signal-display" id="sig-revGrowth-${co.id}">${sigWithTip('revGrowth',sigs.revGrowth,d)}</div>
       </div>
       <div class="field-group">
         <div class="field-label">⑥ Dividend Yield <span>(%)</span></div>
         <input class="field-input ${lk}" type="number" step="0.01" placeholder="e.g. 1.5" ${ro} value="${sv('divYield')}" oninput="m1Update('${co.id}','divYield',this.value)">
-        <div class="signal-display" id="sig-divYield-${co.id}">${sigBadge(sigs.divYield)}</div>
+        <div class="signal-display" id="sig-divYield-${co.id}">${sigWithTip('divYield',sigs.divYield,d)}</div>
       </div>
     </div>
     <div class="co-score-bar">
@@ -1347,7 +1522,7 @@ function m1Update(coId,field,value){
   const sigs=calcSignals(S.m1.stockData[coId]);
   ['pe','wk','mktCap','revGrowth','divYield'].forEach(k=>{
     const el=document.getElementById(`sig-${k}-${coId}`);
-    if(el) el.innerHTML=sigBadge(sigs[k]);
+    if(el) el.innerHTML=sigWithTip(k, sigs[k], S.m1.stockData[coId]);
   });
   const score=countChecks(sigs);
   const scoreEl=document.getElementById(`coscore-${coId}`);
@@ -1375,9 +1550,17 @@ function renderM1Score(){
   const v=S.m1.verdict;
 
   document.getElementById('m1ScoreContent').innerHTML=`
-    <div class="page-title">🏆 Score & My Verdict</div>
-    <div class="page-sub">Tally scores then write your final investment decision!</div>
-    ${maxScore>0?`<div class="winner-banner"><h2>🏆 Current Leader: ${winner.co.logo} ${winner.co.name}</h2><p>Score: ${winner.score}/5 check marks — highest by the numbers!</p></div>`:''}
+    <div class="report-header">
+      <div>
+        <div class="report-stamp">📁 Case Report</div>
+        <div class="report-case">Mission 01 — Stock Detective</div>
+      </div>
+      <div style="flex:1">
+        <div class="report-title">Detective's Final Report</div>
+        <div style="color:#9ab;font-size:.8em">Study the scoreboard, then write your verdict below to close the case.</div>
+      </div>
+    </div>
+    ${maxScore>0?`<div class="winner-banner"><h2>🏆 Numbers Leader: ${winner.co.logo} ${winner.co.name}</h2><p>${winner.score}/5 check marks — highest score by the numbers. Does your gut agree?</p></div>`:''}
     <div class="verdict-section">
       <h3>📊 Final Scoreboard</h3>
       <div style="overflow-x:auto">
@@ -1399,18 +1582,18 @@ function renderM1Score(){
       </div>
     </div>
     <div class="verdict-section">
-      <h3>🤔 Think Like an Investor!</h3>
+      <h3>🕵️ Case Interview — Think Like an Investor</h3>
       <div class="questions">
-        <div class="question"><label>Q1: Which company got the MOST check marks? Would you invest in it? Why?</label>
-          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q1=this.value;save()">${escHtml(v.q1)}</textarea></div>
-        <div class="question"><label>Q2: Tesla is famous and cool — but what do the numbers say?</label>
-          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q2=this.value;save()">${escHtml(v.q2)}</textarea></div>
-        <div class="question"><label>Q3: Coca-Cola has been around 130+ years. Which number says it's "safe"? Which says it's not growing fast?</label>
-          <textarea placeholder="Write your answer here..." oninput="S.m1.verdict.q3=this.value;save()">${escHtml(v.q3)}</textarea></div>
+        <div class="question"><label>Clue 1: Which company scored the most ✓ check marks? Would you trust the numbers enough to invest in it? Why?</label>
+          <textarea placeholder="Write your findings here..." oninput="S.m1.verdict.q1=this.value;save()">${escHtml(v.q1)}</textarea></div>
+        <div class="question"><label>Clue 2: Tesla is famous and exciting — but what do the 6 numbers actually say about its stock? Any red flags?</label>
+          <textarea placeholder="What did the data reveal..." oninput="S.m1.verdict.q2=this.value;save()">${escHtml(v.q2)}</textarea></div>
+        <div class="question"><label>Clue 3: Coca-Cola has survived for 130+ years. Which of its numbers say it's "safe"? Which say it's not growing fast?</label>
+          <textarea placeholder="Safety vs growth — what did you find..." oninput="S.m1.verdict.q3=this.value;save()">${escHtml(v.q3)}</textarea></div>
       </div>
     </div>
     <div class="verdict-section">
-      <h3>🏆 My Investment Verdict — If I Had $1,000 to Invest...</h3>
+      <h3>📋 My Investment Verdict — If I Had $1,000 to Invest...</h3>
       <div class="verdict-row" style="margin-bottom:14px">
         <div class="verdict-box"><label>I would invest in:</label><input type="text" placeholder="Company name..." value="${escHtml(v.investIn)}" oninput="S.m1.verdict.investIn=this.value;save();refreshM1VerdictCheck(this.value)"></div>
         <div class="verdict-box"><label>Because (2 reasons):</label><textarea style="min-height:48px" placeholder="1.&#10;2." oninput="S.m1.verdict.investReason=this.value;save()">${escHtml(v.investReason)}</textarea></div>
@@ -1432,7 +1615,7 @@ function renderM1Score(){
       <button class="btn-secondary" onclick="goTo('m1-table')">← Back to Table</button>
       ${S.m1.completed
         ?`<button class="btn-green" onclick="goTo('m2-intro')">Go to Mission 2 →</button>`
-        :`<button class="complete-mission-btn" onclick="completeM1()">✅ Complete Mission 1 — Unlock Portfolio Builder!</button>`}
+        :`<button class="complete-mission-btn" onclick="completeM1()">📁 Submit Detective Report — Close the Case!</button>`}
     </div>`;
 }
 
