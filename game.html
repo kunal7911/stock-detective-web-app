@@ -429,10 +429,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ptm-dash-arrow{color:var(--gold);font-size:1.3em;flex-shrink:0;opacity:.7;}
 @media(max-width:600px){.metrics-grid,.fields-grid,.add-form-grid{grid-template-columns:1fr;}.pie-section{grid-template-columns:1fr;}}
 </style>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<nav class="top-nav" id="topNav">
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay" style="position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px">
+  <div style="font-size:3em;animation:float 2s ease-in-out infinite">🔍</div>
+  <div style="color:var(--gold);font-weight:700;font-size:1.05em">Loading your case files…</div>
+</div>
+
+<!-- AUTH VIEW -->
+<div id="authView" style="position:fixed;inset:0;background:var(--navy);z-index:998;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto">
+  <div style="background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.12);border-radius:20px;padding:40px 36px;max-width:400px;width:100%;text-align:center">
+    <div style="font-size:2.5em;margin-bottom:10px">🔍</div>
+    <div style="color:var(--gold);font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:3px;margin-bottom:4px">Stock Detective Academy</div>
+    <h2 style="color:#fff;font-size:1.4em;font-weight:900;margin-bottom:24px;line-height:1.3">Your case files<br>await, Detective.</h2>
+    <!-- Tab switcher -->
+    <div style="display:flex;border:1px solid rgba(255,255,255,.1);border-radius:30px;overflow:hidden;margin-bottom:24px;background:rgba(255,255,255,.04)">
+      <button id="tabSignIn" onclick="switchAuthTab('signin')" style="flex:1;padding:10px;border:none;cursor:pointer;font-weight:700;font-size:.85em;border-radius:30px;background:var(--gold);color:var(--navy);transition:all .2s">Sign In</button>
+      <button id="tabSignUp" onclick="switchAuthTab('signup')" style="flex:1;padding:10px;border:none;cursor:pointer;font-weight:700;font-size:.85em;border-radius:30px;background:transparent;color:#9ab;transition:all .2s">Create Account</button>
+    </div>
+    <!-- Fields -->
+    <div id="authNameField" style="display:none;margin-bottom:12px">
+      <input id="authName" type="text" placeholder="Your detective name…" maxlength="24" onkeydown="if(event.key==='Enter')submitAuth()"
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;color:#fff;font-size:.95em;outline:none;box-sizing:border-box">
+    </div>
+    <div style="margin-bottom:12px">
+      <input id="authEmail" type="email" placeholder="Email address…" onkeydown="if(event.key==='Enter')submitAuth()"
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;color:#fff;font-size:.95em;outline:none;box-sizing:border-box">
+    </div>
+    <div style="margin-bottom:20px">
+      <input id="authPwd" type="password" placeholder="Password (min 6 chars)…" onkeydown="if(event.key==='Enter')submitAuth()"
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;color:#fff;font-size:.95em;outline:none;box-sizing:border-box">
+    </div>
+    <div id="authError" style="display:none;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px 14px;color:#f87171;font-size:.83em;margin-bottom:16px;text-align:left"></div>
+    <button id="authSubmitBtn" onclick="submitAuth()"
+      style="width:100%;background:var(--gold);color:var(--navy);border:none;border-radius:10px;padding:13px;font-size:1em;font-weight:800;cursor:pointer;transition:all .2s">Sign In →</button>
+    <p style="margin-top:16px;font-size:.78em;color:#9ab">
+      <span id="authSwitchLabel">No account? </span>
+      <button id="authSwitchBtn" onclick="switchAuthTab('signup')"
+        style="background:none;border:none;color:var(--gold);cursor:pointer;font-weight:700;font-size:1em">Create one free</button>
+    </p>
+    <p style="margin-top:8px;font-size:.72em;color:#555">Progress saves to the cloud automatically.</p>
+  </div>
+</div>
+
+<nav class="top-nav" id="topNav" style="display:none">
   <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
     <div class="nav-brand-wrap" onclick="goTo('dashboard')">
       <div class="nav-brand-icon">🔍</div>
@@ -447,6 +493,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <button class="nav-dash-btn" id="navDashBtn" onclick="goTo('dashboard')" style="display:none">🏠 Dashboard</button>
     <a href="index.html" style="background:rgba(245,200,66,.12);color:var(--gold);border:1px solid rgba(245,200,66,.3);border-radius:20px;padding:5px 14px;font-size:.78em;font-weight:700;text-decoration:none;white-space:nowrap;transition:all .2s;" onmouseover="this.style.background='rgba(245,200,66,.22)'" onmouseout="this.style.background='rgba(245,200,66,.12)'">← Home</a>
+    <button onclick="doSignOut()" title="Sign out" style="background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);border-radius:20px;padding:5px 12px;font-size:.78em;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s" onmouseover="this.style.background='rgba(239,68,68,.22)'" onmouseout="this.style.background='rgba(239,68,68,.12)'">Sign Out</button>
   </div>
 </nav>
 
@@ -685,6 +732,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════
+// FIREBASE CONFIG — replace with your project values
+// (Project Settings → Your apps → Web app → firebaseConfig)
+// ═══════════════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey:            "REPLACE_WITH_YOUR_API_KEY",
+  authDomain:        "REPLACE_WITH_YOUR_AUTH_DOMAIN",
+  projectId:         "REPLACE_WITH_YOUR_PROJECT_ID",
+  storageBucket:     "REPLACE_WITH_YOUR_STORAGE_BUCKET",
+  messagingSenderId: "REPLACE_WITH_YOUR_SENDER_ID",
+  appId:             "REPLACE_WITH_YOUR_APP_ID"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const fbAuth = firebase.auth();
+const fbDb   = firebase.firestore();
+
 /**
  * ╔══════════════════════════════════════════════════════════╗
  * ║         STOCK DETECTIVE ACADEMY — Single-file App        ║
@@ -815,22 +878,13 @@ function defaultState() {
   };
 }
 
-let S = (() => {
-  try {
-    const raw = localStorage.getItem(STATE_KEY);
-    if(raw) {
-      const p = JSON.parse(raw), d = defaultState();
-      return {...d,...p,
-        clueCoins: p.clueCoins||0,
-        m1:{...d.m1,...p.m1,stockData:{...d.m1.stockData,...(p.m1?.stockData||{})},verdict:{...d.m1.verdict,...(p.m1?.verdict||{})}},
-        m2:{...d.m2,...p.m2,verdict:{...d.m2.verdict,...(p.m2?.verdict||{})}},
-        m3:{...d.m3,...(p.m3||{}),verdict:{...d.m3.verdict,...(p.m3?.verdict||{})}}};
-    }
-  } catch(e){}
-  return defaultState();
-})();
+// S starts empty — loaded from Firestore after auth in loadUserState()
+let S = defaultState();
 
-function save(){try{localStorage.setItem(STATE_KEY,JSON.stringify(S));}catch(e){}}
+function save(){
+  try{localStorage.setItem(STATE_KEY,JSON.stringify(S));}catch(e){}
+  if(fbUser) fbDb.collection('users').doc(fbUser.uid).set(S).catch(e=>console.warn('Firestore save:',e));
+}
 
 // ═══════════════════════════════════════════════════════
 // 3. UTILITIES
@@ -2566,15 +2620,125 @@ function updatePTMCalc(){
 }
 
 // ═══════════════════════════════════════════════════════
-// 18. INIT  — app startup
+// 18. FIREBASE AUTH + FIRESTORE
+// ═══════════════════════════════════════════════════════
+let fbUser = null;
+let authMode = 'signin';
+
+async function loadUserState(){
+  try {
+    const snap = await fbDb.collection('users').doc(fbUser.uid).get();
+    if(snap.exists){
+      const p=snap.data(), d=defaultState();
+      S={...d,...p,
+         clueCoins:p.clueCoins||0,
+         m1:{...d.m1,...p.m1,stockData:{...d.m1.stockData,...(p.m1?.stockData||{})},verdict:{...d.m1.verdict,...(p.m1?.verdict||{})}},
+         m2:{...d.m2,...p.m2,verdict:{...d.m2.verdict,...(p.m2?.verdict||{})}},
+         m3:{...d.m3,...(p.m3||{}),verdict:{...d.m3.verdict,...(p.m3?.verdict||{})}}};
+    } else {
+      S = defaultState();
+    }
+    try{localStorage.setItem(STATE_KEY,JSON.stringify(S));}catch(e){}
+  } catch(e){
+    console.warn('Firestore load failed, falling back to localStorage',e);
+    try{
+      const raw=localStorage.getItem(STATE_KEY);
+      if(raw){const p=JSON.parse(raw),d=defaultState();
+        S={...d,...p,clueCoins:p.clueCoins||0,
+           m1:{...d.m1,...p.m1,stockData:{...d.m1.stockData,...(p.m1?.stockData||{})},verdict:{...d.m1.verdict,...(p.m1?.verdict||{})}},
+           m2:{...d.m2,...p.m2,verdict:{...d.m2.verdict,...(p.m2?.verdict||{})}},
+           m3:{...d.m3,...(p.m3||{}),verdict:{...d.m3.verdict,...(p.m3?.verdict||{})}}};}
+    }catch(e2){}
+  }
+}
+
+function switchAuthTab(mode){
+  authMode = mode;
+  const isUp = mode==='signup';
+  document.getElementById('authNameField').style.display = isUp ? 'block' : 'none';
+  document.getElementById('tabSignIn').style.background   = isUp ? 'transparent' : 'var(--gold)';
+  document.getElementById('tabSignIn').style.color        = isUp ? '#9ab' : 'var(--navy)';
+  document.getElementById('tabSignUp').style.background   = isUp ? 'var(--gold)' : 'transparent';
+  document.getElementById('tabSignUp').style.color        = isUp ? 'var(--navy)' : '#9ab';
+  document.getElementById('authSubmitBtn').textContent    = isUp ? 'Create Account →' : 'Sign In →';
+  document.getElementById('authSwitchLabel').textContent  = isUp ? 'Already have an account? ' : 'No account? ';
+  document.getElementById('authSwitchBtn').textContent    = isUp ? 'Sign in' : 'Create one free';
+  document.getElementById('authSwitchBtn').onclick        = ()=>switchAuthTab(isUp?'signin':'signup');
+  document.getElementById('authError').style.display = 'none';
+}
+
+async function submitAuth(){
+  const email = document.getElementById('authEmail').value.trim();
+  const pwd   = document.getElementById('authPwd').value;
+  const btn   = document.getElementById('authSubmitBtn');
+  if(!email||!pwd){showAuthError('Please enter your email and password.');return;}
+  btn.disabled = true;
+  btn.textContent = '…';
+  try{
+    if(authMode==='signup'){
+      const name=(document.getElementById('authName')?.value||'').trim();
+      if(!name){showAuthError('Please enter your detective name.');btn.disabled=false;btn.textContent='Create Account →';return;}
+      const cred = await fbAuth.createUserWithEmailAndPassword(email,pwd);
+      S = defaultState();
+      S.detectiveName = name;
+      await fbDb.collection('users').doc(cred.user.uid).set(S);
+    } else {
+      await fbAuth.signInWithEmailAndPassword(email,pwd);
+    }
+  } catch(e){
+    showAuthError(authErrMsg(e.code));
+    btn.disabled = false;
+    btn.textContent = authMode==='signup' ? 'Create Account →' : 'Sign In →';
+  }
+}
+
+function authErrMsg(code){
+  const map = {
+    'auth/email-already-in-use': 'That email is already registered — try signing in.',
+    'auth/wrong-password':        'Incorrect password. Try again.',
+    'auth/user-not-found':        'No account found. Create one above.',
+    'auth/invalid-email':         'Please enter a valid email address.',
+    'auth/weak-password':         'Password must be at least 6 characters.',
+    'auth/too-many-requests':     'Too many attempts. Please wait a moment.',
+    'auth/invalid-credential':    'Email or password is incorrect.',
+  };
+  return map[code] || 'Something went wrong. Please try again.';
+}
+
+function showAuthError(msg){
+  const el = document.getElementById('authError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function doSignOut(){
+  if(confirm('Sign out of Stock Detective Academy?')) fbAuth.signOut();
+}
+
+// ═══════════════════════════════════════════════════════
+// 19. INIT  — app startup
 // ═══════════════════════════════════════════════════════
 function init(){
-  goTo('dashboard');
-  // Pre-render M1 table so tabs are built
-  buildTabs();
-  buildPanels();
+  fbAuth.onAuthStateChanged(async user => {
+    if(user){
+      fbUser = user;
+      await loadUserState();
+      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('authView').style.display       = 'none';
+      document.getElementById('topNav').style.display         = 'flex';
+      goTo('dashboard');
+      buildTabs();
+      buildPanels();
+    } else {
+      fbUser = null;
+      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('authView').style.display       = 'flex';
+      document.getElementById('topNav').style.display         = 'none';
+    }
+  });
 }
 init();
 </script>
+
 </body>
 </html>
