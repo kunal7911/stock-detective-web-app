@@ -181,7 +181,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .field-input{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:8px;padding:9px 11px;color:#fff;font-size:.92em;outline:none;transition:border-color .2s;width:100%;}
 .field-input:focus{border-color:var(--gold);}
 .field-input.locked{opacity:.6;cursor:not-allowed;}
-.signal-display{height:26px;display:flex;align-items:center;}
+.signal-display{min-height:26px;display:block;}
 .co-score-bar{margin-top:18px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
 .co-score-num{color:var(--gold);font-size:1.5em;font-weight:800;}
 .score-pips{display:flex;gap:5px;}
@@ -438,10 +438,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 /* Company fun fact */
 .co-funfact{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(59,130,246,.04));border-left:3px solid #3b82f6;border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:14px;font-size:.82em;color:#93c5fd;line-height:1.6;}
 /* Signal tooltip */
-.sig-tip{font-size:.75em;color:#94a3b8;margin-top:4px;line-height:1.4;padding:4px 8px;background:rgba(255,255,255,.04);border-radius:6px;border-left:2px solid rgba(255,255,255,.1);}
+.sig-tip{font-size:.74em;color:#94a3b8;margin-top:5px;line-height:1.45;padding:5px 9px;background:rgba(255,255,255,.04);border-radius:6px;border-left:2px solid rgba(255,255,255,.1);display:block;}
 .sig-tip.good{color:#86efac;border-left-color:var(--green);}
 .sig-tip.okay{color:#fcd34d;border-left-color:var(--yellow);}
 .sig-tip.warn{color:#fca5a5;border-left-color:var(--red);}
+/* Field group: allow height to grow with tooltip */
+.field-group{display:flex;flex-direction:column;gap:5px;}
 /* Quiz */
 .quiz-section{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:22px;margin-top:28px;}
 .quiz-title{color:var(--gold);font-size:1em;font-weight:800;margin-bottom:4px;}
