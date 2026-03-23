@@ -428,6 +428,116 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ptm-dash-sub{color:#8ab;font-size:.78em;line-height:1.4;}
 .ptm-dash-arrow{color:var(--gold);font-size:1.3em;flex-shrink:0;opacity:.7;}
 @media(max-width:600px){.metrics-grid,.fields-grid,.add-form-grid{grid-template-columns:1fr;}.pie-section{grid-template-columns:1fr;}}
+
+/* ─────────────────────────────────────────────────────
+   MOBILE  ≤ 640px
+───────────────────────────────────────────────────── */
+@media(max-width:640px){
+
+  /* NAV — hide text-only items to prevent overflow */
+  .top-nav{padding:0 10px;min-height:52px;height:auto;gap:5px;flex-wrap:nowrap;}
+  .nav-brand{display:none;}                          /* hide "Stock Detective" text, keep icon */
+  #navDetectiveName{display:none!important;}         /* rank pill lives on dashboard instead */
+  .nav-steps{gap:4px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;max-width:45vw;}
+  .nav-steps::-webkit-scrollbar{display:none;}
+  .nav-step{padding:4px 9px;font-size:.68em;white-space:nowrap;flex-shrink:0;}
+  .nav-dash-btn{padding:5px 10px;font-size:.72em;}
+
+  /* PAGES */
+  .page-wrap{padding:14px 12px;}
+  .dash-wrap{padding:14px 12px;}
+  .page-title{font-size:1.3em;}
+  .page-sub{font-size:.85em;}
+
+  /* DASHBOARD HERO */
+  .hero-h1{font-size:1.5em;}
+  .hero-name-card{padding:16px 14px;}
+  .stat-box{min-width:68px;padding:9px 10px;}
+  .stat-num{font-size:1.05em;}
+  .rh-stats{gap:7px;}
+
+  /* MISSIONS GRID — always single column on phones */
+  .missions-grid{grid-template-columns:1fr;}
+
+  /* TABLES — make horizontally scrollable */
+  .scoreboard-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;}
+  .scoreboard-table tbody,.scoreboard-table thead,.scoreboard-table tr{display:table;width:100%;table-layout:fixed;}
+  /* simpler approach */
+  .scoreboard-table{display:block;width:100%;overflow-x:auto;}
+
+  /* BUTTONS */
+  .btn-primary,.btn-green{padding:11px 22px;font-size:.92em;}
+  .btn-secondary{padding:9px 18px;font-size:.88em;}
+  .nav-row{flex-wrap:wrap;justify-content:center;gap:8px;}
+  .complete-mission-btn{font-size:.95em;padding:12px 28px;}
+
+  /* COMPANY TABS */
+  .company-tabs{gap:5px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
+  .company-tabs::-webkit-scrollbar{display:none;}
+  .co-tab{flex-shrink:0;padding:6px 11px;font-size:.76em;}
+
+  /* STOCK PICKER */
+  .stock-picker{grid-template-columns:repeat(3,1fr);gap:8px;}
+
+  /* SECTOR GRID */
+  .sector-grid{grid-template-columns:1fr 1fr;}
+
+  /* PORTFOLIO */
+  .portfolio-summary{grid-template-columns:1fr 1fr;}
+  .combined-totals{grid-template-columns:1fr 1fr;}
+  .pi-stats{gap:8px;}
+  .pi-header{flex-wrap:wrap;}
+
+  /* INTRO HERO (M2/M3) */
+  .intro-hero{padding:24px 12px;}
+  .intro-hero h1{font-size:1.5em;}
+
+  /* COMPLETION SCREEN */
+  .completion-badge{font-size:3em;}
+  .completion-title{font-size:1.4em;}
+
+  /* PTM */
+  .ptm-hero{padding:16px 12px;}
+  .ptm-final-num{font-size:2em;}
+  .ptm-sliders{padding:14px 12px;}
+  .ptm-bars{height:100px;}
+  .ptm-bar-val{font-size:.55em;}
+  .ptm-bar-age{font-size:.6em;}
+  .ptm-badges{gap:7px;}
+  .ptm-badge{padding:6px 10px;font-size:.74em;min-width:64px;}
+
+  /* SIGNALS BAR */
+  .signals-bar{gap:7px;}
+  .sig-pill{padding:5px 11px;font-size:.82em;}
+
+  /* HINT BOX */
+  .hint-box{font-size:.78em;padding:10px 12px;}
+
+  /* VERDICT / QUESTIONS */
+  .verdict-section{padding:16px 14px;}
+  .question textarea{font-size:.82em;}
+
+  /* DASHBOARD HERO TOP */
+  .dash-hero-top{padding:18px 14px 16px!important;}
+
+  /* AUTH VIEW - reduce padding on small card */
+  #authView > div{padding:28px 20px!important;}
+  #authView h2{font-size:1.2em!important;}
+}
+
+/* ─────────────────────────────────────────────────────
+   VERY SMALL PHONES  ≤ 380px  (iPhone SE, etc.)
+───────────────────────────────────────────────────── */
+@media(max-width:380px){
+  .top-nav{padding:0 8px;}
+  .nav-brand-icon{width:28px;height:28px;font-size:.85em;}
+  .hero-h1{font-size:1.3em;}
+  .sector-grid{grid-template-columns:1fr;}
+  .stock-picker{grid-template-columns:repeat(2,1fr);}
+  .stat-box{min-width:60px;padding:7px 8px;}
+  .ptm-final-num{font-size:1.7em;}
+  .btn-primary,.btn-green{padding:10px 18px;font-size:.88em;}
+}
 </style>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1004,7 +1114,7 @@ function renderDashboard() {
   }
 
   document.getElementById('dashContent').innerHTML = `
-    <div style="background:linear-gradient(135deg,rgba(13,27,42,1) 0%,rgba(20,40,70,1) 100%);border-bottom:2px solid rgba(245,200,66,.25);padding:28px 24px 24px;text-align:center">
+    <div class="dash-hero-top" style="background:linear-gradient(135deg,rgba(13,27,42,1) 0%,rgba(20,40,70,1) 100%);border-bottom:2px solid rgba(245,200,66,.25);padding:28px 24px 24px;text-align:center">
       <div style="display:inline-flex;align-items:center;gap:12px;margin-bottom:10px">
         <span style="font-size:2.2em">🔍</span>
         <div style="text-align:left">
